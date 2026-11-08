@@ -88,4 +88,4 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 ## Contexto atual
 - Foco: esqueleto + serviço de monitoramento com notificação persistente + leitura ao vivo.
 - Pendentes: histórico de sessões (persistência), janelas de carga mais rápida, saúde da bateria, ranking de apps (acesso ao uso), páginas legais, tile/widget.
-- Problemas conhecidos: nenhum build rodou ainda; a sessão que criou o esqueleto não compilou (sem acesso ao Google Maven). O primeiro CI é a primeira prova.
+- Problemas conhecidos: nada vistoriado num aparelho real ainda. O CI passa (testes + release com R8); a sessão não compila localmente (sem acesso ao Google Maven), então o CI é a prova do build.
