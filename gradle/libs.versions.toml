@@ -2,6 +2,7 @@
 agp = "8.13.0"
 kotlin = "2.2.20"
 composeBom = "2025.10.00"
+material3 = "1.5.0-rc01"
 activityCompose = "1.11.0"
 coreKtx = "1.17.0"
 lifecycle = "2.9.4"
@@ -14,7 +15,7 @@ androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-ru
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 junit = { module = "junit:junit", version.ref = "junit" }
 
 [plugins]

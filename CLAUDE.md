@@ -11,7 +11,7 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 - Repositório: `rilclesaraiva/Joule-Arc`
 
 ## Stack
-- Stack: Kotlin + Jetpack Compose + Material 3 Expressive (`material3` 1.4+, `MaterialExpressiveTheme`)
+- Stack: Kotlin + Jetpack Compose + Material 3 Expressive (`material3` 1.5.x, fixado em `gradle/libs.versions.toml`; no 1.4.0 as APIs Expressive são internas, então não voltar para 1.4)
 - Build: `./gradlew assembleRelease` · Testes: `./gradlew testDebugUnitTest`
 - Mapa: core → `app/src/main/java/com/joulearc/app/core` · data → `app/src/main/java/com/joulearc/app/data` · features → `app/src/main/java/com/joulearc/app/features`
 - Versão: `app/build.gradle.kts` (`versionName`, `versionCode`) · lida no CI por `VERSION_CMD`
