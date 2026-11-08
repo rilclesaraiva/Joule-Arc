@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']   # reserva: uma tag criada à mão também publica
+
+permissions:
+  contents: write   # o CI cria a tag e a Release
+
+env:
+  # ── Ajuste por stack ──
+  VERSION_CMD: grep -m1 -oP 'versionName\s*=?\s*"\K[^"]+' app/build.gradle.kts   # imprime a versão
+  TEST_CMD: chmod +x gradlew && ./gradlew testDebugUnitTest assembleRelease   # release = R8 + assinatura
+  TEST_ARTIFACTS: app/build/outputs/apk/release/*.apk   # build para vistoria, em todo push
+  RELEASE_CMD: ./gradlew bundleRelease assembleRelease
+  ARTIFACTS: |
+    app/build/outputs/bundle/release/*.aab
+    app/build/outputs/apk/release/*.apk
+  # ── Assinatura ──
+  REQUIRE_SIGNING: 'true'   # sem os secrets, o release é barrado
+  KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+  ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+  ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+  ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - name: Assinatura (pulada se não houver secrets)
+        if: env.KEYSTORE_B64 != ''
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"
+      - run: eval "$TEST_CMD"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-para-vistoria
+          path: ${{ env.TEST_ARTIFACTS }}
+          if-no-files-found: ignore
+
+  release:
+    needs: ci
+    runs-on: ubuntu-latest
+    concurrency: release
+    steps:
+      - uses: actions/checkout@v6
+        with: { fetch-depth: 0 }   # traz as tags existentes
+
+      - name: Decidir se publica
+        id: v
+        run: |
+          V="$(eval "$VERSION_CMD")"
+          [ -n "$V" ] || { echo "VERSION_CMD não retornou a versão"; exit 1; }
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            [ "${GITHUB_REF_NAME#v}" = "$V" ] || { echo "Tag $GITHUB_REF_NAME difere da versão $V"; exit 1; }
+          elif git rev-parse -q --verify "refs/tags/v$V" >/dev/null; then
+            echo "v$V já publicada: nada a fazer."; echo "publish=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          awk -v v="$V" '$0 ~ "^## \\[" v "\\]" {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then
+            echo "::warning::v$V não tem seção no CHANGELOG: nada publicado."
+            echo "publish=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"; echo "publish=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v4
+        if: steps.v.outputs.publish == 'true'
+        with: { distribution: temurin, java-version: '17' }
+
+      - name: Assinatura
+        if: steps.v.outputs.publish == 'true'
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            [ "$REQUIRE_SIGNING" = true ] && { echo "Secrets de assinatura ausentes: release barrado."; exit 1; }
+            exit 0
+          fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"
+
+      - if: steps.v.outputs.publish == 'true'
+        run: eval "$RELEASE_CMD"
+
+      - uses: softprops/action-gh-release@v2   # cria a tag vX.Y.Z neste commit e publica
+        if: steps.v.outputs.publish == 'true'
+        with:
+          tag_name: v${{ steps.v.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          body_path: notes.md
+          files: ${{ env.ARTIFACTS }}

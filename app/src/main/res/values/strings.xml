@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Joule Arc</string>
+
+    <string name="monitor_channel_name">Battery monitor</string>
+    <string name="monitor_channel_description">Persistent notification that keeps the charging monitor running</string>
+    <string name="monitor_starting">Starting the monitor…</string>
+    <string name="notification_text">%1$s · %2$d mA · %3$d%% · %4$.1f °C</string>
+
+    <string name="status_charging">Charging</string>
+    <string name="status_discharging">Discharging</string>
+    <string name="status_full">Full</string>
+    <string name="status_not_charging">Not charging</string>
+    <string name="status_unknown">Unknown</string>
+
+    <string name="current_label_charging">Charging current</string>
+    <string name="current_label_discharging">Discharge current</string>
+    <string name="current_unavailable">Not available on this device</string>
+    <string name="unit_ma">mA</string>
+
+    <string name="stat_level">Level</string>
+    <string name="stat_voltage">Voltage</string>
+    <string name="stat_temperature">Temperature</string>
+    <string name="stat_source">Power source</string>
+    <string name="source_ac">AC</string>
+    <string name="source_usb">USB</string>
+    <string name="source_wireless">Wireless</string>
+    <string name="source_battery">Battery</string>
+
+    <string name="notifications_title">Notifications are off</string>
+    <string name="notifications_body">Allow notifications to see the monitor in your notification shade.</string>
+    <string name="notifications_action">Allow</string>
+
+    <string name="usage_title">Foreground and background usage</string>
+    <string name="usage_body">To rank which apps use the most battery, Joule Arc needs usage access. The ranking is an estimate based on usage time, not exact mAh.</string>
+    <string name="usage_granted">Usage access granted</string>
+    <string name="usage_action">Open settings</string>
+
+    <string name="support_invite">Want to support the project? Visit the project repository.</string>
+</resources>

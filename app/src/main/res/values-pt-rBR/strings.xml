@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Joule Arc</string>
+
+    <string name="monitor_channel_name">Monitor de bateria</string>
+    <string name="monitor_channel_description">Notificação persistente que mantém o monitor de carga ativo</string>
+    <string name="monitor_starting">Iniciando o monitor…</string>
+    <string name="notification_text">%1$s · %2$d mA · %3$d%% · %4$.1f °C</string>
+
+    <string name="status_charging">Carregando</string>
+    <string name="status_discharging">Descarregando</string>
+    <string name="status_full">Completa</string>
+    <string name="status_not_charging">Sem carregar</string>
+    <string name="status_unknown">Desconhecido</string>
+
+    <string name="current_label_charging">Corrente de carga</string>
+    <string name="current_label_discharging">Corrente de descarga</string>
+    <string name="current_unavailable">Indisponível neste aparelho</string>
+    <string name="unit_ma">mA</string>
+
+    <string name="stat_level">Nível</string>
+    <string name="stat_voltage">Tensão</string>
+    <string name="stat_temperature">Temperatura</string>
+    <string name="stat_source">Fonte de energia</string>
+    <string name="source_ac">Tomada</string>
+    <string name="source_usb">USB</string>
+    <string name="source_wireless">Sem fio</string>
+    <string name="source_battery">Bateria</string>
+
+    <string name="notifications_title">Notificações desativadas</string>
+    <string name="notifications_body">Permita notificações para ver o monitor na barra de notificações.</string>
+    <string name="notifications_action">Permitir</string>
+
+    <string name="usage_title">Uso em primeiro e segundo plano</string>
+    <string name="usage_body">Para ordenar quais apps mais consomem bateria, o Joule Arc precisa do acesso ao uso. O ranking é uma estimativa baseada no tempo de uso, não em mAh exatos.</string>
+    <string name="usage_granted">Acesso ao uso concedido</string>
+    <string name="usage_action">Abrir ajustes</string>
+
+    <string name="support_invite">Quer apoiar o projeto? Entre no repositório do projeto.</string>
+</resources>
