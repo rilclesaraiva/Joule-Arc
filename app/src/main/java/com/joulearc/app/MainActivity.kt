@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -133,10 +135,15 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(bottom = 8.dp),
                         )
 
-                        HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.Top,
+                        ) { page ->
                             when (page) {
                                 0 -> Column(
                                     modifier = Modifier
+                                        .fillMaxSize()
                                         .verticalScroll(rememberScrollState())
                                         .padding(horizontal = 16.dp, vertical = 8.dp),
                                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -169,6 +176,7 @@ class MainActivity : ComponentActivity() {
                                     active = activeSession,
                                     sessions = sessions,
                                     insights = insights,
+                                    modifier = Modifier.fillMaxSize(),
                                 )
 
                                 2 -> HealthScreen(
@@ -176,10 +184,11 @@ class MainActivity : ComponentActivity() {
                                     capacityMah = capacityMah,
                                     designCapacityMah = designCapacity,
                                     onDesignCapacityChange = { SettingsRepository.setDesignCapacityMah(it) },
+                                    modifier = Modifier.fillMaxSize(),
                                 )
 
                                 else -> if (!usageGranted) {
-                                    Column(Modifier.padding(16.dp)) {
+                                    Column(Modifier.fillMaxSize().padding(16.dp)) {
                                         UsageAccessCard(
                                             granted = false,
                                             onOpenSettings = { context.startActivity(usageAccessSettingsIntent()) },
@@ -191,6 +200,7 @@ class MainActivity : ComponentActivity() {
                                         samples = levelSamples,
                                         windowDays = windowDays,
                                         onWindowChange = { windowDays = it },
+                                        modifier = Modifier.fillMaxSize(),
                                     )
                                 }
                             }

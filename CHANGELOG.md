@@ -26,6 +26,7 @@
 - App usage time now comes from usage events clipped to the selected window (the previous aggregated stats could include whole days outside the window). The window is shortened to the start of the level history so the drained percentage and the usage times cover the same period. The ranges are now 24 hours and 14 days (what Android keeps may be shorter).
 
 ### Fixed
+- A large empty gap appeared above the content of each tab: the pager centered short pages vertically. Pages now start at the top.
 - The status could lag by up to 30 s after plugging or unplugging the charger (it showed "Discharging" while charging). The monitor now reacts instantly to battery broadcasts and samples every 500 ms while the app is visible (2 s while charging with the screen off).
 
 ### Known issues
