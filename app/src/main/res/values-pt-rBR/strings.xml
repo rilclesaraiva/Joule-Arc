@@ -37,4 +37,25 @@
     <string name="usage_action">Abrir ajustes</string>
 
     <string name="support_invite">Quer apoiar o projeto? Entre no repositório do projeto.</string>
+
+    <string name="stat_power">Potência</string>
+
+    <string name="estimate_title">Estimativa de carga</string>
+    <string name="estimate_rate">%1$.1f%% por hora</string>
+    <string name="estimate_full">Cheia em %1$s · por volta de %2$s</string>
+    <string name="estimate_capacity">Capacidade estimada: %1$d mAh</string>
+    <string name="estimate_note">Baseada na velocidade de carga atual. A carga desacelera perto de 100%, então o tempo real costuma ser maior.</string>
+    <string name="estimate_calculating">Calculando…</string>
+    <string name="estimate_unavailable">Este aparelho não informa o contador de carga da bateria, então a estimativa não está disponível.</string>
+
+    <string name="tab_live">Ao vivo</string>
+    <string name="tab_history">Histórico</string>
+    <string name="history_empty">Nenhuma sessão de carga ainda. Elas aparecem aqui depois de carregar por pelo menos um minuto.</string>
+    <string name="history_active">Carregando agora</string>
+    <string name="history_level">%1$d%% → %2$d%% (+%3$d%%)</string>
+    <string name="history_duration">Duração: %1$s</string>
+    <string name="history_avg">Corrente média: %1$d mA</string>
+    <string name="history_peak">Pico: %1$d mA · %2$s</string>
+    <string name="history_rate">Média: %1$.1f%% por hora</string>
+    <string name="history_temp">Temperatura máxima: %1$.1f °C</string>
 </resources>

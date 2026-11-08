@@ -37,4 +37,25 @@
     <string name="usage_action">Open settings</string>
 
     <string name="support_invite">Want to support the project? Visit the project repository.</string>
+
+    <string name="stat_power">Power</string>
+
+    <string name="estimate_title">Charging estimate</string>
+    <string name="estimate_rate">%1$.1f%% per hour</string>
+    <string name="estimate_full">Full in %1$s · around %2$s</string>
+    <string name="estimate_capacity">Estimated capacity: %1$d mAh</string>
+    <string name="estimate_note">Based on the current charging speed. Charging slows down near 100%, so the real time is usually longer.</string>
+    <string name="estimate_calculating">Calculating…</string>
+    <string name="estimate_unavailable">This device does not report the battery charge counter, so the estimate is not available.</string>
+
+    <string name="tab_live">Live</string>
+    <string name="tab_history">History</string>
+    <string name="history_empty">No charging sessions yet. They appear here after you charge for at least one minute.</string>
+    <string name="history_active">Charging now</string>
+    <string name="history_level">%1$d%% → %2$d%% (+%3$d%%)</string>
+    <string name="history_duration">Duration: %1$s</string>
+    <string name="history_avg">Average current: %1$d mA</string>
+    <string name="history_peak">Peak: %1$d mA · %2$s</string>
+    <string name="history_rate">Average: %1$.1f%% per hour</string>
+    <string name="history_temp">Max temperature: %1$.1f °C</string>
 </resources>

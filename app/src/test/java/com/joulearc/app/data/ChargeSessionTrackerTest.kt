@@ -1,0 +1,72 @@
+package com.joulearc.app.data
+
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class ChargeSessionTrackerTest {
+    private val unplugged = { t: Long ->
+        snap(t, status = ChargeStatus.DISCHARGING, source = PowerSource.BATTERY, current = 400)
+    }
+
+    @Test fun startsAndUpdatesSession() {
+        val tracker = ChargeSessionTracker()
+        assertNull(tracker.onSnapshot(snap(0, level = 40, current = 1000)))
+        assertNull(tracker.onSnapshot(snap(10_000, level = 41, current = 3000)))
+        val s = tracker.current!!
+        assertTrue(s.ongoing)
+        assertEquals(40, s.startLevel)
+        assertEquals(41, s.endLevel)
+        assertEquals(3000, s.peakCurrentMa)
+        assertEquals(10_000L, s.durationMs)
+        // time-weighted: the whole 10 s interval is credited to the new sample
+        assertEquals(3000.0, s.avgCurrentMa, 0.01)
+    }
+
+    @Test fun unplugEndsSessionImmediately() {
+        val tracker = ChargeSessionTracker()
+        tracker.onSnapshot(snap(0, level = 40))
+        tracker.onSnapshot(snap(60_000, level = 45))
+        val closed = tracker.onSnapshot(unplugged(61_000))
+        assertNotNull(closed)
+        assertFalse(closed!!.ongoing)
+        assertEquals(60_000L, closed.durationMs)
+        assertEquals(5, closed.gainPercent)
+        assertNull(tracker.current)
+    }
+
+    @Test fun briefStatusFlickerKeepsSessionOpen() {
+        val tracker = ChargeSessionTracker()
+        tracker.onSnapshot(snap(0))
+        val flicker = snap(30_000, status = ChargeStatus.NOT_CHARGING, source = PowerSource.USB)
+        assertNull(tracker.onSnapshot(flicker))
+        assertNotNull(tracker.current)
+        assertNull(tracker.onSnapshot(snap(40_000)))
+        assertEquals(40_000L, tracker.current!!.durationMs)
+    }
+
+    @Test fun longGapClosesAndStartsNewSession() {
+        val tracker = ChargeSessionTracker()
+        tracker.onSnapshot(snap(0, level = 20))
+        val closed = tracker.onSnapshot(snap(500_000, level = 60))
+        assertNotNull(closed)
+        assertEquals(0L, closed!!.durationMs)
+        assertEquals(60, tracker.current!!.startLevel)
+    }
+
+    @Test fun percentPerHourNeedsFiveMinutes() {
+        val short = ChargeSessionTracker().apply {
+            onSnapshot(snap(0, level = 10)); onSnapshot(snap(60_000, level = 12))
+        }.current!!
+        assertNull(short.percentPerHour)
+
+        val long = ChargeSessionTracker().apply {
+            onSnapshot(snap(0, level = 10)); onSnapshot(snap(100_000, level = 10))
+            onSnapshot(snap(200_000, level = 10)); onSnapshot(snap(300_000, level = 15))
+        }.current!!
+        assertEquals(60f, long.percentPerHour!!, 0.1f)
+    }
+}

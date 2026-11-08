@@ -34,6 +34,8 @@ class BatteryReader(context: Context) {
         }
 
         val rawCurrent = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+        val counter = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+            .takeIf { it != Long.MIN_VALUE && it > 0L }
 
         return BatterySnapshot(
             levelPercent = percent,
@@ -42,6 +44,7 @@ class BatteryReader(context: Context) {
             temperatureC = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10f,
             status = status,
             source = source,
+            chargeCounterUah = counter,
             timestampMs = System.currentTimeMillis(),
         )
     }

@@ -6,11 +6,13 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 
 **Available now (early development)**
 - Persistent notification while monitoring, with current, level and temperature.
-- Live charging current, battery level, voltage, temperature and charge status.
+- Live charging current, battery level, voltage, temperature, power and charge status, updated twice per second while the app is open.
+- Charging estimate: percent per hour and when the battery should be full.
+- Charging session history.
 - Material 3 Expressive interface with dynamic color.
 
 **Planned**
-- Charging session history and charts.
+- Charts for charging sessions.
 - Detection of the moments when the device charges fastest.
 - Battery health estimate.
 - Foreground and background app ranking (an estimate based on usage time, since Android does not expose per-app mAh to regular apps).
@@ -23,7 +25,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - **Start at boot**: restarts the monitor after the device reboots.
 - **Usage access** (special permission, granted by you in system settings): will be used to measure how long apps run in the foreground and background. The app only asks for it when you open that feature.
 
-The app does not declare the internet permission.
+The charging session history is stored only on your device, in the app's private storage. The app does not declare the internet permission.
 
 ## 🤖 Built with AI ("vibe coding")
 

@@ -22,11 +22,12 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 
 ## Arquitetura
 - `data/` expõe `BatteryRepository` (StateFlow de `BatterySnapshot`) e `BatteryReader` (lê `BatteryManager` e o broadcast `ACTION_BATTERY_CHANGED`).
-- `features/monitor/` tem o `MonitorService` (serviço em primeiro plano, tipo `specialUse`, notificação persistente) e a tela principal.
+- `data/` também tem `ChargeEstimator` (% por hora e tempo até cheia, a partir da corrente média e da capacidade estimada pelo contador de carga), `ChargeSessionTracker` (agrupa amostras em sessões), `SessionStore` (JSON em `filesDir/sessions.json`, sem Room de propósito) e `SessionRepository`.
+- `features/monitor/` tem o `MonitorService` (serviço em primeiro plano, tipo `specialUse`, notificação persistente) e a tela ao vivo. `features/history/` tem a aba Histórico. A entrada (`MainActivity`) monta as abas.
 - `features/usage/` trata a permissão especial de acesso ao uso (`UsageStatsManager`) e, depois, o ranking de apps em primeiro e segundo plano.
 - `MainActivity` (entrada) monta as telas e liga as features por callbacks.
 - Limite honesto: apps comuns não leem mAh por app (restrição do Android). O ranking de apps é uma **estimativa** a partir de tempo em primeiro/segundo plano, e a interface precisa dizer isso.
-- Amostragem: ~2 s carregando, ~30 s fora da carga, para poupar bateria.
+- Amostragem: 500 ms com o app visível, 2 s carregando com a tela apagada, 30 s fora disso. O serviço acorda na hora em qualquer broadcast de bateria (plugar, desplugar, mudança de nível). Nunca voltar a depender só de intervalo fixo longo.
 
 ## Regras de estrutura
 - Feature não importa outra feature; o compartilhado sobe para core/data.
@@ -86,6 +87,6 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
   repositório do projeto" com link para o repo.
 
 ## Contexto atual
-- Foco: esqueleto + serviço de monitoramento com notificação persistente + leitura ao vivo.
-- Pendentes: histórico de sessões (persistência), janelas de carga mais rápida, saúde da bateria, ranking de apps (acesso ao uso), páginas legais, tile/widget.
+- Foco: leitura rápida, potência, estimativa de carga e histórico de sessões (v0.1, ainda sem release).
+- Pendentes: janelas de carga mais rápida (hora do dia / condição em que carrega mais rápido), saúde da bateria, ranking de apps (acesso ao uso), páginas legais, tile/widget.
 - Problemas conhecidos: nada vistoriado num aparelho real ainda. O CI passa (testes + release com R8); a sessão não compila localmente (sem acesso ao Google Maven), então o CI é a prova do build.
