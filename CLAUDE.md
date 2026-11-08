@@ -18,7 +18,7 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 - Release: `./gradlew bundleRelease assembleRelease` → `.aab` e `.apk` de release
 - Pacote (Android): `com.joulearc.app`, fixo · R8 ativo no release (sem ofuscação), nunca desligar
 - Ícone: `app/src/main/res/drawable/ic_launcher_foreground.xml` (+ background e monocromático), só muda se o mantenedor pedir
-- minSdk 26 · targetSdk/compileSdk 36
+- minSdk 26 · targetSdk 36 · compileSdk 37 (exigido pelo material3 1.5) · AGP 9.1.x com Kotlin embutido (não aplicar `org.jetbrains.kotlin.android`) · Gradle 9.3.1
 
 ## Arquitetura
 - `data/` expõe `BatteryRepository` (StateFlow de `BatterySnapshot`) e `BatteryReader` (lê `BatteryManager` e o broadcast `ACTION_BATTERY_CHANGED`).
