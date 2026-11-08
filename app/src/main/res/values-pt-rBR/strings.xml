@@ -99,10 +99,10 @@
 
     <string name="apps_title">Primeiro e segundo plano</string>
     <string name="apps_window_24h">24 horas</string>
-    <string name="apps_window_7d">7 dias</string>
+    <string name="apps_window_14d">14 dias</string>
     <string name="apps_row">Primeiro plano %1$s · Segundo plano %2$s</string>
     <string name="apps_share">%1$d%%</string>
-    <string name="apps_note">Uma estimativa baseada no tempo de uso, não em mAh exatos: o Android não deixa apps comuns lerem o consumo de bateria por app. Segundo plano conta o tempo em que o app rodou um serviço em primeiro plano.</string>
+    <string name="apps_note">Uma estimativa, não mAh exatos: o Android não deixa apps comuns lerem o consumo de bateria por app. O Joule Arc pega a bateria gasta no período (do histórico de nível que ele grava) e divide entre os apps pelo tempo de uso. Segundo plano conta o tempo em que o app rodou um serviço em primeiro plano. Tela, rádios e sistema também são atribuídos aos apps.</string>
     <string name="apps_empty">Sem dados de uso neste período.</string>
     <string name="apps_loading">Carregando…</string>
 
@@ -113,4 +113,12 @@
     <string name="tile_subtitle">%1$s · %2$d%%</string>
     <string name="widget_detail">%1$s · %2$.1f °C</string>
     <string name="widget_description">Corrente, potência e nível da bateria ao vivo</string>
+
+    <string name="usage_chart_level">Nível da bateria</string>
+    <string name="usage_chart_usage">Uso da bateria</string>
+    <string name="usage_last_full">Última carga até 100%</string>
+    <string name="usage_per_app">Uso da bateria por app</string>
+    <string name="usage_since">Dados desde %1$s</string>
+    <string name="usage_percent_less">&lt; 1%</string>
+    <string name="usage_no_history">Coletando o histórico da bateria. Os gráficos se completam conforme você usa o celular.</string>
 </resources>

@@ -23,6 +23,7 @@ import com.joulearc.app.data.BatteryRepository
 import com.joulearc.app.data.BatterySnapshot
 import com.joulearc.app.data.ChargeEstimator
 import com.joulearc.app.data.ChargeStatus
+import com.joulearc.app.data.LevelHistoryRepository
 import com.joulearc.app.data.SessionRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +61,7 @@ class MonitorService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createChannel()
         SessionRepository.init(this)
+        LevelHistoryRepository.init(this)
         val reader = BatteryReader(this)
         val first = reader.read()
         ServiceCompat.startForeground(
@@ -106,6 +108,7 @@ class MonitorService : Service() {
         BatteryRepository.publishEstimate(estimator.update(snapshot))
         BatteryRepository.publishCapacity(estimator.capacityMah)
         SessionRepository.onSnapshot(snapshot)
+        LevelHistoryRepository.onSnapshot(snapshot)
 
         val text = notificationText(snapshot)
         val now = System.currentTimeMillis()

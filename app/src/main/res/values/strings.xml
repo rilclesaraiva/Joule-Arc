@@ -99,10 +99,10 @@
 
     <string name="apps_title">Foreground and background</string>
     <string name="apps_window_24h">24 hours</string>
-    <string name="apps_window_7d">7 days</string>
+    <string name="apps_window_14d">14 days</string>
     <string name="apps_row">Foreground %1$s · Background %2$s</string>
     <string name="apps_share">%1$d%%</string>
-    <string name="apps_note">An estimate based on usage time, not exact mAh: Android does not let regular apps read per-app battery use. Background counts the time an app ran a foreground service.</string>
+    <string name="apps_note">An estimate, not exact mAh: Android does not let regular apps read battery use per app. Joule Arc takes the battery drained in the period (from the level history it records) and splits it between apps by usage time. Background counts the time an app ran a foreground service. Screen, radios and the system are attributed to apps too.</string>
     <string name="apps_empty">No usage data in this period.</string>
     <string name="apps_loading">Loading…</string>
 
@@ -113,4 +113,12 @@
     <string name="tile_subtitle">%1$s · %2$d%%</string>
     <string name="widget_detail">%1$s · %2$.1f °C</string>
     <string name="widget_description">Live current, power and battery level</string>
+
+    <string name="usage_chart_level">Battery level</string>
+    <string name="usage_chart_usage">Battery usage</string>
+    <string name="usage_last_full">Last charged to 100%</string>
+    <string name="usage_per_app">Battery use by app</string>
+    <string name="usage_since">Data since %1$s</string>
+    <string name="usage_percent_less">&lt; 1%</string>
+    <string name="usage_no_history">Collecting battery history. The charts fill in as you use the phone.</string>
 </resources>

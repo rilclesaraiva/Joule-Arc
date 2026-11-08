@@ -19,6 +19,12 @@
 - Quick Settings tile and home screen widget with the live current, status, level and power.
 - Privacy policy and terms in `docs/` (for GitHub Pages), linked in the README and in the app.
 
+- Battery level history (14 days, on the device only) and a battery usage screen inspired by Android's own: hourly level chart for 24 hours, daily usage chart for 14 days, last charge to 100%, and a per-app list with icons and an estimated percentage.
+- The tabs can be swiped, and the tab buttons are now pills; the 24 hours / 14 days switch is a pill too.
+
+### Changed
+- App usage time now comes from usage events clipped to the selected window (the previous aggregated stats could include whole days outside the window). The window is shortened to the start of the level history so the drained percentage and the usage times cover the same period. The ranges are now 24 hours and 14 days (what Android keeps may be shorter).
+
 ### Fixed
 - The status could lag by up to 30 s after plugging or unplugging the charger (it showed "Discharging" while charging). The monitor now reacts instantly to battery broadcasts and samples every 500 ms while the app is visible (2 s while charging with the screen off).
 

@@ -17,7 +17,7 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 - Versão: `app/build.gradle.kts` (`versionName`, `versionCode`) · lida no CI por `VERSION_CMD`
 - Release: `./gradlew bundleRelease assembleRelease` → `.aab` e `.apk` de release
 - Pacote (Android): `com.joulearc.app`, fixo · R8 ativo no release (sem ofuscação), nunca desligar
-- Páginas legais: `docs/` (`privacy`, `terms`, `_config.yml`), com front matter para o Jekyll. URLs usadas no app em `core/SupportFooter.kt`. O mantenedor precisa ativar o Pages (Settings → Pages → branch `main`, pasta `/docs`).
+- Páginas legais: `docs/` (`privacy`, `terms`, `_config.yml`), com front matter para o Jekyll. URLs usadas no app em `core/SupportFooter.kt`. Pages já ativado pelo mantenedor.
 - Ícone: `app/src/main/res/drawable/ic_launcher_foreground.xml` (+ background e monocromático), só muda se o mantenedor pedir
 - minSdk 26 · targetSdk 36 · compileSdk 37 (exigido pelo material3 1.5) · AGP 9.1.x com Kotlin embutido (não aplicar `org.jetbrains.kotlin.android`) · Gradle 9.3.1
 
@@ -25,7 +25,9 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 - `data/` expõe `BatteryRepository` (StateFlow de `BatterySnapshot`) e `BatteryReader` (lê `BatteryManager` e o broadcast `ACTION_BATTERY_CHANGED`).
 - `data/` também tem `ChargeEstimator` (% por hora e tempo até cheia, a partir da corrente média e da capacidade estimada pelo contador de carga), `ChargeSessionTracker` (agrupa amostras em sessões), `SessionStore` (JSON em `filesDir/sessions.json`, sem Room de propósito) e `SessionRepository`.
 - `features/monitor/` tem o `MonitorService` (serviço em primeiro plano, tipo `specialUse`, notificação persistente) e a tela ao vivo. `features/history/` tem a aba Histórico. A entrada (`MainActivity`) monta as abas.
-- `features/usage/` trata a permissão especial de acesso ao uso e a aba Apps (ranking). A leitura (`AppUsageReader`, `queryAndAggregateUsageStats`) e o cálculo (`rankAppUsage`) ficam em `data/`. Segundo plano = tempo com serviço em primeiro plano; peso 0,5.
+- `features/usage/` trata a permissão especial de acesso ao uso e a aba Apps (`BatteryUsageScreen`, inspirada na tela de bateria do Android: alternância 24 h / 14 dias, gráfico de nível por hora ou de consumo por dia, lista por app com ícone). A leitura (`AppUsageReader`, via `queryEvents` recortado na janela, NÃO `queryAndAggregateUsageStats`, que não recorta) e os cálculos (`UsageEventAggregator`, `rankAppUsage`) ficam em `data/`. Segundo plano = tempo com serviço em primeiro plano; peso 0,5. O % por app = parcela × bateria gasta no período (`drainedPercent` do histórico de nível), por isso a janela é recortada no início do histórico.
+- `data/LevelHistoryRepository` grava o nível da bateria (14 dias, `levels.json`) quando o nível ou o carregador muda ou a cada 10 min; `data/LevelCharts` calcula nível por hora, consumo por dia, bateria gasta no período e última carga a 100%.
+- UI: `MainActivity` usa `HorizontalPager` (abas por gesto) e `core/PillTabRow`/`PillToggle` (botões em pílula); `core/BarChart` desenha os gráficos sem dependência.
 - `features/health/` tem a aba Saúde: `cycleCount` (`EXTRA_CYCLE_COUNT`, Android 14+, só se o fabricante informar) e capacidade estimada pelo contador de carga (`ChargeEstimator.capacityMah`). `BATTERY_PROPERTY_STATE_OF_HEALTH` NÃO é API pública (não compila): não usar. Não há API pública para a capacidade nominal, então a saúde é `estimateHealthPercent(capacidade estimada, capacidade nominal digitada pelo usuário)`, guardada em `SettingsRepository` (SharedPreferences).
 - `data/ChargeInsights` compara sessões por fonte e por período do dia (só sessões de 5+ min que começaram abaixo de 80%; "melhor" só com 2+ opções e 2+ sessões).
 - `features/tile/` (`BatteryTileService`) e `features/widget/` (`BatteryWidgetProvider`, RemoteViews, sem Glance). O serviço avisa o widget por broadcast explícito (`core/Actions.kt`), porque feature não importa feature.
@@ -93,5 +95,5 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 
 ## Contexto atual
 - Foco: primeira vistoria em aparelho real de tudo o que existe (v0.1, ainda sem release).
-- Pendentes: gráficos das sessões de carga. Ativar o GitHub Pages. Revisar as páginas legais antes do release público.
+- Pendentes: monitoramento de descarga (sessões, consumo com tela ligada/apagada, dreno em repouso), alerta ao atingir X%, mostradores/rótulos e cartão do aparelho, gráfico por sessão de carga. Revisar as páginas legais antes do release público.
 - Problemas conhecidos: nada vistoriado num aparelho real ainda. O CI passa (testes + release com R8); a sessão não compila localmente (sem acesso ao Google Maven), então o CI é a prova do build.

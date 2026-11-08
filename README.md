@@ -10,7 +10,8 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Charging estimate: percent per hour and when the battery should be full.
 - Charging session history, and a comparison of what charges fastest (by power source and time of day).
 - Battery health: estimated capacity, estimated health against the rated capacity you enter, and the cycle count when your device reports it (Android 14+).
-- Foreground and background app ranking (an estimate based on usage time, since Android does not expose per-app mAh to regular apps).
+- Battery usage screen: hourly battery level for 24 hours and daily usage for 14 days, with the last charge to 100%, and a per-app ranking with icons (an estimate: the drained percentage is split between apps by foreground and background time, since Android does not expose per-app mAh to regular apps).
+- Swipe between the tabs; the tab buttons are pills.
 - Quick Settings tile and home screen widget.
 - Material 3 Expressive interface with dynamic color.
 
@@ -24,7 +25,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - **Start at boot**: restarts the monitor after the device reboots.
 - **Usage access** (special permission, granted by you in system settings): used to measure how long apps run in the foreground and background for the Apps tab. The app only asks for it when you open that tab. The data is read on demand and not stored.
 
-The charging session history is stored only on your device, in the app's private storage. The app does not declare the internet permission.
+The charging session history and the 14-day battery level history are stored only on your device, in the app's private storage. The app does not declare the internet permission.
 
 - [Privacy policy](https://rilclesaraiva.github.io/Joule-Arc/privacy) · [Terms](https://rilclesaraiva.github.io/Joule-Arc/terms) (source in [`docs/`](docs))
 
