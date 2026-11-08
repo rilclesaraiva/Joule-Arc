@@ -17,4 +17,4 @@
 
 ### Known issues
 - Not built or tested on a device yet.
-- Charging history, fastest-charging windows, battery health estimate and the app ranking are not implemented yet.
+- Fastest-charging windows, battery health estimate and the app ranking are not implemented yet.
