@@ -19,9 +19,17 @@ data class ChargeEstimate(
  */
 class ChargeEstimator(private val windowSize: Int = 30) {
     private val currents = ArrayDeque<Int>()
-    private var capacityMah: Float? = null
+    private var capacity: Float? = null
+
+    /** Latest capacity estimate in mAh, kept across charging and discharging. */
+    val capacityMah: Int? get() = capacity?.roundToInt()
 
     fun update(s: BatterySnapshot): ChargeEstimate? {
+        val counter = s.chargeCounterUah
+        if (counter != null && s.levelPercent >= 10) {
+            val sample = counter / 1000f / (s.levelPercent / 100f)
+            capacity = capacity?.let { it * 0.95f + sample * 0.05f } ?: sample
+        }
         if (!s.isCharging) {
             currents.clear()
             return null
@@ -30,18 +38,13 @@ class ChargeEstimator(private val windowSize: Int = 30) {
             currents.addLast(it)
             if (currents.size > windowSize) currents.removeFirst()
         }
-        val counter = s.chargeCounterUah
-        if (counter != null && s.levelPercent >= 10) {
-            val sample = counter / 1000f / (s.levelPercent / 100f)
-            capacityMah = capacityMah?.let { it * 0.9f + sample * 0.1f } ?: sample
-        }
 
         val avg = if (currents.isEmpty()) null else currents.average().toFloat()
-        val capacity = capacityMah
-        val perHour = if (avg != null && capacity != null && capacity > 0f) avg / capacity * 100f else null
+        val cap = capacity
+        val perHour = if (avg != null && cap != null && cap > 0f) avg / cap * 100f else null
         val minutes = if (perHour != null && perHour > 0.1f) {
             ((100 - s.levelPercent) / perHour * 60f).roundToInt()
         } else null
-        return ChargeEstimate(perHour, minutes, capacity?.roundToInt(), avg?.roundToInt())
+        return ChargeEstimate(perHour, minutes, cap?.roundToInt(), avg?.roundToInt())
     }
 }

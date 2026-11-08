@@ -58,4 +58,56 @@
     <string name="history_peak">Pico: %1$d mA · %2$s</string>
     <string name="history_rate">Média: %1$.1f%% por hora</string>
     <string name="history_temp">Temperatura máxima: %1$.1f °C</string>
+
+    <string name="tab_health">Saúde</string>
+    <string name="tab_apps">Apps</string>
+
+    <string name="insights_title">Carga mais rápida</string>
+    <string name="insights_need_more">Carregue mais algumas vezes para ver o que carrega mais rápido. Cada opção precisa de pelo menos 2 sessões de 5 minutos ou mais que começaram abaixo de 80%.</string>
+    <string name="insights_best_source">Fonte mais rápida até agora: %1$s</string>
+    <string name="insights_best_period">Período mais rápido: %1$s</string>
+    <string name="insights_by_source">Por fonte de energia</string>
+    <string name="insights_by_period">Por período do dia</string>
+    <string name="insights_row">%1$s · %2$d mA · %3$d sessões</string>
+    <string name="insights_note">Corrente média das sessões registradas. Carregador, cabo, temperatura e nível da bateria afetam a velocidade, então use isto como uma dica.</string>
+    <string name="period_night">Madrugada (0–6 h)</string>
+    <string name="period_morning">Manhã (6–12 h)</string>
+    <string name="period_afternoon">Tarde (12–18 h)</string>
+    <string name="period_evening">Noite (18–24 h)</string>
+
+    <string name="health_title">Saúde da bateria</string>
+    <string name="health_soh">Estado de saúde</string>
+    <string name="health_soh_value">%1$d%%</string>
+    <string name="health_not_reported">Não informado por este aparelho</string>
+    <string name="health_cycles">Ciclos de carga</string>
+    <string name="health_capacity">Capacidade estimada</string>
+    <string name="health_capacity_value">%1$d mAh</string>
+    <string name="health_capacity_wait">Medindo… precisa de nível de bateria de 10% ou mais</string>
+    <string name="health_state">Condição</string>
+    <string name="health_technology">Tecnologia</string>
+    <string name="health_good">Boa</string>
+    <string name="health_overheat">Superaquecida</string>
+    <string name="health_dead">Morta</string>
+    <string name="health_over_voltage">Sobretensão</string>
+    <string name="health_cold">Fria</string>
+    <string name="health_failure">Falha</string>
+    <string name="health_unknown">Desconhecida</string>
+    <string name="health_note">O estado de saúde e a contagem de ciclos vêm do próprio aparelho (Android 14 ou mais novo, e só se o fabricante informar). A capacidade é uma estimativa a partir do contador de carga e do nível da bateria, e pode errar alguns por cento.</string>
+
+    <string name="apps_title">Primeiro e segundo plano</string>
+    <string name="apps_window_24h">24 horas</string>
+    <string name="apps_window_7d">7 dias</string>
+    <string name="apps_row">Primeiro plano %1$s · Segundo plano %2$s</string>
+    <string name="apps_share">%1$d%%</string>
+    <string name="apps_note">Uma estimativa baseada no tempo de uso, não em mAh exatos: o Android não deixa apps comuns lerem o consumo de bateria por app. Segundo plano conta o tempo em que o app rodou um serviço em primeiro plano.</string>
+    <string name="apps_empty">Sem dados de uso neste período.</string>
+    <string name="apps_loading">Carregando…</string>
+
+    <string name="link_privacy">Política de privacidade</string>
+    <string name="link_terms">Termos</string>
+
+    <string name="tile_label">%1$d mA</string>
+    <string name="tile_subtitle">%1$s · %2$d%%</string>
+    <string name="widget_detail">%1$s · %2$.1f °C</string>
+    <string name="widget_description">Corrente, potência e nível da bateria ao vivo</string>
 </resources>

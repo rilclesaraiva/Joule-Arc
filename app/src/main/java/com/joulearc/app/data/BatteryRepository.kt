@@ -12,6 +12,9 @@ object BatteryRepository {
     private val _estimate = MutableStateFlow<ChargeEstimate?>(null)
     val estimate: StateFlow<ChargeEstimate?> = _estimate.asStateFlow()
 
+    private val _capacityMah = MutableStateFlow<Int?>(null)
+    val capacityMah: StateFlow<Int?> = _capacityMah.asStateFlow()
+
     /** True while the app screen is visible: the monitor samples faster. */
     private val _uiVisible = MutableStateFlow(false)
     val uiVisible: StateFlow<Boolean> = _uiVisible.asStateFlow()
@@ -22,6 +25,10 @@ object BatteryRepository {
 
     fun publishEstimate(value: ChargeEstimate?) {
         _estimate.value = value
+    }
+
+    fun publishCapacity(value: Int?) {
+        _capacityMah.value = value
     }
 
     fun setUiVisible(visible: Boolean) {

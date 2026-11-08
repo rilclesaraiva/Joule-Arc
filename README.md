@@ -8,24 +8,25 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Persistent notification while monitoring, with current, level and temperature.
 - Live charging current, battery level, voltage, temperature, power and charge status, updated twice per second while the app is open.
 - Charging estimate: percent per hour and when the battery should be full.
-- Charging session history.
+- Charging session history, and a comparison of what charges fastest (by power source and time of day).
+- Battery health: state of health and cycle count when your device reports them (Android 14+), plus an estimated capacity.
+- Foreground and background app ranking (an estimate based on usage time, since Android does not expose per-app mAh to regular apps).
+- Quick Settings tile and home screen widget.
 - Material 3 Expressive interface with dynamic color.
 
 **Planned**
 - Charts for charging sessions.
-- Detection of the moments when the device charges fastest.
-- Battery health estimate.
-- Foreground and background app ranking (an estimate based on usage time, since Android does not expose per-app mAh to regular apps).
-- Quick Settings tile and widget.
 
 ## Privacy and permissions
 
 - **Notifications** (Android 13+): required to show the persistent monitoring notification.
 - **Foreground service**: keeps the monitor running. Sampling is slower when the device is not charging, to save battery.
 - **Start at boot**: restarts the monitor after the device reboots.
-- **Usage access** (special permission, granted by you in system settings): will be used to measure how long apps run in the foreground and background. The app only asks for it when you open that feature.
+- **Usage access** (special permission, granted by you in system settings): used to measure how long apps run in the foreground and background for the Apps tab. The app only asks for it when you open that tab. The data is read on demand and not stored.
 
 The charging session history is stored only on your device, in the app's private storage. The app does not declare the internet permission.
+
+- [Privacy policy](https://rilclesaraiva.github.io/Joule-Arc/privacy) · [Terms](https://rilclesaraiva.github.io/Joule-Arc/terms) (source in [`docs/`](docs))
 
 ## 🤖 Built with AI ("vibe coding")
 

@@ -17,6 +17,7 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 - Versão: `app/build.gradle.kts` (`versionName`, `versionCode`) · lida no CI por `VERSION_CMD`
 - Release: `./gradlew bundleRelease assembleRelease` → `.aab` e `.apk` de release
 - Pacote (Android): `com.joulearc.app`, fixo · R8 ativo no release (sem ofuscação), nunca desligar
+- Páginas legais: `docs/` (`privacy`, `terms`, `_config.yml`), com front matter para o Jekyll. URLs usadas no app em `core/SupportFooter.kt`. O mantenedor precisa ativar o Pages (Settings → Pages → branch `main`, pasta `/docs`).
 - Ícone: `app/src/main/res/drawable/ic_launcher_foreground.xml` (+ background e monocromático), só muda se o mantenedor pedir
 - minSdk 26 · targetSdk 36 · compileSdk 37 (exigido pelo material3 1.5) · AGP 9.1.x com Kotlin embutido (não aplicar `org.jetbrains.kotlin.android`) · Gradle 9.3.1
 
@@ -24,7 +25,11 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 - `data/` expõe `BatteryRepository` (StateFlow de `BatterySnapshot`) e `BatteryReader` (lê `BatteryManager` e o broadcast `ACTION_BATTERY_CHANGED`).
 - `data/` também tem `ChargeEstimator` (% por hora e tempo até cheia, a partir da corrente média e da capacidade estimada pelo contador de carga), `ChargeSessionTracker` (agrupa amostras em sessões), `SessionStore` (JSON em `filesDir/sessions.json`, sem Room de propósito) e `SessionRepository`.
 - `features/monitor/` tem o `MonitorService` (serviço em primeiro plano, tipo `specialUse`, notificação persistente) e a tela ao vivo. `features/history/` tem a aba Histórico. A entrada (`MainActivity`) monta as abas.
-- `features/usage/` trata a permissão especial de acesso ao uso (`UsageStatsManager`) e, depois, o ranking de apps em primeiro e segundo plano.
+- `features/usage/` trata a permissão especial de acesso ao uso e a aba Apps (ranking). A leitura (`AppUsageReader`, `queryAndAggregateUsageStats`) e o cálculo (`rankAppUsage`) ficam em `data/`. Segundo plano = tempo com serviço em primeiro plano; peso 0,5.
+- `features/health/` tem a aba Saúde: `healthPercent` (`BATTERY_PROPERTY_STATE_OF_HEALTH`) e `cycleCount` (`EXTRA_CYCLE_COUNT`) só no Android 14+ e só se o fabricante informar; capacidade estimada pelo contador de carga (`ChargeEstimator.capacityMah`). Não existe API pública para a capacidade de projeto, então não há "% de saúde" calculado por nós.
+- `data/ChargeInsights` compara sessões por fonte e por período do dia (só sessões de 5+ min que começaram abaixo de 80%; "melhor" só com 2+ opções e 2+ sessões).
+- `features/tile/` (`BatteryTileService`) e `features/widget/` (`BatteryWidgetProvider`, RemoteViews, sem Glance). O serviço avisa o widget por broadcast explícito (`core/Actions.kt`), porque feature não importa feature.
+- Sinal: `BatterySnapshot.signedCurrentMa`/`signedPowerMw` (negativo na bateria). `currentMa`/`powerMw` continuam positivos e são os usados pelas sessões e pela estimativa.
 - `MainActivity` (entrada) monta as telas e liga as features por callbacks.
 - Limite honesto: apps comuns não leem mAh por app (restrição do Android). O ranking de apps é uma **estimativa** a partir de tempo em primeiro/segundo plano, e a interface precisa dizer isso.
 - Amostragem: 500 ms com o app visível, 2 s carregando com a tela apagada, 30 s fora disso. O serviço acorda na hora em qualquer broadcast de bateria (plugar, desplugar, mudança de nível). Nunca voltar a depender só de intervalo fixo longo.
@@ -75,7 +80,7 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
 
 ## Projeto público (se for usado por terceiros)
 - Páginas legais em `docs/` (privacidade, termos), publicadas no GitHub Pages e
-  linkadas no README e no app. Ainda não criadas: entram antes de qualquer release público.
+  linkadas no README e no app. Criadas em `docs/`; mantê-las verdadeiras com o código.
 - Coleta nova (SDK, permissão, chamada de rede, cookie) → atualizar a política
   no mesmo commit.
 - Nenhuma afirmação sem respaldo: o que README, loja e páginas legais dizem
@@ -87,6 +92,6 @@ Joule Arc — monitor inteligente de bateria e carregamento para Android: monito
   repositório do projeto" com link para o repo.
 
 ## Contexto atual
-- Foco: leitura rápida, potência, estimativa de carga e histórico de sessões (v0.1, ainda sem release).
-- Pendentes: janelas de carga mais rápida (hora do dia / condição em que carrega mais rápido), saúde da bateria, ranking de apps (acesso ao uso), páginas legais, tile/widget.
+- Foco: primeira vistoria em aparelho real de tudo o que existe (v0.1, ainda sem release).
+- Pendentes: gráficos das sessões de carga. Ativar o GitHub Pages. Revisar as páginas legais antes do release público.
 - Problemas conhecidos: nada vistoriado num aparelho real ainda. O CI passa (testes + release com R8); a sessão não compila localmente (sem acesso ao Google Maven), então o CI é a prova do build.

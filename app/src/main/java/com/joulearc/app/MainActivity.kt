@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,15 +34,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joulearc.app.core.JouleArcTheme
 import com.joulearc.app.core.SupportFooter
+import com.joulearc.app.data.AppUsage
+import com.joulearc.app.data.AppUsageReader
 import com.joulearc.app.data.BatteryRepository
+import com.joulearc.app.data.computeInsights
+import com.joulearc.app.data.rankAppUsage
 import com.joulearc.app.data.SessionRepository
+import com.joulearc.app.features.health.HealthScreen
 import com.joulearc.app.features.history.HistoryScreen
 import com.joulearc.app.features.monitor.MonitorScreen
 import com.joulearc.app.features.monitor.MonitorService
+import com.joulearc.app.features.usage.AppRankingScreen
 import com.joulearc.app.features.usage.UsageAccessCard
 import com.joulearc.app.features.usage.isUsageAccessGranted
 import com.joulearc.app.features.usage.usageAccessSettingsIntent
@@ -63,13 +72,25 @@ class MainActivity : ComponentActivity() {
                 val sessions by SessionRepository.sessions.collectAsStateWithLifecycle()
                 val activeSession by SessionRepository.active.collectAsStateWithLifecycle()
 
+                val capacityMah by BatteryRepository.capacityMah.collectAsStateWithLifecycle()
+                val insights = remember(sessions) { computeInsights(sessions) }
+
                 var tab by rememberSaveable { mutableIntStateOf(0) }
+                var windowDays by rememberSaveable { mutableIntStateOf(1) }
                 var notificationsGranted by remember { mutableStateOf(hasNotificationPermission()) }
                 var usageGranted by remember { mutableStateOf(isUsageAccessGranted(context)) }
 
                 val notificationLauncher = rememberLauncherForActivityResult(
                     ActivityResultContracts.RequestPermission(),
                 ) { notificationsGranted = it }
+
+                val apps by produceState<List<AppUsage>?>(null, usageGranted, windowDays, tab) {
+                    if (tab != 3 || !usageGranted) return@produceState
+                    value = null
+                    value = withContext(Dispatchers.IO) {
+                        rankAppUsage(AppUsageReader(context).read(windowDays * 24L * 3_600_000L))
+                    }
+                }
 
                 LifecycleResumeEffect(Unit) {
                     notificationsGranted = hasNotificationPermission()
@@ -94,6 +115,16 @@ class MainActivity : ComponentActivity() {
                                 selected = tab == 1,
                                 onClick = { tab = 1 },
                                 text = { Text(stringResource(R.string.tab_history)) },
+                            )
+                            Tab(
+                                selected = tab == 2,
+                                onClick = { tab = 2 },
+                                text = { Text(stringResource(R.string.tab_health)) },
+                            )
+                            Tab(
+                                selected = tab == 3,
+                                onClick = { tab = 3 },
+                                text = { Text(stringResource(R.string.tab_apps)) },
                             )
                         }
 
@@ -131,17 +162,33 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.padding(top = 16.dp),
                                 )
 
-                                UsageAccessCard(
-                                    granted = usageGranted,
-                                    onOpenSettings = { context.startActivity(usageAccessSettingsIntent()) },
-                                )
-
                                 SupportFooter()
                             }
-                        } else {
+                        } else if (tab == 1) {
                             HistoryScreen(
                                 active = activeSession,
                                 sessions = sessions,
+                                insights = insights,
+                                modifier = Modifier.weight(1f),
+                            )
+                        } else if (tab == 2) {
+                            HealthScreen(
+                                snapshot = snapshot,
+                                capacityMah = capacityMah,
+                                modifier = Modifier.weight(1f),
+                            )
+                        } else if (!usageGranted) {
+                            Column(Modifier.padding(16.dp)) {
+                                UsageAccessCard(
+                                    granted = false,
+                                    onOpenSettings = { context.startActivity(usageAccessSettingsIntent()) },
+                                )
+                            }
+                        } else {
+                            AppRankingScreen(
+                                apps = apps,
+                                windowDays = windowDays,
+                                onWindowChange = { windowDays = it },
                                 modifier = Modifier.weight(1f),
                             )
                         }

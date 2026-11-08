@@ -58,4 +58,56 @@
     <string name="history_peak">Peak: %1$d mA · %2$s</string>
     <string name="history_rate">Average: %1$.1f%% per hour</string>
     <string name="history_temp">Max temperature: %1$.1f °C</string>
+
+    <string name="tab_health">Health</string>
+    <string name="tab_apps">Apps</string>
+
+    <string name="insights_title">Fastest charging</string>
+    <string name="insights_need_more">Charge a few more times to see what charges fastest. Each option needs at least 2 sessions of 5 minutes or more that started below 80%.</string>
+    <string name="insights_best_source">Fastest source so far: %1$s</string>
+    <string name="insights_best_period">Fastest time of day: %1$s</string>
+    <string name="insights_by_source">By power source</string>
+    <string name="insights_by_period">By time of day</string>
+    <string name="insights_row">%1$s · %2$d mA · %3$d sessions</string>
+    <string name="insights_note">Average current over your recorded sessions. Charger, cable, temperature and battery level all affect speed, so treat this as a hint.</string>
+    <string name="period_night">Night (0–6 h)</string>
+    <string name="period_morning">Morning (6–12 h)</string>
+    <string name="period_afternoon">Afternoon (12–18 h)</string>
+    <string name="period_evening">Evening (18–24 h)</string>
+
+    <string name="health_title">Battery health</string>
+    <string name="health_soh">State of health</string>
+    <string name="health_soh_value">%1$d%%</string>
+    <string name="health_not_reported">Not reported by this device</string>
+    <string name="health_cycles">Charge cycles</string>
+    <string name="health_capacity">Estimated capacity</string>
+    <string name="health_capacity_value">%1$d mAh</string>
+    <string name="health_capacity_wait">Measuring… needs a battery level of 10% or more</string>
+    <string name="health_state">Condition</string>
+    <string name="health_technology">Technology</string>
+    <string name="health_good">Good</string>
+    <string name="health_overheat">Overheating</string>
+    <string name="health_dead">Dead</string>
+    <string name="health_over_voltage">Over voltage</string>
+    <string name="health_cold">Cold</string>
+    <string name="health_failure">Failure</string>
+    <string name="health_unknown">Unknown</string>
+    <string name="health_note">State of health and cycle count come from the device itself (Android 14 or newer, and only if the manufacturer reports them). The capacity is an estimate from the charge counter and the battery level, and can be off by several percent.</string>
+
+    <string name="apps_title">Foreground and background</string>
+    <string name="apps_window_24h">24 hours</string>
+    <string name="apps_window_7d">7 days</string>
+    <string name="apps_row">Foreground %1$s · Background %2$s</string>
+    <string name="apps_share">%1$d%%</string>
+    <string name="apps_note">An estimate based on usage time, not exact mAh: Android does not let regular apps read per-app battery use. Background counts the time an app ran a foreground service.</string>
+    <string name="apps_empty">No usage data in this period.</string>
+    <string name="apps_loading">Loading…</string>
+
+    <string name="link_privacy">Privacy policy</string>
+    <string name="link_terms">Terms</string>
+
+    <string name="tile_label">%1$d mA</string>
+    <string name="tile_subtitle">%1$s · %2$d%%</string>
+    <string name="widget_detail">%1$s · %2$.1f °C</string>
+    <string name="widget_description">Live current, power and battery level</string>
 </resources>

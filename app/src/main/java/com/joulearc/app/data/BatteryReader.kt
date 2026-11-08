@@ -4,10 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import android.os.Build
+import android.os.SystemClock
 
 class BatteryReader(context: Context) {
     private val appContext = context.applicationContext
     private val batteryManager = appContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+
+    private var cachedHealth: Int? = null
+    private var healthReadAt = Long.MIN_VALUE
 
     fun read(): BatterySnapshot? {
         val intent = appContext.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
@@ -33,9 +38,23 @@ class BatteryReader(context: Context) {
             else -> PowerSource.BATTERY
         }
 
+        val healthState = when (intent.getIntExtra(BatteryManager.EXTRA_HEALTH, 1)) {
+            BatteryManager.BATTERY_HEALTH_GOOD -> BatteryHealthState.GOOD
+            BatteryManager.BATTERY_HEALTH_OVERHEAT -> BatteryHealthState.OVERHEAT
+            BatteryManager.BATTERY_HEALTH_DEAD -> BatteryHealthState.DEAD
+            BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> BatteryHealthState.OVER_VOLTAGE
+            BatteryManager.BATTERY_HEALTH_COLD -> BatteryHealthState.COLD
+            BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> BatteryHealthState.FAILURE
+            else -> BatteryHealthState.UNKNOWN
+        }
+
         val rawCurrent = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
         val counter = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
             .takeIf { it != Long.MIN_VALUE && it > 0L }
+
+        val cycles = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            intent.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, -1).takeIf { it > 0 }
+        } else null
 
         return BatterySnapshot(
             levelPercent = percent,
@@ -46,6 +65,27 @@ class BatteryReader(context: Context) {
             source = source,
             chargeCounterUah = counter,
             timestampMs = System.currentTimeMillis(),
+            healthPercent = readStateOfHealth(),
+            cycleCount = cycles,
+            healthState = healthState,
+            technology = intent.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)?.takeIf { it.isNotBlank() },
         )
+    }
+
+    /** State of health changes slowly, so it is queried at most once a minute. */
+    private fun readStateOfHealth(): Int? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return null
+        val now = SystemClock.elapsedRealtime()
+        if (now - healthReadAt >= HEALTH_REFRESH_MS) {
+            healthReadAt = now
+            cachedHealth = batteryManager
+                .getIntProperty(BatteryManager.BATTERY_PROPERTY_STATE_OF_HEALTH)
+                .takeIf { it in 1..100 }
+        }
+        return cachedHealth
+    }
+
+    private companion object {
+        const val HEALTH_REFRESH_MS = 60_000L
     }
 }

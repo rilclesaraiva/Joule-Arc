@@ -17,6 +17,7 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.joulearc.app.MainActivity
 import com.joulearc.app.R
+import com.joulearc.app.core.ACTION_REFRESH_WIDGETS
 import com.joulearc.app.data.BatteryReader
 import com.joulearc.app.data.BatteryRepository
 import com.joulearc.app.data.BatterySnapshot
@@ -44,6 +45,7 @@ class MonitorService : Service() {
     private val estimator = ChargeEstimator()
     private var started = false
     private var lastNotifyMs = 0L
+    private var lastWidgetMs = 0L
     private var lastNotifyText: String? = null
     private var lastSnapshot: BatterySnapshot? = null
 
@@ -102,6 +104,7 @@ class MonitorService : Service() {
         lastSnapshot = snapshot
         BatteryRepository.publish(snapshot)
         BatteryRepository.publishEstimate(estimator.update(snapshot))
+        BatteryRepository.publishCapacity(estimator.capacityMah)
         SessionRepository.onSnapshot(snapshot)
 
         val text = notificationText(snapshot)
@@ -110,6 +113,14 @@ class MonitorService : Service() {
             lastNotifyText = text
             lastNotifyMs = now
             getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, buildNotification(text))
+        }
+
+        val widgetInterval = if (snapshot.isCharging || BatteryRepository.uiVisible.value) {
+            WIDGET_FAST_INTERVAL_MS
+        } else WIDGET_SLOW_INTERVAL_MS
+        if (now - lastWidgetMs >= widgetInterval) {
+            lastWidgetMs = now
+            sendBroadcast(Intent(ACTION_REFRESH_WIDGETS).setPackage(packageName))
         }
     }
 
@@ -135,7 +146,7 @@ class MonitorService : Service() {
             getString(
                 R.string.notification_text,
                 getString(statusLabel(snapshot.status)),
-                snapshot.currentMa ?: 0,
+                snapshot.signedCurrentMa ?: 0,
                 snapshot.levelPercent,
                 snapshot.temperatureC,
             )
@@ -167,6 +178,8 @@ class MonitorService : Service() {
         private const val CHARGING_INTERVAL_MS = 2_000L
         private const val IDLE_INTERVAL_MS = 30_000L
         private const val NOTIFY_MIN_INTERVAL_MS = 1_000L
+        private const val WIDGET_FAST_INTERVAL_MS = 10_000L
+        private const val WIDGET_SLOW_INTERVAL_MS = 60_000L
 
         fun start(context: Context) {
             ContextCompat.startForegroundService(context, Intent(context, MonitorService::class.java))

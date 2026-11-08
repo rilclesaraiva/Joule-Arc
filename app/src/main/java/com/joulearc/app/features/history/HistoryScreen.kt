@@ -18,13 +18,16 @@ import com.joulearc.app.R
 import com.joulearc.app.core.formatDateTime
 import com.joulearc.app.core.formatDuration
 import com.joulearc.app.core.formatWatts
+import com.joulearc.app.data.ChargeInsights
 import com.joulearc.app.data.ChargeSession
+import com.joulearc.app.data.DayPeriod
 import com.joulearc.app.data.PowerSource
 
 @Composable
 fun HistoryScreen(
     active: ChargeSession?,
     sessions: List<ChargeSession>,
+    insights: ChargeInsights,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -32,6 +35,7 @@ fun HistoryScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        item(key = "insights") { InsightsCard(insights) }
         if (active != null) {
             item(key = "active") { SessionCard(active) }
         }
@@ -109,6 +113,96 @@ private fun SessionCard(session: ChargeSession) {
                     },
                 ),
                 style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+private fun sourceRes(source: PowerSource): Int = when (source) {
+    PowerSource.AC -> R.string.source_ac
+    PowerSource.USB -> R.string.source_usb
+    PowerSource.WIRELESS -> R.string.source_wireless
+    PowerSource.BATTERY -> R.string.source_battery
+}
+
+private fun periodRes(period: DayPeriod): Int = when (period) {
+    DayPeriod.NIGHT -> R.string.period_night
+    DayPeriod.MORNING -> R.string.period_morning
+    DayPeriod.AFTERNOON -> R.string.period_afternoon
+    DayPeriod.EVENING -> R.string.period_evening
+}
+
+@Composable
+private fun InsightsCard(insights: ChargeInsights) {
+    ElevatedCard(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(
+                text = stringResource(R.string.insights_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            if (insights.usedSessions == 0) {
+                Text(
+                    text = stringResource(R.string.insights_need_more),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                return@Column
+            }
+            insights.bestSource?.let {
+                Text(
+                    text = stringResource(R.string.insights_best_source, stringResource(sourceRes(it))),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            insights.bestPeriod?.let {
+                Text(
+                    text = stringResource(R.string.insights_best_period, stringResource(periodRes(it))),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            if (insights.bestSource == null && insights.bestPeriod == null) {
+                Text(
+                    text = stringResource(R.string.insights_need_more),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Text(
+                text = stringResource(R.string.insights_by_source),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+            insights.bySource.forEach {
+                Text(
+                    text = stringResource(
+                        R.string.insights_row,
+                        stringResource(sourceRes(it.key)),
+                        it.avgCurrentMa,
+                        it.sessions,
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Text(
+                text = stringResource(R.string.insights_by_period),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+            insights.byPeriod.forEach {
+                Text(
+                    text = stringResource(
+                        R.string.insights_row,
+                        stringResource(periodRes(it.key)),
+                        it.avgCurrentMa,
+                        it.sessions,
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Text(
+                text = stringResource(R.string.insights_note),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 8.dp),
             )
         }
     }

@@ -53,10 +53,11 @@ fun MonitorScreen(
                     ),
                     style = MaterialTheme.typography.labelLarge,
                 )
-                if (snapshot.currentMa != null) {
+                val signedCurrent = snapshot.signedCurrentMa
+                if (signedCurrent != null) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
-                            text = snapshot.currentMa.toString(),
+                            text = signedCurrent.toString(),
                             style = MaterialTheme.typography.displayLarge,
                         )
                         Text(
