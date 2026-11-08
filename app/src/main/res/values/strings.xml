@@ -76,9 +76,12 @@
     <string name="period_evening">Evening (18–24 h)</string>
 
     <string name="health_title">Battery health</string>
-    <string name="health_soh">State of health</string>
+    <string name="health_soh">Estimated health</string>
     <string name="health_soh_value">%1$d%%</string>
     <string name="health_not_reported">Not reported by this device</string>
+    <string name="health_soh_need_design">Enter the rated capacity below to see an estimate</string>
+    <string name="health_design_label">Rated capacity (mAh)</string>
+    <string name="health_design_hint">Find it in the phone specifications, for example 5000</string>
     <string name="health_cycles">Charge cycles</string>
     <string name="health_capacity">Estimated capacity</string>
     <string name="health_capacity_value">%1$d mAh</string>
@@ -92,7 +95,7 @@
     <string name="health_cold">Cold</string>
     <string name="health_failure">Failure</string>
     <string name="health_unknown">Unknown</string>
-    <string name="health_note">State of health and cycle count come from the device itself (Android 14 or newer, and only if the manufacturer reports them). The capacity is an estimate from the charge counter and the battery level, and can be off by several percent.</string>
+    <string name="health_note">Health = estimated capacity divided by the rated capacity you enter. The capacity comes from the charge counter and the battery level and can be off by several percent, so treat the result as a rough guide. The cycle count comes from the device (Android 14 or newer, and only if the manufacturer reports it).</string>
 
     <string name="apps_title">Foreground and background</string>
     <string name="apps_window_24h">24 hours</string>

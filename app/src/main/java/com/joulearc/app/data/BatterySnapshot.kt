@@ -17,8 +17,6 @@ data class BatterySnapshot(
     /** Charge currently stored in the battery in µAh, or null when not reported. */
     val chargeCounterUah: Long?,
     val timestampMs: Long,
-    /** State of health in %, only on Android 14+ and when the manufacturer reports it. */
-    val healthPercent: Int? = null,
     /** Charge cycle count, only on Android 14+ and when the manufacturer reports it. */
     val cycleCount: Int? = null,
     val healthState: BatteryHealthState = BatteryHealthState.UNKNOWN,

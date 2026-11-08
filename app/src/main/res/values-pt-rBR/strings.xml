@@ -76,9 +76,12 @@
     <string name="period_evening">Noite (18–24 h)</string>
 
     <string name="health_title">Saúde da bateria</string>
-    <string name="health_soh">Estado de saúde</string>
+    <string name="health_soh">Saúde estimada</string>
     <string name="health_soh_value">%1$d%%</string>
     <string name="health_not_reported">Não informado por este aparelho</string>
+    <string name="health_soh_need_design">Informe a capacidade nominal abaixo para ver uma estimativa</string>
+    <string name="health_design_label">Capacidade nominal (mAh)</string>
+    <string name="health_design_hint">Está nas especificações do celular, por exemplo 5000</string>
     <string name="health_cycles">Ciclos de carga</string>
     <string name="health_capacity">Capacidade estimada</string>
     <string name="health_capacity_value">%1$d mAh</string>
@@ -92,7 +95,7 @@
     <string name="health_cold">Fria</string>
     <string name="health_failure">Falha</string>
     <string name="health_unknown">Desconhecida</string>
-    <string name="health_note">O estado de saúde e a contagem de ciclos vêm do próprio aparelho (Android 14 ou mais novo, e só se o fabricante informar). A capacidade é uma estimativa a partir do contador de carga e do nível da bateria, e pode errar alguns por cento.</string>
+    <string name="health_note">Saúde = capacidade estimada dividida pela capacidade nominal que você informa. A capacidade vem do contador de carga e do nível da bateria e pode errar alguns por cento, então use o resultado como referência aproximada. A contagem de ciclos vem do aparelho (Android 14 ou mais novo, e só se o fabricante informar).</string>
 
     <string name="apps_title">Primeiro e segundo plano</string>
     <string name="apps_window_24h">24 horas</string>

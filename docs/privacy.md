@@ -22,8 +22,9 @@ any data from the app.
 
 | Data | Why | Where it goes |
 |------|-----|---------------|
-| Battery readings: level, current, voltage, temperature, status, power source, charge counter, health and cycle count when the device reports them | Show live values, estimate charging speed and battery capacity | Shown on screen and in the notification, tile and widget. Not stored, except as summarized in the history below |
+| Battery readings: level, current, voltage, temperature, status, power source, charge counter, cycle count when the device reports it | Show live values, estimate charging speed and battery capacity | Shown on screen and in the notification, tile and widget. Not stored, except as summarized in the history below |
 | Charging session history: start time, duration, battery level at start and end, average and peak current, peak power, maximum temperature, power source | Show the history and compare what charges faster | Stored in a file in the app's private storage on your device (`sessions.json`). Not sent anywhere |
+| Rated battery capacity, only if you type it | Estimate battery health | Stored on your device in the app's private storage (shared preferences). Not sent anywhere |
 | App usage time (foreground time and foreground-service time per app), only if you grant the special "Usage access" permission | Rank which apps use the most battery (an estimate) | Read on demand and shown on screen. Not stored and not sent anywhere |
 
 ## Permissions

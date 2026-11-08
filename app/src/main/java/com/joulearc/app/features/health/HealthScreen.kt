@@ -1,6 +1,8 @@
 package com.joulearc.app.features.health
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,19 +10,27 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.joulearc.app.R
 import com.joulearc.app.data.BatteryHealthState
 import com.joulearc.app.data.BatterySnapshot
+import com.joulearc.app.data.estimateHealthPercent
 
 @Composable
 fun HealthScreen(
     snapshot: BatterySnapshot?,
     capacityMah: Int?,
+    designCapacityMah: Int?,
+    onDesignCapacityChange: (Int?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -35,11 +45,31 @@ fun HealthScreen(
         )
 
         val notReported = stringResource(R.string.health_not_reported)
+        val healthPercent = estimateHealthPercent(capacityMah, designCapacityMah)
         InfoCard(
             label = stringResource(R.string.health_soh),
-            value = snapshot?.healthPercent?.let { stringResource(R.string.health_soh_value, it) } ?: notReported,
-            big = snapshot?.healthPercent != null,
+            value = healthPercent?.let { stringResource(R.string.health_soh_value, it) }
+                ?: stringResource(R.string.health_soh_need_design),
+            big = healthPercent != null,
         )
+        ElevatedCard(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                var text by rememberSaveable { mutableStateOf(designCapacityMah?.toString() ?: "") }
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { input ->
+                        val digits = input.filter { it.isDigit() }.take(5)
+                        text = digits
+                        onDesignCapacityChange(digits.toIntOrNull())
+                    },
+                    label = { Text(stringResource(R.string.health_design_label)) },
+                    supportingText = { Text(stringResource(R.string.health_design_hint)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
         InfoCard(
             label = stringResource(R.string.health_cycles),
             value = snapshot?.cycleCount?.toString() ?: notReported,

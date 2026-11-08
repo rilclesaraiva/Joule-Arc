@@ -14,7 +14,7 @@
 
 - Current is now shown negative while running on the battery (and in the notification, tile and widget).
 - "Fastest charging" insights in the History tab: compares your sessions by power source and by time of day.
-- Health tab: state of health and cycle count (Android 14+, when the device reports them), estimated capacity, condition and technology.
+- Health tab: estimated capacity (from the charge counter), estimated health (against the rated capacity you enter), cycle count (Android 14+, when the device reports it), condition and technology.
 - Apps tab: ranking of foreground and background usage over 24 hours or 7 days (an estimate based on usage time, not exact mAh). Uses the special usage access permission.
 - Quick Settings tile and home screen widget with the live current, status, level and power.
 - Privacy policy and terms in `docs/` (for GitHub Pages), linked in the README and in the app.

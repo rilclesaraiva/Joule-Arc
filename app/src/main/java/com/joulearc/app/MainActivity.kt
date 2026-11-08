@@ -46,6 +46,7 @@ import com.joulearc.app.data.BatteryRepository
 import com.joulearc.app.data.computeInsights
 import com.joulearc.app.data.rankAppUsage
 import com.joulearc.app.data.SessionRepository
+import com.joulearc.app.data.SettingsRepository
 import com.joulearc.app.features.health.HealthScreen
 import com.joulearc.app.features.history.HistoryScreen
 import com.joulearc.app.features.monitor.MonitorScreen
@@ -62,6 +63,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         SessionRepository.init(this)
+        SettingsRepository.init(this)
         MonitorService.start(this)
 
         setContent {
@@ -73,6 +75,7 @@ class MainActivity : ComponentActivity() {
                 val activeSession by SessionRepository.active.collectAsStateWithLifecycle()
 
                 val capacityMah by BatteryRepository.capacityMah.collectAsStateWithLifecycle()
+                val designCapacity by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
                 val insights = remember(sessions) { computeInsights(sessions) }
 
                 var tab by rememberSaveable { mutableIntStateOf(0) }
@@ -175,6 +178,8 @@ class MainActivity : ComponentActivity() {
                             HealthScreen(
                                 snapshot = snapshot,
                                 capacityMah = capacityMah,
+                                designCapacityMah = designCapacity,
+                                onDesignCapacityChange = { SettingsRepository.setDesignCapacityMah(it) },
                                 modifier = Modifier.weight(1f),
                             )
                         } else if (!usageGranted) {
