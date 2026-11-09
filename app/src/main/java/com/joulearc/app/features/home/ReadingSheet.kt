@@ -156,8 +156,8 @@ private fun VoltageDetails(state: HomeState, s: BatterySnapshot) {
             stringResource(R.string.sheet_typical) to "3.4 – 4.4 V",
         ),
     )
-    Meaning(stringResource(meaningOf(band.label, Scales.voltage)), band)
-    Note(stringResource(R.string.note_voltage))
+    Meaning(stringResource(meaningOf(band.label, Scales.voltage, s.source != PowerSource.BATTERY)), band)
+    Note(stringResource(if (s.source != PowerSource.BATTERY) R.string.note_voltage else R.string.note_voltage_unplugged))
 }
 
 @Composable
@@ -173,7 +173,7 @@ private fun TemperatureDetails(state: HomeState, s: BatterySnapshot) {
             state.extremes.maxTempC?.let { stringResource(R.string.sheet_max_opened) to formatTemperature(it, f) },
         ),
     )
-    Meaning(stringResource(meaningOf(band.label, Scales.temperature)), band)
+    Meaning(stringResource(meaningOf(band.label, Scales.temperature, s.source != PowerSource.BATTERY)), band)
     Note(stringResource(R.string.note_temperature))
 }
 
@@ -192,7 +192,7 @@ private fun LevelDetails(state: HomeState, s: BatterySnapshot) {
             if (s.drawingFromBattery) e?.minutesLeft?.let { stringResource(R.string.hero_remaining) to formatMinutes(it) } else null,
         ),
     )
-    Meaning(stringResource(meaningOf(band.label, Scales.level)), band)
+    Meaning(stringResource(meaningOf(band.label, Scales.level, s.source != PowerSource.BATTERY)), band)
 }
 
 @Composable
@@ -224,7 +224,7 @@ private fun PowerDetails(state: HomeState, s: BatterySnapshot) {
         ),
     )
     if (band != null && scale != null) Meaning(stringResource(meaningOf(band.label, scale)), band)
-    Note(stringResource(R.string.note_power))
+    Note(stringResource(if (s.isCharging) R.string.note_power else R.string.note_power_out))
 }
 
 @Composable

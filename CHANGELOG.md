@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Changed
+- Reading details now fit the situation: with no charger connected, the voltage, temperature and level texts no longer tell you to unplug or keep charging, and the power note explains discharge. Portuguese uses "Tensão" everywhere (no more "Voltagem").
 - Predictive back now works like a page stack: the current page slides with your finger over the page below (with a shadow and rounded corners), and the swipe finishes without a second animation.
 - "Design capacity" is now called "Device capacity" (Settings, capacity card and detail texts).
 - Charging power: very fast and ultra fast (65 W and up) are now blue instead of green, matching the other readings, where blue means above the ideal range but not harmful.
@@ -37,6 +38,7 @@
 - Text on the home and pages was too dark in the dark and AMOLED themes (the pages lost their content color when the top bars were removed).
 
 ### Changed
+- Reading details now fit the situation: with no charger connected, the voltage, temperature and level texts no longer tell you to unplug or keep charging, and the power note explains discharge. Portuguese uses "Tensão" everywhere (no more "Voltagem").
 - The settings button on the home is now a floating round button, like the back buttons.
 - "Battery use by app" is now "Usage by app", and page titles keep the same margin on both sides.
 - No fixed top bars: page titles scroll with the content, and the home title and settings button sit at the start of the home. Only a round, slightly transparent back button stays over inner pages.

@@ -307,4 +307,13 @@
     <string name="update_dialog_cancel">Cancel</string>
     <string name="settings_predictive">Predictive back gesture</string>
     <string name="settings_predictive_sub">Shows a preview of the page while you swipe to go back</string>
+    <string name="meaning_voltage_high_unplugged">High voltage for a battery with no charger. Normal right after unplugging from a full charge, and it drops with use.</string>
+    <string name="meaning_voltage_too_high_unplugged">Above the usual range for a phone battery. It may just be an inaccurate reading on this device; if it shows up often or together with heat, have the phone checked.</string>
+    <string name="meaning_temp_hot_unplugged">Hot. Give the phone a break, take it out of the case and avoid heavy use for a while.</string>
+    <string name="meaning_temp_too_hot_unplugged">Too hot. Stop heavy use until it cools down and keep the phone out of the sun.</string>
+    <string name="meaning_level_critical_charging">Almost empty, but it is charging. Give it a little time before heavy use.</string>
+    <string name="meaning_level_low_charging">Low, but it is already charging.</string>
+    <string name="meaning_level_high_charging">Above 80%. Charging to 100% is normal; to preserve the battery, unplug near 80% when you can.</string>
+    <string name="note_voltage_unplugged">This is the battery voltage. It slowly drops as the charge runs out and rises a little when you plug in a charger.</string>
+    <string name="note_power_out">Power is voltage times current: how fast energy leaves the battery to run the phone. It rises with the screen on, high brightness, games, the camera and a weak mobile signal.</string>
 </resources>

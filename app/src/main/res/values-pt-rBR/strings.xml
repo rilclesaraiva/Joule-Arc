@@ -193,9 +193,9 @@
     <string name="sheet_power_in">Entrando na bateria</string>
     <string name="sheet_power_out">Saindo da bateria</string>
     <string name="meaning_current" formatted="false">Valores positivos são corrente entrando na bateria, negativos são corrente saindo dela. As estimativas de velocidade e tempo usam a média das últimas leituras. A carga desacelera perto de 100%, então o tempo real até encher costuma ser maior.</string>
-    <string name="meaning_voltage_low">Voltagem baixa. A bateria está quase vazia ou o celular está sob uso pesado.</string>
-    <string name="meaning_voltage_normal">Uma leitura saudável. A voltagem sobe ao carregar e cai conforme você usa o celular.</string>
-    <string name="meaning_voltage_high">Voltagem alta, comum no fim de uma carga.</string>
+    <string name="meaning_voltage_low">Tensão baixa. A bateria está quase vazia ou o celular está sob uso pesado.</string>
+    <string name="meaning_voltage_normal">Uma leitura saudável. A tensão sobe ao carregar e cai conforme você usa o celular.</string>
+    <string name="meaning_voltage_high">Tensão alta, comum no fim de uma carga.</string>
     <string name="meaning_voltage_too_high">Acima da faixa comum. Se continuar assim, desconecte o carregador e verifique-o.</string>
     <string name="meaning_temp_too_cold">Muito fria. Baterias perdem capacidade e carregam mal no frio. Evite carregar até o celular esquentar.</string>
     <string name="meaning_temp_cold">Fria. A bateria pode segurar um pouco menos de carga no frio.</string>
@@ -227,9 +227,9 @@
     <string name="meaning_health_unknown">Informe a capacidade do dispositivo nas configurações para estimar a saúde da bateria.</string>
     <string name="meaning_technology" formatted="false">As baterias de lítio duram mais quando ficam frescas e carregadas entre 20% e 80%. Uma carga completa de vez em quando não tem problema.</string>
     <string name="meaning_cycles" formatted="false">Um ciclo equivale a usar 100% da carga da bateria, mesmo que espalhado por vários dias. Muitas baterias de celular mantêm cerca de 80% da capacidade depois de 500 a 800 ciclos.</string>
-    <string name="note_voltage">Esta é a tensão da bateria. Carregadores rápidos usam tensão maior no cabo, e o celular reduz para a bateria. A voltagem pula um pouco quando você conecta ou desconecta o carregador.</string>
+    <string name="note_voltage">Esta é a tensão da bateria. Carregadores rápidos usam tensão maior no cabo, e o celular reduz para a bateria. A tensão pula um pouco quando você conecta ou desconecta o carregador.</string>
     <string name="note_temperature">O Android informa a temperatura da bateria, que acompanha o quanto o celular inteiro está quente.</string>
-    <string name="note_power">Potência é voltagem vezes corrente: a velocidade com que a energia entra ou sai da bateria. Ao carregar ela é menor que a potência do carregador: parte alimenta o celular, parte vira calor, e ela cai conforme a bateria enche.</string>
+    <string name="note_power">Potência é tensão vezes corrente: a velocidade com que a energia entra ou sai da bateria. Ao carregar ela é menor que a potência do carregador: parte alimenta o celular, parte vira calor, e ela cai conforme a bateria enche.</string>
     <string name="note_health">A saúde é a carga total estimada de hoje comparada com a capacidade do dispositivo. A verificação do celular só avisa falhas como superaquecimento.</string>
     <string name="settings_charge_alert">Lembrete de carregamento</string>
     <string name="settings_charge_alert_sub">Lembra você de desconectar em %1$d%%</string>
@@ -307,4 +307,13 @@
     <string name="update_dialog_cancel">Cancelar</string>
     <string name="settings_predictive">Gesto de voltar preditivo</string>
     <string name="settings_predictive_sub">Mostra uma prévia da página enquanto você desliza para voltar</string>
+    <string name="meaning_voltage_high_unplugged">Tensão alta para uma bateria sem carregador. É normal logo depois de desconectar de uma carga cheia e cai com o uso.</string>
+    <string name="meaning_voltage_too_high_unplugged">Acima da faixa comum de uma bateria de celular. Pode ser só uma leitura imprecisa deste aparelho; se aparecer com frequência ou junto de calor, leve o celular para verificar.</string>
+    <string name="meaning_temp_hot_unplugged">Quente. Dê uma pausa no celular, tire da capinha e evite usos pesados por um tempo.</string>
+    <string name="meaning_temp_too_hot_unplugged">Muito quente. Pare o uso pesado até esfriar e deixe o celular fora do sol.</string>
+    <string name="meaning_level_critical_charging">Quase vazia, mas já está carregando. Deixe um pouco antes de usar pesado.</string>
+    <string name="meaning_level_low_charging">Baixa, mas já está carregando.</string>
+    <string name="meaning_level_high_charging">Acima de 80%. Carregar até 100% é normal; para preservar a bateria, desconecte perto de 80% quando der.</string>
+    <string name="note_voltage_unplugged">Esta é a tensão da bateria. Ela cai aos poucos conforme a carga acaba e sobe um pouco ao conectar o carregador.</string>
+    <string name="note_power_out">Potência é tensão vezes corrente: a velocidade com que a energia sai da bateria para alimentar o celular. Ela sobe com tela acesa, brilho alto, jogos, câmera e rede móvel fraca.</string>
 </resources>

@@ -83,25 +83,26 @@ internal fun ratingLabel(label: RatingLabel): Int = when (label) {
 }
 
 /** What a rating means, in plain words. */
-internal fun meaningOf(label: RatingLabel, scale: Scale): Int = when {
+/** [plugged] is true while a charger is connected: some advice only makes sense then. */
+internal fun meaningOf(label: RatingLabel, scale: Scale, plugged: Boolean = true): Int = when {
     scale === Scales.voltage -> when (label) {
         RatingLabel.LOW -> R.string.meaning_voltage_low
-        RatingLabel.HIGH -> R.string.meaning_voltage_high
-        RatingLabel.TOO_HIGH -> R.string.meaning_voltage_too_high
+        RatingLabel.HIGH -> if (plugged) R.string.meaning_voltage_high else R.string.meaning_voltage_high_unplugged
+        RatingLabel.TOO_HIGH -> if (plugged) R.string.meaning_voltage_too_high else R.string.meaning_voltage_too_high_unplugged
         else -> R.string.meaning_voltage_normal
     }
     scale === Scales.temperature -> when (label) {
         RatingLabel.TOO_COLD -> R.string.meaning_temp_too_cold
         RatingLabel.COLD -> R.string.meaning_temp_cold
         RatingLabel.WARM -> R.string.meaning_temp_warm
-        RatingLabel.HOT -> R.string.meaning_temp_hot
-        RatingLabel.TOO_HOT -> R.string.meaning_temp_too_hot
+        RatingLabel.HOT -> if (plugged) R.string.meaning_temp_hot else R.string.meaning_temp_hot_unplugged
+        RatingLabel.TOO_HOT -> if (plugged) R.string.meaning_temp_too_hot else R.string.meaning_temp_too_hot_unplugged
         else -> R.string.meaning_temp_normal
     }
     scale === Scales.level -> when (label) {
-        RatingLabel.CRITICAL -> R.string.meaning_level_critical
-        RatingLabel.LOW -> R.string.meaning_level_low
-        RatingLabel.FULLISH -> R.string.meaning_level_high
+        RatingLabel.CRITICAL -> if (plugged) R.string.meaning_level_critical_charging else R.string.meaning_level_critical
+        RatingLabel.LOW -> if (plugged) R.string.meaning_level_low_charging else R.string.meaning_level_low
+        RatingLabel.FULLISH -> if (plugged) R.string.meaning_level_high_charging else R.string.meaning_level_high
         else -> R.string.meaning_level_good
     }
     scale === Scales.chargingPower -> when (label) {
