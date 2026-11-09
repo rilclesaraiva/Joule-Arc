@@ -15,10 +15,8 @@ import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.graphicsLayer
 import com.joulearc.app.core.FloatingCircleButton
-import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -47,6 +45,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -186,11 +185,13 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     val route = stack.substringAfterLast('|')
     val open: (String) -> Unit = { stack = "$stack|$it" }
     val back: () -> Unit = { stack = stack.substringBeforeLast('|') }
-    // Back gesture: with the preview on, the page follows the finger (scales down, rounds its corners).
+    // Back gesture: with the preview on, the page slides with the finger and the page below shows through.
     val predictive by SettingsRepository.predictiveBack.collectAsStateWithLifecycle()
     val backProgress = remember { Animatable(0f) }
     var backFromRight by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+    // Set just before a committed back gesture, so the page change does not animate twice.
+    val instant = remember { booleanArrayOf(false) }
+    LaunchedEffect(stack) { instant[0] = false }
     if (predictive) {
         PredictiveBackHandler(enabled = stack.contains('|')) { events ->
             try {
@@ -198,10 +199,13 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     backFromRight = it.swipeEdge == BackEventCompat.EDGE_RIGHT
                     backProgress.snapTo(it.progress)
                 }
+                // Finished: slide the rest of the way out, then swap pages without a second animation.
+                backProgress.animateTo(1f, tween(AppMotion.SHORT))
+                instant[0] = true
                 back()
-                scope.launch { backProgress.animateTo(0f, tween(AppMotion.SHORT)) }
+                backProgress.snapTo(0f)
             } catch (e: CancellationException) {
-                scope.launch { backProgress.animateTo(0f, tween(AppMotion.SHORT)) }
+                backProgress.animateTo(0f, tween(AppMotion.SHORT))
             }
         }
     } else {
@@ -227,30 +231,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     }
 
     val prompt by GitHubUpdatesRepository.prompt.collectAsStateWithLifecycle()
-    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceDim)) {
-    Box(
-        Modifier.fillMaxSize().graphicsLayer {
-            val p = backProgress.value
-            val s = 1f - 0.1f * p
-            scaleX = s
-            scaleY = s
-            translationX = (if (backFromRight) -1f else 1f) * 12.dp.toPx() * p
-            shape = RoundedCornerShape((28 * p).dp)
-            clip = p > 0f
-        },
-    ) {
-    AnimatedContent(
-        targetState = stack,
-        transitionSpec = {
-            val forward = targetState.count { it == '|' } >= initialState.count { it == '|' }
-            val direction = if (forward) 1 else -1
-            (slideInHorizontally(tween(AppMotion.MEDIUM)) { it / 5 * direction } + fadeIn(tween(AppMotion.MEDIUM)))
-                .togetherWith(
-                    slideOutHorizontally(tween(AppMotion.MEDIUM)) { -it / 5 * direction } + fadeOut(tween(AppMotion.SHORT)),
-                )
-        },
-        label = "pages",
-    ) { target ->
+    val renderPage: @Composable (String) -> Unit = { target ->
         val page = target.substringAfterLast('|')
         when {
             page == HOME -> {
@@ -339,6 +320,47 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
             page == ABOUT -> Page(back) { modifier -> AboutScreen(modifier) }
         }
     }
+    val gesturing by remember { derivedStateOf { backProgress.value > 0f } }
+    val sign = if (backFromRight) -1f else 1f
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceDim)) {
+    if (gesturing && stack.contains('|')) {
+        // The page below, revealed as the current one slides away (slight parallax, fading scrim).
+        Box(
+            Modifier.fillMaxSize().graphicsLayer {
+                translationX = -sign * size.width * 0.2f * (1f - backProgress.value)
+            },
+        ) {
+            renderPage(stack.substringBeforeLast('|'))
+            Box(Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.32f * (1f - backProgress.value))))
+        }
+    }
+    Box(
+        Modifier.fillMaxSize().graphicsLayer {
+            val p = backProgress.value
+            translationX = sign * size.width * p
+            if (p > 0f) {
+                shadowElevation = 24.dp.toPx()
+                shape = RoundedCornerShape((28f * minOf(1f, p * 6f)).dp)
+                clip = true
+            }
+        },
+    ) {
+    AnimatedContent(
+        targetState = stack,
+        transitionSpec = {
+            if (instant[0]) {
+                androidx.compose.animation.EnterTransition.None togetherWith androidx.compose.animation.ExitTransition.None
+            } else {
+                val forward = targetState.count { it == '|' } >= initialState.count { it == '|' }
+                val direction = if (forward) 1 else -1
+                (slideInHorizontally(tween(AppMotion.MEDIUM)) { it / 5 * direction } + fadeIn(tween(AppMotion.MEDIUM)))
+                    .togetherWith(
+                        slideOutHorizontally(tween(AppMotion.MEDIUM)) { -it / 5 * direction } + fadeOut(tween(AppMotion.SHORT)),
+                    )
+            }
+        },
+        label = "pages",
+    ) { target -> renderPage(target) }
     prompt?.let { release ->
         BackHandler { GitHubUpdatesRepository.dismissForNow() }
         UpdateScreen(

@@ -75,15 +75,15 @@ object Scales {
         ),
     )
 
-    /** Power going into the battery, in watts. */
+    /** Power going into the battery, in watts. Blue from 25 W up: faster is fine but also warmer, never "bad". */
     val chargingPower = Scale(
         0f, 150f,
         listOf(
             Band(5f, RatingLabel.SLOW, Tone.CAUTION),
             Band(10f, RatingLabel.NORMAL, Tone.GOOD),
             Band(25f, RatingLabel.FAST, Tone.GOOD),
-            Band(65f, RatingLabel.VERY_FAST, Tone.GOOD),
-            Band(END, RatingLabel.ULTRA_FAST, Tone.GOOD),
+            Band(65f, RatingLabel.VERY_FAST, Tone.INFO),
+            Band(END, RatingLabel.ULTRA_FAST, Tone.INFO),
         ),
     )
 

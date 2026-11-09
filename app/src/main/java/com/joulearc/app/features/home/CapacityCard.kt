@@ -28,7 +28,7 @@ import com.joulearc.app.data.estimateHealthPercent
 import java.util.Locale
 import kotlin.math.roundToInt
 
-/** Battery capacity: charge now, full charge today, lost to wear and design capacity. */
+/** Battery capacity: charge now, full charge today, lost to wear and device capacity. */
 @Composable
 internal fun CapacityCard(
     s: BatterySnapshot,

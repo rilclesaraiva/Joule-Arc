@@ -12,7 +12,7 @@ object DeviceInfo {
     val model: String get() = Build.MODEL ?: ""
 
     /**
-     * Design capacity detected by the app itself, trying each source in turn: the system power
+     * Device capacity detected by the app itself, trying each source in turn: the system power
      * profile (not a public API, read by reflection) and, on devices that allow it, the kernel
      * battery node. Any of them can be missing, blocked or a placeholder, so the result is only a
      * starting point: the value the user types in Settings always wins.

@@ -34,7 +34,7 @@ object SettingsRepository {
     private var prefs: SharedPreferences? = null
 
     private val _designCapacityMah = MutableStateFlow<Int?>(null)
-    /** Design capacity typed by the user; null means "use the system value". */
+    /** Device capacity typed by the user; null means "use the system value". */
     val designCapacityMah: StateFlow<Int?> = _designCapacityMah.asStateFlow()
 
     private val _chargeAlertEnabled = MutableStateFlow(false)

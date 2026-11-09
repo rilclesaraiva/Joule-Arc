@@ -130,10 +130,10 @@
     <string name="capacity_now_value">%1$s mAh · %2$d%%</string>
     <string name="capacity_full">Full charge today (estimated)</string>
     <string name="capacity_lost">Lost to wear</string>
-    <string name="capacity_design">Design capacity</string>
-    <string name="capacity_design_system">Design capacity detected by the app. If it looks wrong, type the right value in Settings.</string>
-    <string name="capacity_design_user">Design capacity set by you.</string>
-    <string name="capacity_design_missing">Design capacity unknown: set it in Settings.</string>
+    <string name="capacity_design">Device capacity</string>
+    <string name="capacity_design_system">Device capacity detected by the app. If it looks wrong, type the right value in Settings.</string>
+    <string name="capacity_design_user">Device capacity set by you.</string>
+    <string name="capacity_design_missing">Device capacity unknown: set it in Settings.</string>
     <string name="capacity_unavailable">This device does not report the charge counter, so the capacity cannot be measured.</string>
     <string name="capacity_note">The full charge is estimated from the charge counter and the level, and can be off by a few percent.</string>
     <string name="value_mah">%1$d mAh</string>
@@ -224,13 +224,13 @@
     <string name="meaning_health_fair">Some normal wear. The battery holds a bit less than when it was new.</string>
     <string name="meaning_health_worn">Noticeable wear. The battery holds clearly less than when it was new and empties faster.</string>
     <string name="meaning_health_poor">Heavy wear. Consider replacing the battery if it runs out too quickly.</string>
-    <string name="meaning_health_unknown">Set the design capacity in Settings to estimate the battery health.</string>
+    <string name="meaning_health_unknown">Set the device capacity in Settings to estimate the battery health.</string>
     <string name="meaning_technology" formatted="false">Lithium batteries last longer when kept cool and charged between 20% and 80%. A full charge now and then is fine.</string>
     <string name="meaning_cycles" formatted="false">One cycle is using 100% of the battery charge, even if spread over several days. Many phone batteries keep around 80% of their capacity after 500 to 800 cycles.</string>
     <string name="note_voltage">This is the battery voltage. Fast chargers use a higher voltage on the cable, and the phone lowers it for the battery. The voltage jumps a little when you plug or unplug the charger.</string>
     <string name="note_temperature">Android reports the battery temperature, which follows how warm the whole phone is.</string>
     <string name="note_power">Power is voltage times current: how fast energy goes into or out of the battery. While charging it is lower than the charger power: part runs the phone, part is lost as heat, and it drops as the battery fills.</string>
-    <string name="note_health">Health is the estimated full charge today compared with the design capacity. The phone battery check only flags failures such as overheating.</string>
+    <string name="note_health">Health is the estimated full charge today compared with the device capacity. The phone battery check only flags failures such as overheating.</string>
     <string name="settings_charge_alert">Charge reminder</string>
     <string name="settings_charge_alert_sub">Reminds you to unplug at %1$d%%</string>
     <string name="settings_low_alert">Low battery reminder</string>
@@ -238,7 +238,7 @@
     <string name="settings_protection">App protection</string>
     <string name="settings_protection_sub">Allow Joule Arc to run without battery restrictions so monitoring and reminders keep working</string>
     <string name="settings_protection_on">Already running without battery restrictions</string>
-    <string name="settings_design">Design capacity (mAh)</string>
+    <string name="settings_design">Device capacity (mAh)</string>
     <string name="settings_design_hint">Leave empty to use the value detected by the app: %1$s</string>
     <string name="settings_design_none">could not be detected on this device</string>
     <string name="settings_dual_cell">Dual-cell battery</string>

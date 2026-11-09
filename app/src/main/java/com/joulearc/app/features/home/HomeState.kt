@@ -12,7 +12,7 @@ data class HomeState(
     val snapshot: BatterySnapshot?,
     val estimate: ChargeEstimate?,
     val capacityMah: Int?,
-    /** Design capacity in use: typed by the user, or the system value. */
+    /** Device capacity in use: typed by the user, or the system value. */
     val designCapacityMah: Int?,
     val designFromSystem: Boolean,
     val recorded: RecordedCurrents,

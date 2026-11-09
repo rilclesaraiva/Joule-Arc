@@ -130,10 +130,10 @@
     <string name="capacity_now_value">%1$s mAh · %2$d%%</string>
     <string name="capacity_full">Carga total hoje (estimada)</string>
     <string name="capacity_lost">Perdida com o desgaste</string>
-    <string name="capacity_design">Capacidade de projeto</string>
-    <string name="capacity_design_system">Capacidade de projeto detectada pelo app. Se parecer errada, digite o valor certo nas configurações.</string>
-    <string name="capacity_design_user">Capacidade de projeto informada por você.</string>
-    <string name="capacity_design_missing">Capacidade de projeto desconhecida: informe nas configurações.</string>
+    <string name="capacity_design">Capacidade do dispositivo</string>
+    <string name="capacity_design_system">Capacidade do dispositivo detectada pelo app. Se parecer errada, digite o valor certo nas configurações.</string>
+    <string name="capacity_design_user">Capacidade do dispositivo informada por você.</string>
+    <string name="capacity_design_missing">Capacidade do dispositivo desconhecida: informe nas configurações.</string>
     <string name="capacity_unavailable">Este aparelho não informa o contador de carga, então a capacidade não pode ser medida.</string>
     <string name="capacity_note">A carga total é estimada a partir do contador de carga e do nível, e pode errar alguns por cento.</string>
     <string name="value_mah">%1$d mAh</string>
@@ -224,13 +224,13 @@
     <string name="meaning_health_fair">Algum desgaste normal. A bateria guarda um pouco menos do que quando era nova.</string>
     <string name="meaning_health_worn">Desgaste perceptível. A bateria guarda bem menos do que quando era nova e descarrega mais rápido.</string>
     <string name="meaning_health_poor">Desgaste forte. Considere trocar a bateria se ela acabar rápido demais.</string>
-    <string name="meaning_health_unknown">Informe a capacidade de projeto nas configurações para estimar a saúde da bateria.</string>
+    <string name="meaning_health_unknown">Informe a capacidade do dispositivo nas configurações para estimar a saúde da bateria.</string>
     <string name="meaning_technology" formatted="false">As baterias de lítio duram mais quando ficam frescas e carregadas entre 20% e 80%. Uma carga completa de vez em quando não tem problema.</string>
     <string name="meaning_cycles" formatted="false">Um ciclo equivale a usar 100% da carga da bateria, mesmo que espalhado por vários dias. Muitas baterias de celular mantêm cerca de 80% da capacidade depois de 500 a 800 ciclos.</string>
     <string name="note_voltage">Esta é a tensão da bateria. Carregadores rápidos usam tensão maior no cabo, e o celular reduz para a bateria. A voltagem pula um pouco quando você conecta ou desconecta o carregador.</string>
     <string name="note_temperature">O Android informa a temperatura da bateria, que acompanha o quanto o celular inteiro está quente.</string>
     <string name="note_power">Potência é voltagem vezes corrente: a velocidade com que a energia entra ou sai da bateria. Ao carregar ela é menor que a potência do carregador: parte alimenta o celular, parte vira calor, e ela cai conforme a bateria enche.</string>
-    <string name="note_health">A saúde é a carga total estimada de hoje comparada com a capacidade de projeto. A verificação do celular só avisa falhas como superaquecimento.</string>
+    <string name="note_health">A saúde é a carga total estimada de hoje comparada com a capacidade do dispositivo. A verificação do celular só avisa falhas como superaquecimento.</string>
     <string name="settings_charge_alert">Lembrete de carregamento</string>
     <string name="settings_charge_alert_sub">Lembra você de desconectar em %1$d%%</string>
     <string name="settings_low_alert">Lembrete de bateria fraca</string>
@@ -238,7 +238,7 @@
     <string name="settings_protection">Proteção do app</string>
     <string name="settings_protection_sub">Permita que o Joule Arc rode sem restrição de bateria para o monitoramento e os lembretes continuarem funcionando</string>
     <string name="settings_protection_on">Já roda sem restrição de bateria</string>
-    <string name="settings_design">Capacidade de projeto (mAh)</string>
+    <string name="settings_design">Capacidade do dispositivo (mAh)</string>
     <string name="settings_design_hint">Deixe vazio para usar o valor detectado pelo app: %1$s</string>
     <string name="settings_design_none">não foi possível detectar neste aparelho</string>
     <string name="settings_dual_cell">Bateria de duas células</string>
