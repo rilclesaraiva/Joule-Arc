@@ -72,6 +72,7 @@ fun SettingsScreen(systemDesignMah: Int?, onOpenAbout: () -> Unit, modifier: Mod
     val fahrenheit by SettingsRepository.useFahrenheit.collectAsStateWithLifecycle()
     val themeMode by SettingsRepository.themeMode.collectAsStateWithLifecycle()
     val designUser by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
+    val predictiveBack by SettingsRepository.predictiveBack.collectAsStateWithLifecycle()
 
     var protectionOk by remember { mutableStateOf(DeviceInfo.isIgnoringBatteryOptimizations(context)) }
     LifecycleResumeEffect(Unit) {
@@ -139,6 +140,15 @@ fun SettingsScreen(systemDesignMah: Int?, onOpenAbout: () -> Unit, modifier: Mod
                             onSelect = { SettingsRepository.setUseFahrenheit(it == 1) },
                         )
                     }
+                }
+                add {
+                    SwitchRow(
+                        icon = R.drawable.ic_arrow_back,
+                        title = stringResource(R.string.settings_predictive),
+                        subtitle = stringResource(R.string.settings_predictive_sub),
+                        checked = predictiveBack,
+                        onChange = SettingsRepository::setPredictiveBack,
+                    )
                 }
             },
         )

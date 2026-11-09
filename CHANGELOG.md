@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 ### Added
+- New app icon (a glowing "J" cut by a lightning bolt), as an adaptive icon with a monochrome layer, also shown in About.
+- Predictive back gesture: while you swipe back, the page follows your finger (shrinks and rounds its corners). On by default; Settings has a switch. The switch controls the in-app animation; the system's own back-to-home preview follows Android.
 - Project structure (`core` / `data` / `features`), CI workflow and R8 release build without obfuscation.
 - Original adaptive launcher icon with a monochrome layer.
 - Persistent foreground-service notification that keeps monitoring the charging system, restarted after reboot.
@@ -30,6 +32,8 @@
 - Text on the home and pages was too dark in the dark and AMOLED themes (the pages lost their content color when the top bars were removed).
 
 ### Changed
+- The settings button on the home is now a floating round button, like the back buttons.
+- "Battery use by app" is now "Usage by app", and page titles keep the same margin on both sides.
 - No fixed top bars: page titles scroll with the content, and the home title and settings button sit at the start of the home. Only a round, slightly transparent back button stays over inner pages.
 - Settings are now plain ordered lists with icons (no categories); About is the only heading and opens a page with the developer, project links, legal pages, license and an invitation to the repository. The home footer is gone.
 - Reset buttons need two quick taps; the first tap shows a small hint.

@@ -78,16 +78,11 @@ fun AboutScreen(modifier: Modifier = Modifier) {
         PageTitle(stringResource(R.string.about_section))
 
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.size(112.dp)) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        painterResource(R.drawable.ic_bolt),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(56.dp),
-                    )
-                }
-            }
+            Image(
+                painter = painterResource(R.drawable.ic_app_logo),
+                contentDescription = null,
+                modifier = Modifier.size(112.dp),
+            )
             Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
             Surface(shape = CircleShape, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
                 Text(

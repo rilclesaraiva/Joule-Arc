@@ -81,7 +81,7 @@
     <string name="usage_chart_level">Battery level</string>
     <string name="usage_chart_usage">Battery usage</string>
     <string name="usage_last_full">Last charged to 100%</string>
-    <string name="usage_per_app">Battery use by app</string>
+    <string name="usage_per_app">Usage by app</string>
     <string name="usage_since">Data since %1$s</string>
     <string name="usage_percent_less">&lt; 1%</string>
     <string name="usage_no_history">Collecting battery history. The charts fill in as you use the phone.</string>
@@ -305,4 +305,6 @@
     <string name="update_alerts_snoozed">Paused until %1$s</string>
     <string name="update_alerts_normal">Notify normally</string>
     <string name="update_dialog_cancel">Cancel</string>
+    <string name="settings_predictive">Predictive back gesture</string>
+    <string name="settings_predictive_sub">Shows a preview of the page while you swipe to go back</string>
 </resources>

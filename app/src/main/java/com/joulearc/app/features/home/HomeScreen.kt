@@ -14,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -46,7 +45,6 @@ fun HomeScreen(
     onOpenDrain: () -> Unit,
     onOpenUsage: () -> Unit,
     onResetRecorded: () -> Unit,
-    onSettings: () -> Unit,
     scrollState: ScrollState,
     modifier: Modifier = Modifier,
 ) {
@@ -60,19 +58,11 @@ fun HomeScreen(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.weight(1f),
-            )
-            FilledTonalIconButton(onClick = onSettings) {
-                Icon(painterResource(R.drawable.ic_settings), stringResource(R.string.settings_title))
-            }
-        }
+        Text(
+            text = stringResource(R.string.app_name),
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 18.dp),
+        )
 
         if (!state.notificationsGranted) NotificationCard(onRequestNotifications)
 

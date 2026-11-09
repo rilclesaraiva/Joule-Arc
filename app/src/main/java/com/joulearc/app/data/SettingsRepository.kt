@@ -25,6 +25,7 @@ object SettingsRepository {
     private const val KEY_DUAL_CELL = "dual_cell"
     private const val KEY_THEME = "theme"
     private const val KEY_FAHRENHEIT = "fahrenheit"
+    private const val KEY_PREDICTIVE_BACK = "predictive_back"
     private const val KEY_REC_CHARGE_MAX = "rec_charge_max"
     private const val KEY_REC_CHARGE_MIN = "rec_charge_min"
     private const val KEY_REC_DRAIN_MAX = "rec_drain_max"
@@ -55,6 +56,10 @@ object SettingsRepository {
     private val _useFahrenheit = MutableStateFlow(false)
     val useFahrenheit: StateFlow<Boolean> = _useFahrenheit.asStateFlow()
 
+    private val _predictiveBack = MutableStateFlow(true)
+    /** Back-gesture preview animation between pages. On by default. */
+    val predictiveBack: StateFlow<Boolean> = _predictiveBack.asStateFlow()
+
     private val _recorded = MutableStateFlow(RecordedCurrents())
     val recorded: StateFlow<RecordedCurrents> = _recorded.asStateFlow()
 
@@ -70,6 +75,7 @@ object SettingsRepository {
         _dualCellBattery.value = p.getBoolean(KEY_DUAL_CELL, false)
         _themeMode.value = p.getInt(KEY_THEME, THEME_SYSTEM)
         _useFahrenheit.value = p.getBoolean(KEY_FAHRENHEIT, false)
+        _predictiveBack.value = p.getBoolean(KEY_PREDICTIVE_BACK, true)
         _recorded.value = RecordedCurrents(
             chargeMaxMa = p.getInt(KEY_REC_CHARGE_MAX, -1).takeIf { it >= 0 },
             chargeMinMa = p.getInt(KEY_REC_CHARGE_MIN, -1).takeIf { it >= 0 },
@@ -127,6 +133,11 @@ object SettingsRepository {
     fun setUseFahrenheit(value: Boolean) {
         _useFahrenheit.value = value
         edit { putBoolean(KEY_FAHRENHEIT, value) }
+    }
+
+    fun setPredictiveBack(value: Boolean) {
+        _predictiveBack.value = value
+        edit { putBoolean(KEY_PREDICTIVE_BACK, value) }
     }
 
     /** Updates the recorded highest and lowest current; writes only when a value changes. */

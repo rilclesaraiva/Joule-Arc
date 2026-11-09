@@ -10,6 +10,16 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
+import androidx.activity.BackEventCompat
+import androidx.activity.compose.PredictiveBackHandler
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.graphicsLayer
+import com.joulearc.app.core.FloatingCircleButton
+import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -176,7 +186,27 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     val route = stack.substringAfterLast('|')
     val open: (String) -> Unit = { stack = "$stack|$it" }
     val back: () -> Unit = { stack = stack.substringBeforeLast('|') }
-    BackHandler(enabled = stack.contains('|')) { back() }
+    // Back gesture: with the preview on, the page follows the finger (scales down, rounds its corners).
+    val predictive by SettingsRepository.predictiveBack.collectAsStateWithLifecycle()
+    val backProgress = remember { Animatable(0f) }
+    var backFromRight by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    if (predictive) {
+        PredictiveBackHandler(enabled = stack.contains('|')) { events ->
+            try {
+                events.collect {
+                    backFromRight = it.swipeEdge == BackEventCompat.EDGE_RIGHT
+                    backProgress.snapTo(it.progress)
+                }
+                back()
+                scope.launch { backProgress.animateTo(0f, tween(AppMotion.SHORT)) }
+            } catch (e: CancellationException) {
+                scope.launch { backProgress.animateTo(0f, tween(AppMotion.SHORT)) }
+            }
+        }
+    } else {
+        BackHandler(enabled = stack.contains('|')) { back() }
+    }
 
     var notificationsGranted by remember { mutableStateOf(hasNotificationPermission()) }
     var usageGranted by remember { mutableStateOf(isUsageAccessGranted(context)) }
@@ -197,7 +227,18 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     }
 
     val prompt by GitHubUpdatesRepository.prompt.collectAsStateWithLifecycle()
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceDim)) {
+    Box(
+        Modifier.fillMaxSize().graphicsLayer {
+            val p = backProgress.value
+            val s = 1f - 0.1f * p
+            scaleX = s
+            scaleY = s
+            translationX = (if (backFromRight) -1f else 1f) * 12.dp.toPx() * p
+            shape = RoundedCornerShape((28 * p).dp)
+            clip = p > 0f
+        },
+    ) {
     AnimatedContent(
         targetState = stack,
         transitionSpec = {
@@ -227,7 +268,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     drain = drainStats,
                     notificationsGranted = notificationsGranted,
                 )
-                HomePage { modifier ->
+                HomePage(onSettings = { open(SETTINGS) }) { modifier ->
                     HomeScreen(
                         state = homeState,
                         onRequestNotifications = {
@@ -239,8 +280,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                         onOpenDrain = { open(DRAIN) },
                         onOpenUsage = { open(USAGE) },
                         onResetRecorded = { SettingsRepository.resetRecorded() },
-                        onSettings = { open(SETTINGS) },
-                        scrollState = homeScroll,
+                                        scrollState = homeScroll,
                         modifier = modifier,
                     )
                 }
@@ -315,13 +355,22 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
         )
     }
     }
+    }
 }
 
 /** Home: no fixed bar. The title and the settings button are part of the scrolling content. */
 @Composable
-private fun HomePage(content: @Composable (Modifier) -> Unit) {
+private fun HomePage(onSettings: () -> Unit, content: @Composable (Modifier) -> Unit) {
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        content(Modifier.fillMaxSize())
+        Box(Modifier.fillMaxSize()) {
+            content(Modifier.fillMaxSize())
+            FloatingCircleButton(
+                icon = R.drawable.ic_settings,
+                description = stringResource(R.string.settings_title),
+                onClick = onSettings,
+                modifier = Modifier.align(Alignment.TopEnd).statusBarsPadding().padding(12.dp),
+            )
+        }
     }
 }
 

@@ -34,13 +34,13 @@ fun PageTitle(title: String, modifier: Modifier = Modifier) {
     Text(
         text = title,
         style = MaterialTheme.typography.headlineLarge,
-        modifier = modifier.fillMaxWidth().padding(start = 56.dp, top = 72.dp, bottom = 4.dp),
+        modifier = modifier.fillMaxWidth().padding(start = 56.dp, end = 56.dp, top = 72.dp, bottom = 4.dp),
     )
 }
 
-/** Round back button, slightly see-through, fixed over the page. */
+/** Round button, slightly see-through, fixed over a page (back on inner pages, settings on the home). */
 @Composable
-fun BackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun FloatingCircleButton(icon: Int, description: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         onClick = onClick,
         shape = CircleShape,
@@ -48,10 +48,14 @@ fun BackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
         modifier = modifier.size(48.dp),
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Icon(painterResource(R.drawable.ic_arrow_back), stringResource(R.string.cd_back))
+            Icon(painterResource(icon), description)
         }
     }
 }
+
+@Composable
+fun BackButton(onClick: () -> Unit, modifier: Modifier = Modifier) =
+    FloatingCircleButton(R.drawable.ic_arrow_back, stringResource(R.string.cd_back), onClick, modifier)
 
 private const val DOUBLE_TAP_MS = 1_000L
 
