@@ -13,10 +13,8 @@ env:
   VERSION_CMD: grep -m1 -oP 'versionName\s*=?\s*"\K[^"]+' app/build.gradle.kts   # imprime a versão
   TEST_CMD: chmod +x gradlew && ./gradlew testDebugUnitTest assembleRelease   # release = R8 + assinatura
   TEST_ARTIFACTS: app/build/outputs/apk/release/*.apk   # build para vistoria, em todo push
-  RELEASE_CMD: ./gradlew bundleRelease assembleRelease
-  ARTIFACTS: |
-    app/build/outputs/bundle/release/*.aab
-    app/build/outputs/apk/release/*.apk
+  RELEASE_CMD: ./gradlew assembleRelease   # só APK: o app não vai para a Play Store, então não há .aab
+  ARTIFACTS: dist/joule-arc_v*.apk   # nome final: joule-arc_vX.Y.Z.apk
   # ── Assinatura ──
   REQUIRE_SIGNING: 'true'   # sem os secrets, o release é barrado
   KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -84,6 +82,12 @@ jobs:
 
       - if: steps.v.outputs.publish == 'true'
         run: eval "$RELEASE_CMD"
+
+      - name: Nomear o APK
+        if: steps.v.outputs.publish == 'true'
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk "dist/joule-arc_v${{ steps.v.outputs.version }}.apk"
 
       - uses: softprops/action-gh-release@v2   # cria a tag vX.Y.Z neste commit e publica
         if: steps.v.outputs.publish == 'true'
