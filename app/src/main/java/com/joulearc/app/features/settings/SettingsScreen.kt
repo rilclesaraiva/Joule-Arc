@@ -42,6 +42,7 @@ import com.joulearc.app.core.PageTitle
 import com.joulearc.app.core.PillToggle
 import com.joulearc.app.core.RowGroup
 import com.joulearc.app.core.RowIcon
+import com.joulearc.app.core.SUPPORT_EMAIL
 import com.joulearc.app.core.rememberDoubleTapConfirm
 import com.joulearc.app.data.AppLanguage
 import com.joulearc.app.data.DeviceInfo
