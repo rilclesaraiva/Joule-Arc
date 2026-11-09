@@ -53,8 +53,8 @@ Automatic Android backup of the app's data is turned off.
 
 ## Links that leave the app
 
-The links in the app to the project repository, this policy and the terms open in your browser.
-So does "Download" in the new version notice: the app never downloads or installs an update by
+The links in the app to the project repository, the developer's GitHub profile, the changelog, the license, this policy and the terms open in your browser.
+So does "Download" in the new version notice (it opens the release page on GitHub): the app never downloads or installs an update by
 itself. Those sites (GitHub) have their own privacy policies.
 
 ## Your rights

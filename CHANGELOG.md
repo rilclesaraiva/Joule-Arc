@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Privacy policy: the list of links that open in the browser now matches the app (developer profile, changelog and license were missing).
 
 ## [0.1.0] - 2026-11-09
 First public version.
