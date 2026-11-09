@@ -328,4 +328,7 @@
     <string name="usage_app_note">An estimate: Android does not let regular apps read the battery used by a single app. Joule Arc splits the battery drained in the period by usage time (background counts half). Active is time with the app on screen; background is time running a foreground service.</string>
     <string name="usage_app_none">No recorded use of this app in this period.</string>
     <string name="notification_text_short">%1$d mA · %2$d%% · %3$s</string>
+    <string name="usage_show_system">Show system apps</string>
+    <string name="usage_hide_system">Hide system apps</string>
+    <string name="usage_more_options">More options</string>
 </resources>

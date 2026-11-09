@@ -31,6 +31,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
@@ -49,6 +53,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -192,6 +198,24 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     // Set just before a committed back gesture, so the page change does not animate twice.
     val instant = remember { booleanArrayOf(false) }
     LaunchedEffect(stack) { instant[0] = false }
+    val scope = rememberCoroutineScope()
+    // The on-screen back button plays the same slide-out as the gesture, then swaps pages at once.
+    val goBack: () -> Unit = {
+        if (predictive && stack.contains('|')) {
+            if (!backProgress.isRunning && backProgress.value == 0f) {
+                scope.launch {
+                    backProgress.animateTo(1f, tween(AppMotion.SHORT))
+                    instant[0] = true
+                    back()
+                    backProgress.snapTo(0f)
+                }
+            }
+        } else {
+            back()
+        }
+    }
+    var showSystemApps by rememberSaveable { mutableStateOf(false) }
+    var usageMenu by remember { mutableStateOf(false) }
     if (predictive) {
         PredictiveBackHandler(enabled = stack.contains('|')) { events ->
             try {
@@ -265,7 +289,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 }
             }
 
-            page == HISTORY -> Page(back) { modifier ->
+            page == HISTORY -> Page(goBack) { modifier ->
                 HistoryScreen(
                     active = activeSession,
                     sessions = sessions,
@@ -275,14 +299,14 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 )
             }
 
-            page.startsWith(SESSION) -> Page(back) { modifier ->
+            page.startsWith(SESSION) -> Page(goBack) { modifier ->
                 val start = page.removePrefix(SESSION).toLongOrNull()
                 val session = activeSession?.takeIf { it.startMs == start }
                     ?: sessions.firstOrNull { it.startMs == start }
                 if (session != null) SessionDetailScreen(session, modifier)
             }
 
-            page == DRAIN -> Page(back) { modifier ->
+            page == DRAIN -> Page(goBack) { modifier ->
                 DrainScreen(
                     stats = drainStats,
                     levelPercent = snapshot?.levelPercent,
@@ -291,7 +315,33 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 )
             }
 
-            page == USAGE -> Page(back) { modifier ->
+            page == USAGE -> Page(
+                goBack,
+                trailing = {
+                    Box(Modifier.align(Alignment.TopEnd).statusBarsPadding().padding(12.dp)) {
+                        FloatingCircleButton(
+                            icon = R.drawable.ic_more_vert,
+                            description = stringResource(R.string.usage_more_options),
+                            onClick = { usageMenu = true },
+                        )
+                        DropdownMenu(expanded = usageMenu, onDismissRequest = { usageMenu = false }) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        stringResource(
+                                            if (showSystemApps) R.string.usage_hide_system else R.string.usage_show_system,
+                                        ),
+                                    )
+                                },
+                                onClick = {
+                                    showSystemApps = !showSystemApps
+                                    usageMenu = false
+                                },
+                            )
+                        }
+                    }
+                },
+            ) { modifier ->
                 if (!usageGranted) {
                     Column(modifier.windowInsetsPadding(WindowInsets.systemBars).padding(16.dp)) {
                         PageTitle(stringResource(R.string.usage_per_app))
@@ -302,7 +352,9 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     }
                 } else {
                     BatteryUsageScreen(
-                        report = report,
+                        report = report?.let { r ->
+                            r.copy(apps = r.apps.filter { showSystemApps || !it.isSystem }.take(30))
+                        },
                         samples = levelSamples,
                         windowDays = windowDays,
                         onWindowChange = { windowDays = it },
@@ -312,7 +364,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 }
             }
 
-            page.startsWith(APP) -> Page(back) { modifier ->
+            page.startsWith(APP) -> Page(goBack) { modifier ->
                 AppUsageScreen(
                     packageName = page.removePrefix(APP),
                     report = report,
@@ -322,11 +374,11 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 )
             }
 
-            page == SETTINGS -> Page(back) { modifier ->
+            page == SETTINGS -> Page(goBack) { modifier ->
                 SettingsScreen(systemDesignMah = systemDesign, onOpenAbout = { open(ABOUT) }, modifier = modifier)
             }
 
-            page == ABOUT -> Page(back) { modifier -> AboutScreen(modifier) }
+            page == ABOUT -> Page(goBack) { modifier -> AboutScreen(modifier) }
         }
     }
     val gesturing by remember { derivedStateOf { backProgress.value > 0f } }
@@ -406,11 +458,16 @@ private fun HomePage(onSettings: () -> Unit, content: @Composable (Modifier) -> 
 
 /** Inner page: the title scrolls with the content; only the round back button stays over the page. */
 @Composable
-private fun Page(onBack: () -> Unit, content: @Composable (Modifier) -> Unit) {
+private fun Page(
+    onBack: () -> Unit,
+    trailing: @Composable BoxScope.() -> Unit = {},
+    content: @Composable (Modifier) -> Unit,
+) {
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Box(Modifier.fillMaxSize()) {
             content(Modifier.fillMaxSize())
             BackButton(onBack, Modifier.align(Alignment.TopStart).statusBarsPadding().padding(12.dp))
+            trailing()
         }
     }
 }

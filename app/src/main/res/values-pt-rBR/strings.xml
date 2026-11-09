@@ -328,4 +328,7 @@
     <string name="usage_app_note">É uma estimativa: o Android não deixa apps comuns ler a bateria usada por um único app. O Joule Arc divide a bateria gasta no período pelo tempo de uso (segundo plano conta metade). Ativo é o tempo com o app na tela; segundo plano é o tempo com um serviço em primeiro plano.</string>
     <string name="usage_app_none">Nenhum uso registrado deste app neste período.</string>
     <string name="notification_text_short">%1$d mA · %2$d%% · %3$s</string>
+    <string name="usage_show_system">Mostrar apps do sistema</string>
+    <string name="usage_hide_system">Ocultar apps do sistema</string>
+    <string name="usage_more_options">Mais opções</string>
 </resources>

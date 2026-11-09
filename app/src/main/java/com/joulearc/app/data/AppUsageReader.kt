@@ -3,6 +3,7 @@ package com.joulearc.app.data
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 
@@ -37,7 +38,7 @@ class AppUsageReader(context: Context) {
             if (pkg == appContext.packageName) return@mapNotNull null
             val fg = aggregator.foregroundMs[pkg] ?: 0L
             val bg = aggregator.backgroundMs[pkg] ?: 0L
-            if (fg + bg <= 0L) null else RawAppUsage(pkg, labelOf(pkg), fg, bg)
+            if (fg + bg <= 0L) null else RawAppUsage(pkg, labelOf(pkg), fg, bg, isSystemApp(pkg))
         }
     }
 
@@ -46,6 +47,19 @@ class AppUsageReader(context: Context) {
             pm.getApplicationIcon(packageName)
         } catch (e: PackageManager.NameNotFoundException) {
             null
+        }
+
+    /**
+     * System app = built into the phone and never updated from a store (updated ones, like the Play
+     * Store, count as regular apps, the way Android's own app list does). Packages the app cannot
+     * see at all have no launcher icon (see the manifest queries), so they are background system parts.
+     */
+    private fun isSystemApp(packageName: String): Boolean =
+        try {
+            val flags = pm.getApplicationInfo(packageName, 0).flags
+            (flags and ApplicationInfo.FLAG_SYSTEM) != 0 && (flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0
+        } catch (e: PackageManager.NameNotFoundException) {
+            true
         }
 
     private fun labelOf(packageName: String): String =

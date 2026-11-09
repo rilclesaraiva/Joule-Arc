@@ -1,6 +1,8 @@
 package com.joulearc.app.data
 
 import android.content.Context
+import android.content.res.Resources
+import org.xmlpull.v1.XmlPullParser
 import android.os.Build
 import android.os.PowerManager
 import java.io.File
@@ -21,7 +23,7 @@ object DeviceInfo {
      * starting point: the value the user types in Settings always wins.
      */
     fun systemDesignCapacityMah(context: Context): Int? =
-        fromPowerProfile(context) ?: fromKernelNode()
+        fromPowerProfile(context) ?: fromPowerProfileXml() ?: fromKernelNode()
 
     private fun fromPowerProfile(context: Context): Int? =
         try {
@@ -38,6 +40,38 @@ object DeviceInfo {
                 cls.getMethod("getAveragePower", String::class.java).invoke(profile, "battery.capacity") as Double
             }
             value.toInt().takeIf { it in PLAUSIBLE_MAH }
+        } catch (t: Throwable) {
+            null
+        }
+
+    /**
+     * The same power profile, read as the framework's own XML resource through public Resources
+     * calls (no hidden class). Vendors put the real battery size in it as "battery.capacity".
+     */
+    private fun fromPowerProfileXml(): Int? =
+        try {
+            val res = Resources.getSystem()
+            val id = res.getIdentifier("power_profile", "xml", "android")
+            if (id == 0) {
+                null
+            } else {
+                val parser = res.getXml(id)
+                try {
+                    var value: Double? = null
+                    var event = parser.eventType
+                    while (event != XmlPullParser.END_DOCUMENT && value == null) {
+                        if (event == XmlPullParser.START_TAG && parser.name == "item" &&
+                            parser.getAttributeValue(null, "name") == "battery.capacity"
+                        ) {
+                            value = parser.nextText().trim().toDoubleOrNull()
+                        }
+                        event = parser.next()
+                    }
+                    value?.toInt()?.takeIf { it in PLAUSIBLE_MAH }
+                } finally {
+                    parser.close()
+                }
+            }
         } catch (t: Throwable) {
             null
         }

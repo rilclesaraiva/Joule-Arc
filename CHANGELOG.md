@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 ### Changed
+- Uso por app hides system apps by default (built-in apps that were never updated, and background parts with no launcher icon). The three-dot button at the top right opens a small menu over it to show or hide them. The percentages still count them, so the shown apps may add up to less than the total.
+- The on-screen back button now plays the same slide-out as the back gesture.
+- Device capacity detection has one more source: the system power profile read as the framework's XML resource through public calls, tried before the kernel node.
 - Tapping an app in "Uso por app" opens its own page: total time, active and background time and the estimated battery share of each, with the 24 hours / 14 days switch.
 - The Device section is now one tappable panel that opens a single sheet (model, manufacturer, Android version, API level, security update, device code, device capacity).
 - The full-charge estimate no longer flickers: it is sampled only when the battery level changes and smoothed slowly.
