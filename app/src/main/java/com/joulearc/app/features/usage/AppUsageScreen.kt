@@ -113,19 +113,25 @@ private fun Breakdown(app: AppUsage, report: UsageReport) {
             stringResource(R.string.usage_app_total, formatDuration(app.foregroundMs + app.backgroundMs), percentText(totalPercent)),
             style = MaterialTheme.typography.titleMedium,
         )
-        val total = (app.foregroundMs + app.backgroundMs).coerceAtLeast(1L).toFloat()
-        val activeFraction = app.foregroundMs / total
+        // The bar is a share of the whole battery (like Android's): active, then background, then the rest.
+        val timeTotal = (app.foregroundMs + app.backgroundMs).coerceAtLeast(1L).toFloat()
+        val activeFraction = activePercent?.let { it / 100f } ?: (app.foregroundMs / timeTotal)
+        val backgroundFraction = backgroundPercent?.let { it / 100f } ?: (app.backgroundMs / timeTotal)
         Canvas(Modifier.fillMaxWidth().height(20.dp)) {
             val corner = CornerRadius(size.height / 2f, size.height / 2f)
+            val minWidth = size.height
             drawRoundRect(track, size = size, cornerRadius = corner)
-            val activeWidth = size.width * activeFraction
-            if (activeWidth > 0f) {
-                drawRoundRect(activeColor, size = Size(activeWidth.coerceAtLeast(size.height), size.height), cornerRadius = corner)
+            val activeWidth = if (activeFraction > 0f) (size.width * activeFraction).coerceIn(minWidth, size.width) else 0f
+            val backgroundWidth = if (backgroundFraction > 0f) (size.width * backgroundFraction).coerceAtLeast(minWidth) else 0f
+            if (backgroundWidth > 0f) {
+                val start = (activeWidth - minWidth / 2f).coerceAtLeast(0f)
+                val width = backgroundWidth.coerceAtMost(size.width - start)
+                if (width > 0f) {
+                    drawRoundRect(backgroundColor, topLeft = Offset(start, 0f), size = Size(width, size.height), cornerRadius = corner)
+                }
             }
-            val backgroundWidth = size.width - activeWidth
-            if (app.backgroundMs > 0L && backgroundWidth > 0f) {
-                val w = backgroundWidth.coerceAtLeast(size.height)
-                drawRoundRect(backgroundColor, topLeft = Offset(size.width - w, 0f), size = Size(w, size.height), cornerRadius = corner)
+            if (activeWidth > 0f) {
+                drawRoundRect(activeColor, size = Size(activeWidth, size.height), cornerRadius = corner)
             }
         }
         LegendRow(activeColor, stringResource(R.string.usage_app_active, formatDuration(app.foregroundMs), percentText(activePercent)))

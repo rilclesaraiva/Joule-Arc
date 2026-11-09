@@ -46,6 +46,18 @@ fun hourlyLevels(
     }
 }
 
+/** The 24 hourly buckets of the local day starting at [dayStartMs]; hours still in the future have no level. */
+fun dayHourlyLevels(samples: List<LevelSample>, dayStartMs: Long, nowMs: Long): List<HourBar> =
+    (0 until 24).map { k ->
+        val start = dayStartMs + k * HOUR_MS
+        val end = start + HOUR_MS
+        if (start > nowMs) {
+            HourBar(start, null, false)
+        } else {
+            HourBar(start, samples.lastOrNull { it.timeMs < end }?.level, samples.any { it.timeMs in start until end && it.plugged })
+        }
+    }
+
 /** Percentage consumed while unplugged, per local day, for the last [days] days (oldest first). */
 fun dailyDrain(
     samples: List<LevelSample>,

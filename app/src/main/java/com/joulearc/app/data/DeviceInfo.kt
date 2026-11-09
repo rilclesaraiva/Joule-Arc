@@ -35,8 +35,8 @@ object DeviceInfo {
             .firstOrNull { r -> r.rawMah?.let { it in PLAUSIBLE_MAH } == true }
             ?.let { DetectedCapacity(it.rawMah!!, it.source) }
 
-    /** Every source with its raw result or the reason it failed, for the diagnostics in the Device sheet. */
-    fun readCapacitySources(context: Context): List<SourceReading> =
+    /** Every source with its raw result or the reason it failed. */
+    private fun readCapacitySources(context: Context): List<SourceReading> =
         listOf(readPowerProfile(context), readPowerProfileXml(), readKernelNode())
 
     private fun readPowerProfile(context: Context): SourceReading =

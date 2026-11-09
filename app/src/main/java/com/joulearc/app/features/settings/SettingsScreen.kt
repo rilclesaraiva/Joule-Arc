@@ -54,7 +54,7 @@ import com.joulearc.app.core.RowIcon
 import com.joulearc.app.core.SUPPORT_EMAIL
 import com.joulearc.app.core.rememberDoubleTapConfirm
 import com.joulearc.app.data.AppLanguage
-import com.joulearc.app.data.CapacitySource
+import com.joulearc.app.core.labelRes
 import com.joulearc.app.data.DetectedCapacity
 import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.SettingsRepository
@@ -172,7 +172,7 @@ fun SettingsScreen(systemDesign: DetectedCapacity?, onOpenAbout: () -> Unit, mod
                                     stringResource(
                                         R.string.settings_design_hint,
                                         systemDesign?.let {
-                                            stringResource(R.string.value_mah, it.mah) + " (" + stringResource(sourceLabel(it.source)) + ")"
+                                            stringResource(R.string.value_mah, it.mah) + " (" + stringResource(it.source.labelRes()) + ")"
                                         }
                                             ?: stringResource(R.string.settings_design_none),
                                     ),
@@ -425,10 +425,4 @@ private fun UpdateAlertsDialog(onDismiss: () -> Unit) {
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.update_dialog_cancel)) } },
     )
-}
-
-private fun sourceLabel(source: CapacitySource): Int = when (source) {
-    CapacitySource.POWER_PROFILE -> R.string.capacity_source_profile
-    CapacitySource.POWER_PROFILE_XML -> R.string.capacity_source_xml
-    CapacitySource.KERNEL -> R.string.capacity_source_kernel
 }

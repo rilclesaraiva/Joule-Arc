@@ -17,14 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.joulearc.app.R
-import com.joulearc.app.data.CapacitySource
+import com.joulearc.app.core.labelRes
 import com.joulearc.app.data.DeviceInfo
-import com.joulearc.app.data.SourceReading
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
-import androidx.compose.ui.platform.LocalContext
 import java.util.Locale
 
 /** One sheet with everything about this phone, opened by tapping the Device section. */
@@ -53,39 +47,22 @@ internal fun DeviceSheet(state: HomeState, onDismiss: () -> Unit) {
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            val capacityLabel = if (state.designFromSystem) R.string.device_capacity_detected else R.string.device_capacity_user
+            val capacityLabel = if (state.designFromSystem) {
+                state.designSource?.let { stringResource(R.string.device_capacity_from, stringResource(it.labelRes())) }
+                    ?: stringResource(R.string.device_capacity_detected)
+            } else {
+                stringResource(R.string.device_capacity_user)
+            }
             InfoRows(
                 listOfNotNull(
                     stringResource(R.string.device_android) to DeviceInfo.androidVersion,
                     stringResource(R.string.device_api) to DeviceInfo.apiLevel.toString(),
                     DeviceInfo.securityPatch.takeIf { it.isNotBlank() }?.let { stringResource(R.string.device_patch) to it },
                     DeviceInfo.deviceCode.takeIf { it.isNotBlank() }?.let { stringResource(R.string.device_code) to it },
-                    state.designCapacityMah?.let { stringResource(capacityLabel) to stringResource(R.string.value_mah, it) },
+                    state.designCapacityMah?.let { capacityLabel to stringResource(R.string.value_mah, it) },
                 ),
             )
             MeaningBox(stringResource(R.string.sheet_meaning), stringResource(R.string.device_note), null)
-            val context = LocalContext.current
-            val readings by produceState<List<SourceReading>?>(null) {
-                value = withContext(Dispatchers.IO) { DeviceInfo.readCapacitySources(context) }
-            }
-            readings?.let { list ->
-                Text(stringResource(R.string.device_detection_title), style = MaterialTheme.typography.titleMedium)
-                list.forEach { r ->
-                    val label = stringResource(
-                        when (r.source) {
-                            CapacitySource.POWER_PROFILE -> R.string.capacity_source_profile
-                            CapacitySource.POWER_PROFILE_XML -> R.string.capacity_source_xml
-                            CapacitySource.KERNEL -> R.string.capacity_source_kernel
-                        },
-                    )
-                    val value = r.rawMah?.let { stringResource(R.string.value_mah, it) } ?: "—"
-                    Text(
-                        text = "$label: $value" + (r.note?.let { "\n$it" } ?: ""),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
         }
     }
 }

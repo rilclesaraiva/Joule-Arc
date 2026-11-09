@@ -2,8 +2,10 @@
 
 ## [Unreleased]
 ### Changed
+- Uso por app: tap a bar in the charts to see only that hour (24 hours view) or that day (14 days view, which also shows the hours of the chosen day). The list, the percentages and the per-app pages follow the selection; tap the same bar again to go back to the overall view. Holding a bar shows its time in a small label.
+- The battery bar on an app's page now fills by the share of the whole battery (active, then background), like Android's, instead of by time.
+- The Device sheet no longer shows the capacity diagnostics; the source of a detected capacity is in the row label.
 - Fixed the detected device capacity on phones where the system reports an adjusted figure: the app now reads the rated "battery.capacity" of the power profile (5000 mAh on the test phone) instead of the adjusted one (4079 mAh).
-- The Device sheet lists every capacity source with its raw result or the reason it failed, to trace a wrong device capacity.
 - Settings now shows where the detected device capacity came from (system power profile, system resources or kernel file), so a wrong or missing value can be traced.
 - Uso por app hides system apps by default (built-in apps that were never updated, and background parts with no launcher icon). The three-dot button at the top right opens a small menu over it to show or hide them. The percentages still count them, so the shown apps may add up to less than the total.
 - The on-screen back button now plays the same slide-out as the back gesture.
@@ -49,7 +51,6 @@
 - Text on the home and pages was too dark in the dark and AMOLED themes (the pages lost their content color when the top bars were removed).
 
 ### Changed
-- The Device sheet lists every capacity source with its raw result or the reason it failed, to trace a wrong device capacity.
 - Reading details now fit the situation: with no charger connected, the voltage, temperature and level texts no longer tell you to unplug or keep charging, and the power note explains discharge. Portuguese uses "Tensão" everywhere (no more "Voltagem").
 - The settings button on the home is now a floating round button, like the back buttons.
 - "Battery use by app" is now "Usage by app", and page titles keep the same margin on both sides.

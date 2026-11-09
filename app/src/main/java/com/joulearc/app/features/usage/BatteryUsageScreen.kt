@@ -37,6 +37,7 @@ import com.joulearc.app.core.formatDuration
 import com.joulearc.app.data.AppUsage
 import com.joulearc.app.data.LevelSample
 import com.joulearc.app.data.dailyDrain
+import com.joulearc.app.data.dayHourlyLevels
 import com.joulearc.app.data.hourlyLevels
 import com.joulearc.app.data.lastFullCharge
 import java.text.SimpleDateFormat
@@ -63,6 +64,10 @@ fun BatteryUsageScreen(
     samples: List<LevelSample>,
     windowDays: Int,
     onWindowChange: (Int) -> Unit,
+    selectedDay: Long?,
+    selectedHour: Long?,
+    onSelectDay: (Long?) -> Unit,
+    onSelectHour: (Long?) -> Unit,
     onAppClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -80,7 +85,15 @@ fun BatteryUsageScreen(
                 onSelect = { onWindowChange(if (it == 0) 1 else 14) },
             )
         }
-        item(key = "chart") { ChartSection(samples, windowDays) }
+        item(key = "chart") { ChartSection(samples, windowDays, selectedDay, selectedHour, onSelectDay, onSelectHour) }
+        selectionLabel(windowDays, selectedDay, selectedHour)?.let { label ->
+            item(key = "showing") {
+                Text(
+                    text = stringResource(R.string.usage_showing, label),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+            }
+        }
         if (report?.clipped == true) {
             item(key = "since") {
                 Text(
@@ -113,13 +126,36 @@ fun BatteryUsageScreen(
     }
 }
 
+private fun hourRange(startMs: Long): String {
+    val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return format.format(Date(startMs)) + "-" + format.format(Date(startMs + 3_600_000L))
+}
+
+private fun dayLabel(startMs: Long): String =
+    SimpleDateFormat("EEE, d MMM", Locale.getDefault()).format(Date(startMs))
+
+/** Text for what the list below is limited to (an hour or a day), or null when it shows everything. */
+private fun selectionLabel(windowDays: Int, day: Long?, hour: Long?): String? = when {
+    hour != null -> if (windowDays == 1) hourRange(hour) else dayLabel(hour) + ", " + hourRange(hour)
+    day != null -> dayLabel(day)
+    else -> null
+}
+
 @Composable
-private fun ChartSection(samples: List<LevelSample>, windowDays: Int) {
+private fun ChartSection(
+    samples: List<LevelSample>,
+    windowDays: Int,
+    selectedDay: Long?,
+    selectedHour: Long?,
+    onSelectDay: (Long?) -> Unit,
+    onSelectHour: (Long?) -> Unit,
+) {
     if (samples.isEmpty()) {
         Text(stringResource(R.string.usage_no_history), style = MaterialTheme.typography.bodyMedium)
         return
     }
     val now = remember(samples) { System.currentTimeMillis() }
+    val hourFormat = remember { SimpleDateFormat("H", Locale.getDefault()) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (windowDays == 1) {
             lastFullCharge(samples)?.let {
@@ -134,14 +170,7 @@ private fun ChartSection(samples: List<LevelSample>, windowDays: Int) {
                 fontWeight = FontWeight.Bold,
             )
             val bars = remember(samples) { hourlyLevels(samples, now) }
-            val hourFormat = remember { SimpleDateFormat("H", Locale.getDefault()) }
-            BarChart(
-                values = bars.map { it.level?.toFloat() },
-                maxValue = 100f,
-                yLabels = listOf("100%", "50%", "0%"),
-                xLabels = bars.mapIndexed { i, b -> if (i % 3 == 0) hourFormat.format(Date(b.startMs)) else "" },
-                highlighted = bars.indices.filter { bars[it].plugged }.toSet(),
-            )
+            HourChart(bars, hourFormat, selectedHour, onSelectHour)
         } else {
             Text(
                 text = stringResource(R.string.usage_chart_usage),
@@ -157,9 +186,35 @@ private fun ChartSection(samples: List<LevelSample>, windowDays: Int) {
                 yLabels = listOf("${top.toInt()}%", "${(top / 2).toInt()}%", "0%"),
                 xLabels = days.map { weekdayFormat.format(Date(it.startMs)).uppercase(Locale.getDefault()) },
                 highlighted = emptySet(),
+                selected = days.indexOfFirst { it.startMs == selectedDay }.takeIf { it >= 0 },
+                onSelect = { index -> onSelectDay(index?.let { days[it].startMs }) },
+                hints = days.map { dayLabel(it.startMs) },
             )
+            if (selectedDay != null) {
+                val bars = remember(samples, selectedDay) { dayHourlyLevels(samples, selectedDay, now) }
+                HourChart(bars, hourFormat, selectedHour, onSelectHour)
+            }
         }
     }
+}
+
+@Composable
+private fun HourChart(
+    bars: List<com.joulearc.app.data.HourBar>,
+    hourFormat: SimpleDateFormat,
+    selectedHour: Long?,
+    onSelectHour: (Long?) -> Unit,
+) {
+    BarChart(
+        values = bars.map { it.level?.toFloat() },
+        maxValue = 100f,
+        yLabels = listOf("100%", "50%", "0%"),
+        xLabels = bars.mapIndexed { i, b -> if (i % 3 == 0) hourFormat.format(Date(b.startMs)) else "" },
+        highlighted = bars.indices.filter { bars[it].plugged }.toSet(),
+        selected = bars.indexOfFirst { it.startMs == selectedHour }.takeIf { it >= 0 },
+        onSelect = { index -> onSelectHour(index?.let { bars[it].startMs }) },
+        hints = bars.map { hourRange(it.startMs) },
+    )
 }
 
 @Composable

@@ -70,4 +70,17 @@ class LevelChartsTest {
         assertEquals(11L, lastFullCharge(samples))
         assertNull(lastFullCharge(listOf(s(1, 50))))
     }
+
+    @Test fun dayHourlyHasNoLevelForFutureHours() {
+        val now = t0 + 10 * hour + 30 * 60_000
+        val samples = listOf(s(t0 + 2 * hour, 90), s(t0 + 5 * hour, 70, plugged = true))
+        val bars = dayHourlyLevels(samples, t0, now)
+        assertEquals(24, bars.size)
+        assertEquals(t0, bars[0].startMs)
+        assertNull(bars[0].level)             // before the first sample
+        assertEquals(90, bars[3].level)
+        assertTrue(bars[5].plugged)
+        assertEquals(70, bars[10].level)      // the current hour
+        assertNull(bars[11].level)            // still in the future
+    }
 }

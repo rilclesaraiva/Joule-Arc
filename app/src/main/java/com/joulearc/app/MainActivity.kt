@@ -102,7 +102,8 @@ import com.joulearc.app.features.usage.usageAccessSettingsIntent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-private const val DAY_MS = 24L * 3_600_000L
+private const val HOUR_MS = 3_600_000L
+private const val DAY_MS = 24L * HOUR_MS
 
 // Routes. The back stack is kept as "home|history|session:123" so it survives recreation.
 private const val HOME = "home"
@@ -237,6 +238,14 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     var notificationsGranted by remember { mutableStateOf(hasNotificationPermission()) }
     var usageGranted by remember { mutableStateOf(isUsageAccessGranted(context)) }
     var windowDays by rememberSaveable { mutableIntStateOf(1) }
+    // What the usage list is limited to: a day (14-day view) and/or an hour; null = everything.
+    var selectedDay by rememberSaveable { mutableStateOf<Long?>(null) }
+    var selectedHour by rememberSaveable { mutableStateOf<Long?>(null) }
+    val changeWindow: (Int) -> Unit = {
+        windowDays = it
+        selectedDay = null
+        selectedHour = null
+    }
     val notificationLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { notificationsGranted = it }
@@ -247,10 +256,9 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     }
 
     val onUsagePages = route == USAGE || route.startsWith(APP)
-    val report by produceState<UsageReport?>(null, usageGranted, windowDays, onUsagePages) {
+    val report by produceState<UsageReport?>(null, usageGranted, windowDays, selectedDay, selectedHour, onUsagePages) {
         if (!onUsagePages || !usageGranted) return@produceState
-        value = null
-        value = withContext(Dispatchers.IO) { buildUsageReport(context, windowDays) }
+        value = withContext(Dispatchers.IO) { buildUsageReport(context, windowDays, selectedDay, selectedHour) }
     }
 
     val prompt by GitHubUpdatesRepository.prompt.collectAsStateWithLifecycle()
@@ -264,6 +272,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     capacityMah = capacityMah,
                     designCapacityMah = designUser ?: systemDesign?.mah,
                     designFromSystem = designUser == null && systemDesign != null,
+                    designSource = if (designUser == null) systemDesign?.source else null,
                     recorded = recorded,
                     extremes = extremes,
                     fahrenheit = fahrenheit,
@@ -358,7 +367,14 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                         },
                         samples = levelSamples,
                         windowDays = windowDays,
-                        onWindowChange = { windowDays = it },
+                        onWindowChange = changeWindow,
+                        selectedDay = selectedDay,
+                        selectedHour = selectedHour,
+                        onSelectDay = {
+                            selectedDay = it
+                            selectedHour = null
+                        },
+                        onSelectHour = { selectedHour = it },
                         onAppClick = { open(APP + it) },
                         modifier = modifier,
                     )
@@ -370,7 +386,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     packageName = page.removePrefix(APP),
                     report = report,
                     windowDays = windowDays,
-                    onWindowChange = { windowDays = it },
+                    onWindowChange = changeWindow,
                     modifier = modifier,
                 )
             }
@@ -477,13 +493,21 @@ private fun Page(
  * Ranks apps over the window and attaches icons. The window is shortened to the start of the
  * battery level history, so the drained percentage and the usage times cover the same period.
  */
-private fun buildUsageReport(context: Context, windowDays: Int): UsageReport {
+private fun buildUsageReport(context: Context, windowDays: Int, selectedDay: Long?, selectedHour: Long?): UsageReport {
     val now = System.currentTimeMillis()
     val samples = LevelHistoryRepository.samples.value
     val windowStart = now - windowDays * DAY_MS
-    val from = samples.firstOrNull()?.let { maxOf(windowStart, it.timeMs) } ?: windowStart
+    // An hour or a day picked in the chart narrows the window to just that slot.
+    val slotStart = selectedHour ?: selectedDay
+    val slotEnd = selectedHour?.let { it + HOUR_MS } ?: selectedDay?.let { it + DAY_MS }
+    val base = slotStart ?: windowStart
+    val to = minOf(slotEnd ?: now, now)
+    val from = samples.firstOrNull()?.let { maxOf(base, it.timeMs) } ?: base
+    if (from >= to) {
+        return UsageReport(emptyList(), emptyMap(), if (samples.isEmpty()) null else 0f, from, false)
+    }
     val reader = AppUsageReader(context)
-    val apps = rankAppUsage(reader.read(from, now), limit = 100)
+    val apps = rankAppUsage(reader.read(from, to), limit = 100)
     val icons = apps.mapNotNull { app ->
         val bitmap = reader.icon(app.packageName)?.toBitmap(96, 96)?.asImageBitmap()
         if (bitmap == null) null else app.packageName to bitmap
@@ -491,8 +515,8 @@ private fun buildUsageReport(context: Context, windowDays: Int): UsageReport {
     return UsageReport(
         apps = apps,
         icons = icons,
-        drainedPercent = if (samples.isEmpty()) null else drainedPercent(samples, from, now),
+        drainedPercent = if (samples.isEmpty()) null else drainedPercent(samples, from, to),
         fromMs = from,
-        clipped = from > windowStart,
+        clipped = slotStart == null && from > windowStart,
     )
 }
