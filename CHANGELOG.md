@@ -34,6 +34,5 @@ First public version.
 - Project structure (`core` / `data` / `features`), CI workflow and R8 release build without obfuscation.
 
 ### Known issues
-- Not tested on a device yet beyond the first screens; the new home, sheets, reminders, tile and widget are untested.
 - What the charger offers, the device capacity from the system and the cycle count depend on the device and may not appear.
 - The per-app list for a single hour can show less time than the real one for apps that were already open when the hour began.

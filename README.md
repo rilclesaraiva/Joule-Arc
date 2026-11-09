@@ -4,7 +4,6 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 
 ## Features
 
-**Available now (early development)**
 - One home screen with the main readings; history, consumption, battery use by app and settings open as separate pages.
 - Live current on a gauge centered on zero (negative = out of the battery), updated twice per second while the app is open, with % per hour, time to full or time left, and the highest and lowest current recorded.
 - Amber warning when a charger is connected but the battery is not charging or is losing charge.
