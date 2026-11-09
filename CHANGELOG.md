@@ -20,6 +20,9 @@
 - Material 3 Expressive theme with dynamic color. The app's animations run at the app's own speed, regardless of the system animation scale.
 - Privacy policy and terms in `docs/` (GitHub Pages), linked in the README and in the app.
 
+### Fixed
+- Text on the home and pages was too dark in the dark and AMOLED themes (the pages lost their content color when the top bars were removed).
+
 ### Changed
 - No fixed top bars: page titles scroll with the content, and the home title and settings button sit at the start of the home. Only a round, slightly transparent back button stays over inner pages.
 - Settings are now plain ordered lists with icons (no categories); About is the only heading and opens a page with the developer, project links, legal pages, license and an invitation to the repository. The home footer is gone.

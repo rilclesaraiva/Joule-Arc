@@ -21,7 +21,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -30,6 +29,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -290,7 +290,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
 /** Home: no fixed bar. The title and the settings button are part of the scrolling content. */
 @Composable
 private fun HomePage(content: @Composable (Modifier) -> Unit) {
-    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         content(Modifier.fillMaxSize().systemBarsPadding())
     }
 }
@@ -298,9 +298,11 @@ private fun HomePage(content: @Composable (Modifier) -> Unit) {
 /** Inner page: the title scrolls with the content; only the round back button stays over the page. */
 @Composable
 private fun Page(onBack: () -> Unit, content: @Composable (Modifier) -> Unit) {
-    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        content(Modifier.fillMaxSize().systemBarsPadding())
-        BackButton(onBack, Modifier.align(Alignment.TopStart).statusBarsPadding().padding(12.dp))
+    Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Box(Modifier.fillMaxSize()) {
+            content(Modifier.fillMaxSize().systemBarsPadding())
+            BackButton(onBack, Modifier.align(Alignment.TopStart).statusBarsPadding().padding(12.dp))
+        }
     }
 }
 

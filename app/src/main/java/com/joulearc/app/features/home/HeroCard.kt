@@ -67,7 +67,10 @@ internal fun HeroCard(
     )
     ElevatedCard(
         onClick = onClick,
-        colors = CardDefaults.elevatedCardColors(containerColor = container),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = container,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
