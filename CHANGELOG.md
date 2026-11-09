@@ -20,6 +20,15 @@
 - Material 3 Expressive theme with dynamic color. The app's animations run at the app's own speed, regardless of the system animation scale.
 - Privacy policy and terms in `docs/` (GitHub Pages), linked in the README and in the app.
 
+### Changed
+- Settings has a fourth theme, AMOLED (pure black surfaces).
+- The home no longer shifts while numbers change: tabular digits, one-line subtitles on the main card.
+- The home remembers its scroll position when you come back from a page.
+- The current gauge keeps its scale: it grows at once when needed but shrinks only after the value stays low for a while.
+- The colored top bar is gone; the battery state now tints the main card and shows as a scalloped Expressive badge.
+- The amber warning waits 45 seconds after the reading turns odd (new "Checking charge" state), so a charger that is still negotiating is not reported as a problem.
+- The design capacity is detected by the app (system power profile, then kernel node when readable); the value typed in Settings still wins.
+
 ### Known issues
 - Not tested on a device yet beyond the first screens; the new home, sheets, reminders, tile and widget are untested.
 - What the charger offers, the design capacity from the system and the cycle count depend on the device and may not appear.

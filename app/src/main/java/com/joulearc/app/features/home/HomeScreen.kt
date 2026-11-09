@@ -1,13 +1,14 @@
 package com.joulearc.app.features.home
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ fun HomeScreen(
     onOpenDrain: () -> Unit,
     onOpenUsage: () -> Unit,
     onResetRecorded: () -> Unit,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier,
 ) {
     var openReading by rememberSaveable { mutableStateOf<Reading?>(null) }
@@ -49,7 +51,7 @@ fun HomeScreen(
 
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -65,7 +67,7 @@ fun HomeScreen(
                 onReset = onResetRecorded,
                 onClick = { openReading = Reading.CURRENT },
             )
-            WarningCard(s)
+            AnimatedVisibility(visible = s.powerState.isWarning) { WarningCard(s) }
             CapacityCard(
                 s = s,
                 capacityMah = state.capacityMah,
@@ -199,3 +201,6 @@ private fun NavCard(icon: Int, title: String, subtitle: String, onClick: () -> U
         }
     }
 }
+
+private val PowerState.isWarning: Boolean
+    get() = this == PowerState.PLUGGED_DRAINING || this == PowerState.PLUGGED_PAUSED

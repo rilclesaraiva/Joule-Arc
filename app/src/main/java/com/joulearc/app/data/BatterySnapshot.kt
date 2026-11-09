@@ -12,6 +12,9 @@ enum class PowerState {
     DISCHARGING,
     FULL,
 
+    /** A charger was just connected with an odd reading: waiting a moment before calling it a problem. */
+    CHECKING,
+
     /** A charger is connected but current flows out of the battery (weak or faulty charger or cable). */
     PLUGGED_DRAINING,
 
@@ -41,11 +44,14 @@ data class BatterySnapshot(
     /** What the charger offers, when the system reports it (not on every device). */
     val chargerMaxVoltageMv: Int? = null,
     val chargerMaxCurrentMa: Int? = null,
+    /** True while an odd plugged-in reading is still inside the settling period (see [AmberGate]). */
+    val settling: Boolean = false,
 ) {
     val powerState: PowerState
         get() = when {
             source == PowerSource.BATTERY -> PowerState.DISCHARGING
             status == ChargeStatus.FULL -> PowerState.FULL
+            settling -> PowerState.CHECKING
             pluggedDischarging -> PowerState.PLUGGED_DRAINING
             status == ChargeStatus.CHARGING -> PowerState.CHARGING
             else -> PowerState.PLUGGED_PAUSED
@@ -56,7 +62,8 @@ data class BatterySnapshot(
 
     /** True while current flows out of the battery, with or without a charger. */
     val drawingFromBattery: Boolean
-        get() = powerState == PowerState.DISCHARGING || powerState == PowerState.PLUGGED_DRAINING
+        get() = powerState == PowerState.DISCHARGING || powerState == PowerState.PLUGGED_DRAINING ||
+            (powerState == PowerState.CHECKING && pluggedDischarging)
 
     /** Current in mA: positive into the battery, negative out of it. */
     val signedCurrentMa: Int?

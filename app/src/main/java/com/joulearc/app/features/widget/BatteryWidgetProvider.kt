@@ -44,6 +44,7 @@ class BatteryWidgetProvider : AppWidgetProvider() {
                 PowerState.FULL -> R.string.status_full
                 PowerState.PLUGGED_DRAINING -> R.string.status_draining
                 PowerState.PLUGGED_PAUSED -> R.string.status_paused
+                PowerState.CHECKING -> R.string.status_checking
             }
             views.setTextViewText(
                 R.id.widget_status,

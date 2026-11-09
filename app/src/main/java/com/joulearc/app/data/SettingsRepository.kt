@@ -15,6 +15,7 @@ object SettingsRepository {
     const val THEME_SYSTEM = 0
     const val THEME_LIGHT = 1
     const val THEME_DARK = 2
+    const val THEME_AMOLED = 3
 
     private const val KEY_DESIGN_CAPACITY = "design_capacity_mah"
     private const val KEY_CHARGE_ALERT = "charge_alert"

@@ -239,6 +239,7 @@ private fun StatusDetails(s: BatterySnapshot) {
         PowerState.FULL -> R.string.meaning_status_full
         PowerState.PLUGGED_DRAINING -> R.string.warn_draining_body
         PowerState.PLUGGED_PAUSED -> R.string.warn_paused_body
+        PowerState.CHECKING -> R.string.meaning_status_checking
     }
     MeaningBox(stringResource(R.string.sheet_meaning), stringResource(meaning), palette.of(stateTone(s.powerState)))
 }

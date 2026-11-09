@@ -119,6 +119,8 @@
     <string name="hero_reset">Reset</string>
     <string name="status_draining">Losing charge</string>
     <string name="status_paused">Not charging</string>
+    <string name="status_checking">Checking charge</string>
+    <string name="meaning_status_checking">The charger was just connected. Joule Arc waits a few seconds for the charge to settle before saying anything is wrong.</string>
     <string name="source_on_battery">On battery</string>
     <string name="warn_draining_title">Charger connected, battery losing charge</string>
     <string name="warn_draining_body">The charger is connected, but more power is leaving the battery than coming in. The charger or cable may be too weak for what the phone is doing, or may be faulty. Try another charger or cable, or use the phone less while it charges.</string>
@@ -130,7 +132,7 @@
     <string name="capacity_full">Full charge today (estimated)</string>
     <string name="capacity_lost">Lost to wear</string>
     <string name="capacity_design">Design capacity</string>
-    <string name="capacity_design_system">Design capacity reported by the system.</string>
+    <string name="capacity_design_system">Design capacity detected by the app. If it looks wrong, type the right value in Settings.</string>
     <string name="capacity_design_user">Design capacity set by you.</string>
     <string name="capacity_design_missing">Design capacity unknown: set it in Settings.</string>
     <string name="capacity_unavailable">This device does not report the charge counter, so the capacity cannot be measured.</string>
@@ -239,8 +241,8 @@
     <string name="settings_protection_sub">Allow Joule Arc to run without battery restrictions so monitoring and reminders keep working</string>
     <string name="settings_protection_on">Already running without battery restrictions</string>
     <string name="settings_design">Design capacity (mAh)</string>
-    <string name="settings_design_hint">Leave empty to use the system value: %1$s</string>
-    <string name="settings_design_none">not reported</string>
+    <string name="settings_design_hint">Leave empty to use the value detected by the app: %1$s</string>
+    <string name="settings_design_none">could not be detected on this device</string>
     <string name="settings_dual_cell">Dual-cell battery</string>
     <string name="settings_dual_cell_sub">For phones with two battery cells (usually 65 W or more). Doubles the current, the charge and the capacity to match the rated values.</string>
     <string name="settings_temp_unit">Temperature unit</string>
@@ -252,6 +254,7 @@
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="theme_amoled">AMOLED</string>
     <string name="settings_language">Language</string>
     <string name="language_system">System</string>
     <string name="settings_help">Help and privacy</string>

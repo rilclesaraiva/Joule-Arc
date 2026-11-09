@@ -14,13 +14,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +42,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,15 +52,12 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joulearc.app.core.AppMotion
 import com.joulearc.app.core.JouleArcTheme
-import com.joulearc.app.core.Tone
 import com.joulearc.app.core.appRecomposer
 import com.joulearc.app.core.isAppInDarkTheme
-import com.joulearc.app.core.statusPalette
 import com.joulearc.app.data.AppUsageReader
 import com.joulearc.app.data.BatteryRepository
 import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.LevelHistoryRepository
-import com.joulearc.app.data.PowerState
 import com.joulearc.app.data.SessionRepository
 import com.joulearc.app.data.SettingsRepository
 import com.joulearc.app.data.computeDrainStats
@@ -161,6 +156,8 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
         computeDrainStats(levelSamples, now - 14L * DAY_MS, now)
     }
 
+    // Kept here, above the page switch, so coming back from a page returns to the same spot.
+    val homeScroll = rememberSaveable(saver = ScrollState.Saver) { ScrollState(0) }
     var stack by rememberSaveable { mutableStateOf(HOME) }
     val route = stack.substringAfterLast('|')
     val open: (String) -> Unit = { stack = "$stack|$it" }
@@ -214,10 +211,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     drain = drainStats,
                     notificationsGranted = notificationsGranted,
                 )
-                HomePage(
-                    state = homeState,
-                    onSettings = { open(SETTINGS) },
-                ) { modifier ->
+                HomePage(onSettings = { open(SETTINGS) }) { modifier ->
                     HomeScreen(
                         state = homeState,
                         onRequestNotifications = {
@@ -229,6 +223,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                         onOpenDrain = { open(DRAIN) },
                         onOpenUsage = { open(USAGE) },
                         onResetRecorded = { SettingsRepository.resetRecorded() },
+                        scrollState = homeScroll,
                         modifier = modifier,
                     )
                 }
@@ -286,45 +281,19 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     }
 }
 
-/** Home scaffold: the top bar takes the color of the battery state (green, red or amber). */
+/** Home scaffold: a plain top bar; the battery state is shown on the main card, not here. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomePage(state: HomeState, onSettings: () -> Unit, content: @Composable (Modifier) -> Unit) {
-    val s = state.snapshot
-    val palette = statusPalette()
-    val tone = when (s?.powerState) {
-        PowerState.CHARGING, PowerState.FULL -> Tone.GOOD
-        PowerState.DISCHARGING -> Tone.BAD
-        PowerState.PLUGGED_DRAINING, PowerState.PLUGGED_PAUSED -> Tone.CAUTION
-        null -> null
-    }
-    val surface = MaterialTheme.colorScheme.surface
-    val barColor by animateColorAsState(
-        targetValue = tone?.let { palette.of(it).copy(alpha = 0.22f).compositeOver(surface) } ?: surface,
-        animationSpec = tween(AppMotion.LONG),
-        label = "barColor",
-    )
+private fun HomePage(onSettings: () -> Unit, content: @Composable (Modifier) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Column {
-                        Text(stringResource(R.string.app_name))
-                        if (s != null) {
-                            Text(
-                                text = stringResource(MonitorService.stateLabel(s.powerState)) + " · ${s.levelPercent}%",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                },
+                title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = onSettings) {
                         Icon(painterResource(R.drawable.ic_settings), stringResource(R.string.settings_title))
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = barColor, scrolledContainerColor = barColor),
             )
         },
     ) { padding -> content(Modifier.padding(padding).fillMaxSize()) }

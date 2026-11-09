@@ -119,6 +119,8 @@
     <string name="hero_reset">Redefinir</string>
     <string name="status_draining">Perdendo carga</string>
     <string name="status_paused">Não está carregando</string>
+    <string name="status_checking">Verificando carga</string>
+    <string name="meaning_status_checking">O carregador acabou de ser conectado. O Joule Arc espera alguns segundos até a carga se estabilizar antes de dizer que algo está errado.</string>
     <string name="source_on_battery">Na bateria</string>
     <string name="warn_draining_title">Carregador conectado, mas a bateria perde carga</string>
     <string name="warn_draining_body">O carregador está conectado, mas sai mais energia da bateria do que entra. O carregador ou o cabo podem ser fracos demais para o uso atual, ou podem estar com defeito. Tente outro carregador ou cabo, ou use menos o celular enquanto carrega.</string>
@@ -130,7 +132,7 @@
     <string name="capacity_full">Carga total hoje (estimada)</string>
     <string name="capacity_lost">Perdida com o desgaste</string>
     <string name="capacity_design">Capacidade de projeto</string>
-    <string name="capacity_design_system">Capacidade de projeto informada pelo sistema.</string>
+    <string name="capacity_design_system">Capacidade de projeto detectada pelo app. Se parecer errada, digite o valor certo nas configurações.</string>
     <string name="capacity_design_user">Capacidade de projeto informada por você.</string>
     <string name="capacity_design_missing">Capacidade de projeto desconhecida: informe nas configurações.</string>
     <string name="capacity_unavailable">Este aparelho não informa o contador de carga, então a capacidade não pode ser medida.</string>
@@ -239,8 +241,8 @@
     <string name="settings_protection_sub">Permita que o Joule Arc rode sem restrição de bateria para o monitoramento e os lembretes continuarem funcionando</string>
     <string name="settings_protection_on">Já roda sem restrição de bateria</string>
     <string name="settings_design">Capacidade de projeto (mAh)</string>
-    <string name="settings_design_hint">Deixe vazio para usar o valor do sistema: %1$s</string>
-    <string name="settings_design_none">não informado</string>
+    <string name="settings_design_hint">Deixe vazio para usar o valor detectado pelo app: %1$s</string>
+    <string name="settings_design_none">não foi possível detectar neste aparelho</string>
     <string name="settings_dual_cell">Bateria de duas células</string>
     <string name="settings_dual_cell_sub">Para celulares com duas células de bateria (geralmente 65 W ou mais). Dobra a corrente, a carga e a capacidade para corresponder aos valores nominais.</string>
     <string name="settings_temp_unit">Unidade de temperatura</string>
@@ -252,6 +254,7 @@
     <string name="theme_system">Sistema</string>
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Escuro</string>
+    <string name="theme_amoled">AMOLED</string>
     <string name="settings_language">Idioma</string>
     <string name="language_system">Sistema</string>
     <string name="settings_help">Ajuda e privacidade</string>

@@ -168,7 +168,7 @@ class MonitorService : Service() {
 
     private fun nextIntervalMs(): Long = when {
         BatteryRepository.uiVisible.value -> VISIBLE_INTERVAL_MS
-        lastSnapshot?.isCharging == true -> CHARGING_INTERVAL_MS
+        lastSnapshot?.let { it.isCharging || it.settling } == true -> CHARGING_INTERVAL_MS
         else -> IDLE_INTERVAL_MS
     }
 
@@ -245,6 +245,7 @@ class MonitorService : Service() {
             PowerState.FULL -> R.string.status_full
             PowerState.PLUGGED_DRAINING -> R.string.status_draining
             PowerState.PLUGGED_PAUSED -> R.string.status_paused
+            PowerState.CHECKING -> R.string.status_checking
         }
     }
 }

@@ -77,6 +77,7 @@ class BatteryTileService : TileService() {
                     PowerState.FULL -> R.string.status_full
                     PowerState.PLUGGED_DRAINING -> R.string.status_draining
                     PowerState.PLUGGED_PAUSED -> R.string.status_paused
+                    PowerState.CHECKING -> R.string.status_checking
                 }
                 tile.subtitle = getString(R.string.tile_subtitle, getString(statusRes), s.levelPercent)
             }

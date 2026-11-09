@@ -21,12 +21,14 @@ internal fun stateLabel(state: PowerState): Int = when (state) {
     PowerState.FULL -> R.string.status_full
     PowerState.PLUGGED_DRAINING -> R.string.status_draining
     PowerState.PLUGGED_PAUSED -> R.string.status_paused
+    PowerState.CHECKING -> R.string.status_checking
 }
 
 internal fun stateTone(state: PowerState): Tone = when (state) {
     PowerState.CHARGING, PowerState.FULL -> Tone.GOOD
     PowerState.DISCHARGING -> Tone.BAD
     PowerState.PLUGGED_DRAINING, PowerState.PLUGGED_PAUSED -> Tone.CAUTION
+    PowerState.CHECKING -> Tone.INFO
 }
 
 internal fun sourceLabel(source: PowerSource): Int = when (source) {

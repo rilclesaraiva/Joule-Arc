@@ -15,7 +15,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Battery use by app: 24-hour level chart, 14-day usage chart and a per-app list with an estimated percentage (Android does not expose per-app mAh to regular apps).
 - Charge and low battery reminders.
 - Quick Settings tile, home screen widget and a persistent notification.
-- Material 3 Expressive interface with dynamic color, light and dark themes, English and Portuguese.
+- Material 3 Expressive interface with dynamic color, light, dark and AMOLED themes, English and Portuguese.
 
 ## Privacy and permissions
 

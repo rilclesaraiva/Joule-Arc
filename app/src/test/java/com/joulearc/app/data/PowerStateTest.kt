@@ -29,4 +29,17 @@ class PowerStateTest {
         val s = snap(0).copy(chargerMaxVoltageMv = 22_000, chargerMaxCurrentMa = 3_220)
         assertEquals(70_840, s.chargerMaxMw)
     }
+
+    @Test fun settlingChargerIsCheckingNotAmber() {
+        val s = snap(0, status = ChargeStatus.CHARGING, source = PowerSource.USB, current = 300)
+            .copy(pluggedDischarging = true, settling = true)
+        assertEquals(PowerState.CHECKING, s.powerState)
+        assertFalse(s.isCharging)
+        assertEquals(-300, s.signedCurrentMa)
+    }
+
+    @Test fun settlingDoesNotHideFull() {
+        val s = snap(0, status = ChargeStatus.FULL, source = PowerSource.AC).copy(settling = true)
+        assertEquals(PowerState.FULL, s.powerState)
+    }
 }

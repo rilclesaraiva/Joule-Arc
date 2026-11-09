@@ -74,6 +74,10 @@ class BatteryReader(context: Context) {
         val maxChargerUa = intent.getIntExtra("max_charging_current", 0)
         val maxChargerUv = intent.getIntExtra("max_charging_voltage", 0)
         val plugged = source != PowerSource.BATTERY
+        // A charger that is still negotiating looks odd for a few seconds; only a lasting oddity counts.
+        val odd = plugged && status != ChargeStatus.FULL && (pluggedDischarging || status != ChargeStatus.CHARGING)
+        val confirmed = amberGate.confirmed(odd, System.currentTimeMillis())
+        val settling = odd && !confirmed
 
         return BatterySnapshot(
             levelPercent = percent,
@@ -91,11 +95,13 @@ class BatteryReader(context: Context) {
             pluggedDischarging = pluggedDischarging,
             chargerMaxVoltageMv = if (plugged && maxChargerUv > 0) maxChargerUv / 1000 else null,
             chargerMaxCurrentMa = if (plugged && maxChargerUa > 0) maxChargerUa / 1000 else null,
+            settling = settling,
         )
     }
 
     private companion object {
         /** Shared by every reader in the process, so the service, tile and widget learn together. */
         val signLearner = CurrentSignLearner()
+        val amberGate = AmberGate()
     }
 }

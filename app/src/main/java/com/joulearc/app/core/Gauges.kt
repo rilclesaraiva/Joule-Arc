@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -21,6 +25,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import java.util.Locale
+import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.min
@@ -30,6 +35,29 @@ import kotlin.math.sin
 /** Picks the smallest gauge range from a fixed list that fits the value. */
 fun gaugeRange(magnitude: Int): Float =
     listOf(1000f, 2000f, 5000f, 10000f, 20000f).firstOrNull { magnitude <= it } ?: 20000f
+
+/**
+ * A gauge range that does not flip back and forth. It grows at once when the value no longer fits,
+ * but shrinks only after the value has fit the smaller range, with some margin, for [SHRINK_DELAY_MS].
+ */
+@Composable
+fun rememberStableGaugeRange(magnitude: Int): Float {
+    var range by remember { mutableFloatStateOf(gaugeRange(magnitude)) }
+    val growTo = gaugeRange(magnitude)
+    val shrinkTo = gaugeRange((magnitude / 0.7f).toInt())
+    LaunchedEffect(growTo, shrinkTo) {
+        when {
+            growTo > range -> range = growTo
+            shrinkTo < range -> {
+                delay(SHRINK_DELAY_MS)
+                range = shrinkTo
+            }
+        }
+    }
+    return range
+}
+
+private const val SHRINK_DELAY_MS = 20_000L
 
 private fun tickText(v: Float): String {
     if (abs(v) < 1000f) return v.roundToInt().toString()

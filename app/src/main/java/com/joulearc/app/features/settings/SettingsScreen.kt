@@ -183,6 +183,7 @@ fun SettingsScreen(systemDesignMah: Int?, modifier: Modifier = Modifier) {
                         stringResource(R.string.theme_system),
                         stringResource(R.string.theme_light),
                         stringResource(R.string.theme_dark),
+                        stringResource(R.string.theme_amoled),
                     ),
                     selected = themeMode,
                     onSelect = SettingsRepository::setThemeMode,

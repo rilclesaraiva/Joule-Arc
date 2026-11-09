@@ -1,6 +1,25 @@
 package com.joulearc.app.features.home
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
+import androidx.compose.material3.toShape
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
+import com.joulearc.app.core.AppMotion
+import com.joulearc.app.core.rememberStableGaugeRange
+import com.joulearc.app.data.PowerState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +40,6 @@ import com.joulearc.app.core.BidirectionalGauge
 import com.joulearc.app.core.formatClock
 import com.joulearc.app.core.formatMinutes
 import com.joulearc.app.core.formatWatts
-import com.joulearc.app.core.gaugeRange
 import com.joulearc.app.core.statusPalette
 import com.joulearc.app.data.BatterySnapshot
 import com.joulearc.app.data.ChargeEstimate
@@ -39,21 +57,39 @@ internal fun HeroCard(
 ) {
     val palette = statusPalette()
     val signed = s.signedCurrentMa
-    ElevatedCard(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+    val stateColor = palette.of(stateTone(s.powerState))
+    val base = MaterialTheme.colorScheme.surfaceContainerLow
+    val container by animateColorAsState(
+        targetValue = stateColor.copy(alpha = 0.14f).compositeOver(base),
+        animationSpec = tween(AppMotion.LONG),
+        label = "heroContainer",
+    )
+    ElevatedCard(
+        onClick = onClick,
+        colors = CardDefaults.elevatedCardColors(containerColor = container),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("${s.levelPercent}%", style = MaterialTheme.typography.displaySmall)
-                Text(
-                    text = stringResource(R.string.home_battery),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 6.dp),
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text("${s.levelPercent}%", style = MaterialTheme.typography.displaySmall)
+                    Text(
+                        text = stringResource(R.string.home_battery),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 6.dp),
+                    )
+                }
+                StateBadge(s.powerState, stateColor)
             }
 
             BidirectionalGauge(
                 value = (signed ?: 0).toFloat(),
-                range = gaugeRange(abs(signed ?: 0)),
+                range = rememberStableGaugeRange(abs(signed ?: 0)),
                 negativeColor = palette.bad,
                 positiveColor = palette.good,
                 modifier = Modifier.padding(horizontal = 24.dp),
@@ -103,12 +139,35 @@ internal fun HeroCard(
     }
 }
 
+/** Expressive status badge: a scalloped shape in the state color with an icon for the state. */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun StateBadge(state: PowerState, color: Color) {
+    val icon = when (state) {
+        PowerState.CHARGING, PowerState.FULL -> R.drawable.ic_bolt
+        PowerState.DISCHARGING -> R.drawable.ic_trending_down
+        PowerState.PLUGGED_DRAINING, PowerState.PLUGGED_PAUSED -> R.drawable.ic_warning
+        PowerState.CHECKING -> R.drawable.ic_clock
+    }
+    val animated by animateColorAsState(color, tween(AppMotion.LONG), label = "badgeColor")
+    Box(
+        modifier = Modifier
+            .size(52.dp)
+            .clip(MaterialShapes.Cookie9Sided.toShape())
+            .background(animated.copy(alpha = 0.24f)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(painterResource(icon), contentDescription = stringResource(stateLabel(state)), tint = animated, modifier = Modifier.size(26.dp))
+    }
+}
+
 @Composable
 private fun SpeedRow(s: BatterySnapshot, estimate: ChargeEstimate?) {
     val measuring = stringResource(R.string.hero_measuring)
     val watts = s.powerMw?.let { formatWatts(it) }
     val stateText = stringResource(stateLabel(s.powerState))
-    val leftSub = listOfNotNull(stateText, watts).joinToString(" · ")
+    // One short line each, so a longer number never wraps and moves what is below.
+    val leftSub = watts ?: ""
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         when {
             s.isCharging -> {
@@ -157,14 +216,14 @@ private fun InfoItem(icon: Int, title: String, subtitle: String, modifier: Modif
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
         IconBadge(icon, MaterialTheme.colorScheme.primary)
         Column {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            if (subtitle.isNotEmpty()) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            Text(title, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                text = subtitle.ifEmpty { " " },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
