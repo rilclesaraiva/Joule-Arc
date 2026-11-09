@@ -128,11 +128,13 @@ class MainActivity : ComponentActivity() {
         SessionRepository.init(this)
         LevelHistoryRepository.init(this)
         if (savedInstanceState == null) BatteryRepository.resetExtremes()
-        MonitorService.start(this)
 
         // The app's own recomposer: animations ignore the system animation scale.
         setContent(parent = appRecomposer()) {
             val themeMode by SettingsRepository.themeMode.collectAsStateWithLifecycle()
+            // Starts the monitor, and again whenever the persistent notification is switched.
+            val persistentNotification by SettingsRepository.persistentNotification.collectAsStateWithLifecycle()
+            LaunchedEffect(persistentNotification) { MonitorService.start(this@MainActivity) }
             val dark = isAppInDarkTheme(themeMode)
             LaunchedEffect(dark) {
                 val transparent = Color.TRANSPARENT

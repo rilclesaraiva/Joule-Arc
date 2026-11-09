@@ -50,6 +50,9 @@ class MonitorService : Service() {
     private val estimator = ChargeEstimator()
     private val alerts = AlertTracker()
     private var started = false
+    private var foreground = false
+    private var sawUi = false
+    private val createdMs = System.currentTimeMillis()
     private var lastNotifyMs = 0L
     private var lastWidgetMs = 0L
     private var lastNotifyText: String? = null
@@ -70,13 +73,9 @@ class MonitorService : Service() {
         LevelHistoryRepository.init(this)
         val reader = BatteryReader(this)
         val first = reader.read()
-        ServiceCompat.startForeground(
-            this,
-            NOTIFICATION_ID,
-            buildNotification(notificationTitle(first), notificationText(first)),
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0,
-        )
+        // Started as a foreground service, so it must call startForeground again on every start.
+        if (SettingsRepository.persistentNotification.value) foreground = false
+        applyNotificationSetting(first)
         if (!started) {
             started = true
             ContextCompat.registerReceiver(
@@ -92,13 +91,43 @@ class MonitorService : Service() {
                 BatteryRepository.uiVisible.collect { wake.trySend(Unit) }
             }
             scope.launch {
+                SettingsRepository.persistentNotification.collect { wake.trySend(Unit) }
+            }
+            scope.launch {
                 while (isActive) {
                     sampleOnce(reader)
+                    if (shouldStopQuietly()) {
+                        stopSelf()
+                        break
+                    }
                     withTimeoutOrNull(nextIntervalMs()) { wake.receive() }
                 }
             }
         }
-        return START_STICKY
+        return if (foreground) START_STICKY else START_NOT_STICKY
+    }
+
+    /**
+     * With the persistent notification on, the service is a foreground service. With it off there is
+     * no notification: the service only runs while the app is open and stops itself afterwards.
+     */
+    private fun applyNotificationSetting(snapshot: BatterySnapshot?) {
+        val on = SettingsRepository.persistentNotification.value
+        if (on && !foreground) {
+            ServiceCompat.startForeground(
+                this,
+                NOTIFICATION_ID,
+                buildNotification(notificationTitle(snapshot), notificationText(snapshot)),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0,
+            )
+            foreground = true
+            lastNotifyText = null
+        } else if (!on && foreground) {
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+            getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
+            foreground = false
+        }
     }
 
     override fun onDestroy() {
@@ -110,8 +139,20 @@ class MonitorService : Service() {
         super.onDestroy()
     }
 
+    /** Without the notification, stop once the app is no longer open (after a short grace at start). */
+    private fun shouldStopQuietly(): Boolean {
+        if (SettingsRepository.persistentNotification.value) return false
+        if (BatteryRepository.uiVisible.value) {
+            sawUi = true
+            return false
+        }
+        return sawUi || System.currentTimeMillis() - createdMs > QUIET_START_GRACE_MS
+    }
+
     private suspend fun sampleOnce(reader: BatteryReader) {
         val snapshot = reader.read() ?: return
+        // Picks up a change of the persistent notification setting while the service runs.
+        applyNotificationSetting(snapshot)
         lastSnapshot = snapshot
         BatteryRepository.publish(snapshot)
         BatteryRepository.publishEstimate(estimator.update(snapshot))
@@ -126,7 +167,7 @@ class MonitorService : Service() {
         val now = System.currentTimeMillis()
         val manager = getSystemService(NotificationManager::class.java)
         val key = title + "|" + text
-        if (key != lastNotifyText && now - lastNotifyMs >= NOTIFY_MIN_INTERVAL_MS) {
+        if (foreground && key != lastNotifyText && now - lastNotifyMs >= NOTIFY_MIN_INTERVAL_MS) {
             lastNotifyText = key
             lastNotifyMs = now
             manager.notify(NOTIFICATION_ID, buildNotification(title, text))
@@ -237,11 +278,17 @@ class MonitorService : Service() {
         private const val CHARGING_INTERVAL_MS = 2_000L
         private const val IDLE_INTERVAL_MS = 30_000L
         private const val NOTIFY_MIN_INTERVAL_MS = 1_000L
+        private const val QUIET_START_GRACE_MS = 10_000L
         private const val WIDGET_FAST_INTERVAL_MS = 10_000L
         private const val WIDGET_SLOW_INTERVAL_MS = 60_000L
 
         fun start(context: Context) {
-            ContextCompat.startForegroundService(context, Intent(context, MonitorService::class.java))
+            val intent = Intent(context, MonitorService::class.java)
+            if (SettingsRepository.persistentNotification.value) {
+                ContextCompat.startForegroundService(context, intent)
+            } else {
+                context.startService(intent)
+            }
         }
 
         fun stateLabel(state: PowerState): Int = when (state) {

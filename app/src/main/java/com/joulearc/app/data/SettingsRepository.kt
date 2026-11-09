@@ -26,6 +26,7 @@ object SettingsRepository {
     private const val KEY_THEME = "theme"
     private const val KEY_FAHRENHEIT = "fahrenheit"
     private const val KEY_PREDICTIVE_BACK = "predictive_back"
+    private const val KEY_PERSISTENT_NOTIFICATION = "persistent_notification"
     private const val KEY_REC_CHARGE_MAX = "rec_charge_max"
     private const val KEY_REC_CHARGE_MIN = "rec_charge_min"
     private const val KEY_REC_DRAIN_MAX = "rec_drain_max"
@@ -60,6 +61,10 @@ object SettingsRepository {
     /** Back-gesture preview animation between pages. On by default. */
     val predictiveBack: StateFlow<Boolean> = _predictiveBack.asStateFlow()
 
+    private val _persistentNotification = MutableStateFlow(true)
+    /** Whether the monitor keeps its notification (and so keeps running in the background). On by default. */
+    val persistentNotification: StateFlow<Boolean> = _persistentNotification.asStateFlow()
+
     private val _recorded = MutableStateFlow(RecordedCurrents())
     val recorded: StateFlow<RecordedCurrents> = _recorded.asStateFlow()
 
@@ -76,6 +81,7 @@ object SettingsRepository {
         _themeMode.value = p.getInt(KEY_THEME, THEME_SYSTEM)
         _useFahrenheit.value = p.getBoolean(KEY_FAHRENHEIT, false)
         _predictiveBack.value = p.getBoolean(KEY_PREDICTIVE_BACK, true)
+        _persistentNotification.value = p.getBoolean(KEY_PERSISTENT_NOTIFICATION, true)
         _recorded.value = RecordedCurrents(
             chargeMaxMa = p.getInt(KEY_REC_CHARGE_MAX, -1).takeIf { it >= 0 },
             chargeMinMa = p.getInt(KEY_REC_CHARGE_MIN, -1).takeIf { it >= 0 },
@@ -138,6 +144,11 @@ object SettingsRepository {
     fun setPredictiveBack(value: Boolean) {
         _predictiveBack.value = value
         edit { putBoolean(KEY_PREDICTIVE_BACK, value) }
+    }
+
+    fun setPersistentNotification(value: Boolean) {
+        _persistentNotification.value = value
+        edit { putBoolean(KEY_PERSISTENT_NOTIFICATION, value) }
     }
 
     /** Updates the recorded highest and lowest current; writes only when a value changes. */

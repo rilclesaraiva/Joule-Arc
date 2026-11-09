@@ -14,6 +14,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Consumption with the screen on and off, estimated battery life, and which time of day drains the most.
 - Usage by app: 24-hour level chart and 14-day usage chart (tap a bar to see only that hour or day), a per-app list with an estimated percentage and a page for each app, with system apps hidden unless you ask (Android does not expose per-app mAh to regular apps).
 - Charge and low battery reminders.
+- The persistent notification can be turned off in Settings; then monitoring (history, reminders, tile and widget) only runs while the app is open.
 - New version notice (checks GitHub releases, with snooze, skip and a manual check in Settings) and the developer's picture in About.
 - Quick Settings tile, home screen widget and a persistent notification.
 - Material 3 Expressive interface with dynamic color, light, dark and AMOLED themes, English, Spanish and Portuguese (the language follows Android: choose it in the system settings for the app on Android 13+, or the system language).
@@ -21,7 +22,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 ## Privacy and permissions
 
 - **Notifications** (Android 13+): the persistent monitoring notification and, if you turn them on, the charge and low battery reminders.
-- **Foreground service**: keeps the monitor running. Sampling is slower when the device is not charging, to save battery.
+- **Foreground service**: keeps the monitor running while the persistent notification is on (the default). Sampling is slower when the device is not charging, to save battery.
 - **Start at boot**: restarts the monitor after the device reboots.
 - **Internet**: only to ask GitHub whether a newer version was published and for the developer's profile picture in the About page. Nothing about you or your battery is sent. Updates are never installed by the app: "Download" opens your browser.
 - **Usage access** (special permission, granted by you in system settings): used to measure how long apps run in the foreground and background, and to show the names and icons of your apps, for the usage by app page. The app only asks for it there. The data is read on demand and not stored.

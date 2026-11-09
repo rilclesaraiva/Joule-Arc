@@ -302,6 +302,8 @@
     <string name="update_alerts_snoozed">Paused until %1$s</string>
     <string name="update_alerts_normal">Notify normally</string>
     <string name="update_dialog_cancel">Cancel</string>
+    <string name="settings_persistent">Persistent notification</string>
+    <string name="settings_persistent_sub">Shows the monitor in the notification shade and keeps it running in the background. If you turn it off, the notification disappears and monitoring, history, reminders, tile and widget only work while the app is open.</string>
     <string name="settings_predictive">Predictive back gesture</string>
     <string name="settings_predictive_sub">Shows a preview of the page while you swipe to go back</string>
     <string name="meaning_voltage_high_unplugged">High voltage for a battery with no charger. Normal right after unplugging from a full charge, and it drops with use.</string>

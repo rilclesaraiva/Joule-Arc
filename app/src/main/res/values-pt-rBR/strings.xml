@@ -302,6 +302,8 @@
     <string name="update_alerts_snoozed">Pausados até %1$s</string>
     <string name="update_alerts_normal">Avisar normalmente</string>
     <string name="update_dialog_cancel">Cancelar</string>
+    <string name="settings_persistent">Notificação persistente</string>
+    <string name="settings_persistent_sub">Mostra o monitor na barra de notificações e o mantém rodando em segundo plano. Se você desligar, a notificação some e o monitoramento, o histórico, os lembretes, o bloco e o widget só funcionam com o app aberto.</string>
     <string name="settings_predictive">Gesto de voltar preditivo</string>
     <string name="settings_predictive_sub">Mostra uma prévia da página enquanto você desliza para voltar</string>
     <string name="meaning_voltage_high_unplugged">Tensão alta para uma bateria sem carregador. É normal logo depois de desconectar de uma carga cheia e cai com o uso.</string>

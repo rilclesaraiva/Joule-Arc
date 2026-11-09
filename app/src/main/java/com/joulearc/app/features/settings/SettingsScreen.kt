@@ -73,6 +73,7 @@ fun SettingsScreen(systemDesign: DetectedCapacity?, onOpenAbout: () -> Unit, mod
     val themeMode by SettingsRepository.themeMode.collectAsStateWithLifecycle()
     val designUser by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
     val predictiveBack by SettingsRepository.predictiveBack.collectAsStateWithLifecycle()
+    val persistentOn by SettingsRepository.persistentNotification.collectAsStateWithLifecycle()
 
     var protectionOk by remember { mutableStateOf(DeviceInfo.isIgnoringBatteryOptimizations(context)) }
     LifecycleResumeEffect(Unit) {
@@ -179,6 +180,15 @@ fun SettingsScreen(systemDesign: DetectedCapacity?, onOpenAbout: () -> Unit, mod
 
         RowGroup(
             listOf(
+                {
+                    SwitchRow(
+                        icon = R.drawable.ic_clock,
+                        title = stringResource(R.string.settings_persistent),
+                        subtitle = stringResource(R.string.settings_persistent_sub),
+                        checked = persistentOn,
+                        onChange = SettingsRepository::setPersistentNotification,
+                    )
+                },
                 {
                     Column {
                         SwitchRow(
