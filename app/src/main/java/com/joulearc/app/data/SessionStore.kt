@@ -45,6 +45,12 @@ internal class SessionStore(private val file: File) {
         .put("maxTemp", s.maxTempC.toDouble())
         .put("source", s.source.name)
         .put("ongoing", s.ongoing)
+        .put(
+            "points",
+            JSONArray().also { arr ->
+                s.points.forEach { arr.put(JSONArray().put(it.offsetSec).put(it.level).put(it.currentMa)) }
+            },
+        )
 
     private fun decode(o: JSONObject) = ChargeSession(
         startMs = o.getLong("start"),
@@ -57,5 +63,11 @@ internal class SessionStore(private val file: File) {
         maxTempC = o.getDouble("maxTemp").toFloat(),
         source = runCatching { PowerSource.valueOf(o.getString("source")) }.getOrDefault(PowerSource.USB),
         ongoing = o.optBoolean("ongoing", false),
+        points = o.optJSONArray("points")?.let { a ->
+            (0 until a.length()).map {
+                val r = a.getJSONArray(it)
+                SessionPoint(r.getInt(0), r.getInt(1), r.getInt(2))
+            }
+        } ?: emptyList(),
     )
 }

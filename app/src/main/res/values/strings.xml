@@ -5,23 +5,16 @@
     <string name="monitor_channel_name">Battery monitor</string>
     <string name="monitor_channel_description">Persistent notification that keeps the charging monitor running</string>
     <string name="monitor_starting">Starting the monitor…</string>
-    <string name="notification_text">%1$s · %2$d mA · %3$d%% · %4$.1f °C</string>
+    <string name="notification_text">%1$s · %2$d mA · %3$d%% · %4$s</string>
 
     <string name="status_charging">Charging</string>
     <string name="status_discharging">Discharging</string>
     <string name="status_full">Full</string>
-    <string name="status_not_charging">Not charging</string>
-    <string name="status_unknown">Unknown</string>
-
-    <string name="current_label_charging">Charging current</string>
-    <string name="current_label_discharging">Discharge current</string>
-    <string name="current_unavailable">Not available on this device</string>
     <string name="unit_ma">mA</string>
 
     <string name="stat_level">Level</string>
     <string name="stat_voltage">Voltage</string>
     <string name="stat_temperature">Temperature</string>
-    <string name="stat_source">Power source</string>
     <string name="source_ac">AC</string>
     <string name="source_usb">USB</string>
     <string name="source_wireless">Wireless</string>
@@ -39,17 +32,6 @@
     <string name="support_invite">Want to support the project? Visit the project repository.</string>
 
     <string name="stat_power">Power</string>
-
-    <string name="estimate_title">Charging estimate</string>
-    <string name="estimate_rate">%1$.1f%% per hour</string>
-    <string name="estimate_full">Full in %1$s · around %2$s</string>
-    <string name="estimate_capacity">Estimated capacity: %1$d mAh</string>
-    <string name="estimate_note">Based on the current charging speed. Charging slows down near 100%, so the real time is usually longer.</string>
-    <string name="estimate_calculating">Calculating…</string>
-    <string name="estimate_unavailable">This device does not report the battery charge counter, so the estimate is not available.</string>
-
-    <string name="tab_live">Live</string>
-    <string name="tab_history">History</string>
     <string name="history_empty">No charging sessions yet. They appear here after you charge for at least one minute.</string>
     <string name="history_active">Charging now</string>
     <string name="history_level">%1$d%% → %2$d%% (+%3$d%%)</string>
@@ -58,9 +40,6 @@
     <string name="history_peak">Peak: %1$d mA · %2$s</string>
     <string name="history_rate">Average: %1$.1f%% per hour</string>
     <string name="history_temp">Max temperature: %1$.1f °C</string>
-
-    <string name="tab_health">Health</string>
-    <string name="tab_apps">Apps</string>
 
     <string name="insights_title">Fastest charging</string>
     <string name="insights_need_more">Charge a few more times to see what charges fastest. Each option needs at least 2 sessions of 5 minutes or more that started below 80%.</string>
@@ -74,19 +53,8 @@
     <string name="period_morning">Morning (6–12 h)</string>
     <string name="period_afternoon">Afternoon (12–18 h)</string>
     <string name="period_evening">Evening (18–24 h)</string>
-
-    <string name="health_title">Battery health</string>
-    <string name="health_soh">Estimated health</string>
-    <string name="health_soh_value">%1$d%%</string>
     <string name="health_not_reported">Not reported by this device</string>
-    <string name="health_soh_need_design">Enter the rated capacity below to see an estimate</string>
-    <string name="health_design_label">Rated capacity (mAh)</string>
-    <string name="health_design_hint">Find it in the phone specifications, for example 5000</string>
     <string name="health_cycles">Charge cycles</string>
-    <string name="health_capacity">Estimated capacity</string>
-    <string name="health_capacity_value">%1$d mAh</string>
-    <string name="health_capacity_wait">Measuring… needs a battery level of 10% or more</string>
-    <string name="health_state">Condition</string>
     <string name="health_technology">Technology</string>
     <string name="health_good">Good</string>
     <string name="health_overheat">Overheating</string>
@@ -95,9 +63,6 @@
     <string name="health_cold">Cold</string>
     <string name="health_failure">Failure</string>
     <string name="health_unknown">Unknown</string>
-    <string name="health_note">Health = estimated capacity divided by the rated capacity you enter. The capacity comes from the charge counter and the battery level and can be off by several percent, so treat the result as a rough guide. The cycle count comes from the device (Android 14 or newer, and only if the manufacturer reports it).</string>
-
-    <string name="apps_title">Foreground and background</string>
     <string name="apps_window_24h">24 hours</string>
     <string name="apps_window_14d">14 days</string>
     <string name="apps_row">Foreground %1$s · Background %2$s</string>
@@ -121,8 +86,6 @@
     <string name="usage_since">Data since %1$s</string>
     <string name="usage_percent_less">&lt; 1%</string>
     <string name="usage_no_history">Collecting battery history. The charts fill in as you use the phone.</string>
-
-    <string name="tab_drain">Drain</string>
     <string name="insights_worst_source">Slowest source so far: %1$s</string>
     <string name="insights_worst_period">Slowest time of day: %1$s</string>
 
@@ -141,4 +104,167 @@
     <string name="drain_period_row_mah">%1$s · %2$.1f%% per hour · about %3$d mAh</string>
     <string name="drain_tracked">Based on %1$s with the screen on and %2$s with the screen off, unplugged, in the last 14 days.</string>
     <string name="drain_note">Estimates from the battery level history Joule Arc records (1% steps), not exact measurements. mAh uses the estimated battery capacity. Charging time is not counted.</string>
+    <string name="home_battery">Battery</string>
+    <string name="home_tap_hint">Tap a reading for details</string>
+    <string name="home_section_analysis">Analysis</string>
+    <string name="home_section_device">Device</string>
+    <string name="hero_per_hour">%1$.0f%% per hour</string>
+    <string name="hero_per_hour_drain">%1$.1f%% per hour</string>
+    <string name="hero_measuring">Measuring…</string>
+    <string name="hero_full_at">Full at %1$s</string>
+    <string name="hero_time_to_full">Time to full</string>
+    <string name="hero_remaining">Lasts about this long</string>
+    <string name="hero_recorded_max">Highest recorded</string>
+    <string name="hero_recorded_min">Lowest recorded</string>
+    <string name="hero_reset">Reset</string>
+    <string name="status_draining">Losing charge</string>
+    <string name="status_paused">Not charging</string>
+    <string name="source_on_battery">On battery</string>
+    <string name="warn_draining_title">Charger connected, battery losing charge</string>
+    <string name="warn_draining_body">The charger is connected, but more power is leaving the battery than coming in. The charger or cable may be too weak for what the phone is doing, or may be faulty. Try another charger or cable, or use the phone less while it charges.</string>
+    <string name="warn_paused_title">Charger connected, not charging</string>
+    <string name="warn_paused_body">The battery is not receiving charge. This can be the system charging limit or battery protection (for example when it is hot), or a problem with the charger or cable.</string>
+    <string name="capacity_title">Battery capacity</string>
+    <string name="capacity_now">In the battery now</string>
+    <string name="capacity_now_value">%1$s mAh · %2$d%%</string>
+    <string name="capacity_full">Full charge today (estimated)</string>
+    <string name="capacity_lost">Lost to wear</string>
+    <string name="capacity_design">Design capacity</string>
+    <string name="capacity_design_system">Design capacity reported by the system.</string>
+    <string name="capacity_design_user">Design capacity set by you.</string>
+    <string name="capacity_design_missing">Design capacity unknown: set it in Settings.</string>
+    <string name="capacity_unavailable">This device does not report the charge counter, so the capacity cannot be measured.</string>
+    <string name="capacity_note">The full charge is estimated from the charge counter and the level, and can be off by a few percent.</string>
+    <string name="value_mah">%1$d mAh</string>
+    <string name="health_chip">Health %1$d%%</string>
+    <string name="health_condition">Phone battery check</string>
+    <string name="tile_status">Status</string>
+    <string name="tile_source">Connected</string>
+    <string name="tile_health">Health</string>
+    <string name="device_android">Android version</string>
+    <string name="device_manufacturer">Manufacturer</string>
+    <string name="device_model">Model</string>
+    <string name="nav_history_title">Charging history</string>
+    <string name="nav_history_sessions">Sessions: %1$d</string>
+    <string name="nav_drain_collecting">Collecting data</string>
+    <string name="nav_drain_rates">Screen on %1$s%%/h · Standby %2$s%%/h</string>
+    <string name="nav_usage_sub">Charts for 24 hours and 14 days, and apps</string>
+    <string name="page_session">Charging session</string>
+    <string name="session_chart_current">Charging current (mA)</string>
+    <string name="session_chart_level">Battery level</string>
+    <string name="session_chart_note" formatted="false">Charging usually slows down as the battery fills, especially above 80%.</string>
+    <string name="session_no_chart">This session has no curve: it was recorded before curves were added, or it is one of the older sessions.</string>
+    <string name="cd_back">Back</string>
+    <string name="settings_title">Settings</string>
+    <string name="rating_too_low">Too low</string>
+    <string name="rating_low">Low</string>
+    <string name="rating_normal">Normal</string>
+    <string name="rating_high">High</string>
+    <string name="rating_too_high">Too high</string>
+    <string name="rating_too_cold">Too cold</string>
+    <string name="rating_cold">Cold</string>
+    <string name="rating_warm">Warm</string>
+    <string name="rating_hot">Hot</string>
+    <string name="rating_too_hot">Too hot</string>
+    <string name="rating_critical">Critical</string>
+    <string name="rating_good">Good</string>
+    <string name="rating_fullish">High</string>
+    <string name="rating_slow">Slow</string>
+    <string name="rating_fast">Fast</string>
+    <string name="rating_very_fast">Very fast</string>
+    <string name="rating_ultra_fast">Ultra fast</string>
+    <string name="rating_light_use">Light use</string>
+    <string name="rating_normal_use">Normal use</string>
+    <string name="rating_heavy_use">Heavy use</string>
+    <string name="rating_very_heavy_use">Very heavy use</string>
+    <string name="rating_fair">Fair</string>
+    <string name="rating_worn">Worn</string>
+    <string name="rating_poor">Poor</string>
+    <string name="sheet_meaning">What this means</string>
+    <string name="sheet_min_opened">Lowest since you opened the app</string>
+    <string name="sheet_max_opened">Highest since you opened the app</string>
+    <string name="sheet_typical">Typical range</string>
+    <string name="sheet_charger_max">The charger offers up to</string>
+    <string name="sheet_fastest_opened">Fastest charging since you opened the app</string>
+    <string name="sheet_drain_opened">Highest consumption since you opened the app</string>
+    <string name="sheet_current">Current</string>
+    <string name="sheet_average">Average of the last readings</string>
+    <string name="sheet_power_in">Going into the battery</string>
+    <string name="sheet_power_out">Coming out of the battery</string>
+    <string name="meaning_current" formatted="false">Positive values are current going into the battery, negative values are current coming out of it. Speed and time estimates use the average of the last readings. Charging slows down near 100%, so the real time to full is usually longer.</string>
+    <string name="meaning_voltage_low">Low voltage. The battery is nearly empty or the phone is under heavy load.</string>
+    <string name="meaning_voltage_normal">A healthy reading. Voltage rises while charging and drops as you use the phone.</string>
+    <string name="meaning_voltage_high">High voltage, common near the end of a charge.</string>
+    <string name="meaning_voltage_too_high">Above the usual range. If it stays like this, unplug the charger and check it.</string>
+    <string name="meaning_temp_too_cold">Very cold. Batteries lose capacity and charge poorly in the cold. Avoid charging until the phone warms up.</string>
+    <string name="meaning_temp_cold">Cool. The battery may hold a bit less charge while cold.</string>
+    <string name="meaning_temp_normal">Ideal temperature for the battery.</string>
+    <string name="meaning_temp_warm">Normal while charging, gaming or using the camera. Staying warm for hours wears the battery a little faster.</string>
+    <string name="meaning_temp_hot">Hot. Give the phone a break, take it out of the case or stop charging for a while.</string>
+    <string name="meaning_temp_too_hot">Too hot. Stop charging and heavy use until it cools down.</string>
+    <string name="meaning_level_critical">Almost empty. Charge soon so the phone does not shut down.</string>
+    <string name="meaning_level_low">Low. A good time to charge.</string>
+    <string name="meaning_level_good" formatted="false">Batteries last longer when kept between 20% and 80%.</string>
+    <string name="meaning_level_high" formatted="false">Above 80%. Fine now and then, but staying full for long periods wears the battery a bit faster.</string>
+    <string name="meaning_power_slow">Slow charging. The charger, the cable or what the phone is doing may be limiting the speed.</string>
+    <string name="meaning_power_normal">Normal charging speed.</string>
+    <string name="meaning_power_fast">Fast charging: the charger and the cable are working well together.</string>
+    <string name="meaning_use_light">Light use. The battery is lasting well.</string>
+    <string name="meaning_use_normal">Normal use.</string>
+    <string name="meaning_use_heavy">Heavy use. Screen brightness, games, camera or navigation drain the battery faster.</string>
+    <string name="meaning_status_charging">Charging normally.</string>
+    <string name="meaning_status_discharging">Running on the battery.</string>
+    <string name="meaning_status_full">The battery is full.</string>
+    <string name="meaning_source_ac">A wall charger, usually the fastest way to charge.</string>
+    <string name="meaning_source_usb">A USB port, such as a computer or a power bank. Usually slower than a wall charger.</string>
+    <string name="meaning_source_wireless">A wireless charger. Convenient, but slower and warmer than a cable.</string>
+    <string name="meaning_source_battery">No charger connected.</string>
+    <string name="meaning_health_good">The battery still holds most of its original charge.</string>
+    <string name="meaning_health_fair">Some normal wear. The battery holds a bit less than when it was new.</string>
+    <string name="meaning_health_worn">Noticeable wear. The battery holds clearly less than when it was new and empties faster.</string>
+    <string name="meaning_health_poor">Heavy wear. Consider replacing the battery if it runs out too quickly.</string>
+    <string name="meaning_health_unknown">Set the design capacity in Settings to estimate the battery health.</string>
+    <string name="meaning_technology" formatted="false">Lithium batteries last longer when kept cool and charged between 20% and 80%. A full charge now and then is fine.</string>
+    <string name="meaning_cycles" formatted="false">One cycle is using 100% of the battery charge, even if spread over several days. Many phone batteries keep around 80% of their capacity after 500 to 800 cycles.</string>
+    <string name="note_voltage">This is the battery voltage. Fast chargers use a higher voltage on the cable, and the phone lowers it for the battery. The voltage jumps a little when you plug or unplug the charger.</string>
+    <string name="note_temperature">Android reports the battery temperature, which follows how warm the whole phone is.</string>
+    <string name="note_power">Power is voltage times current: how fast energy goes into or out of the battery. While charging it is lower than the charger power: part runs the phone, part is lost as heat, and it drops as the battery fills.</string>
+    <string name="note_health">Health is the estimated full charge today compared with the design capacity. The phone battery check only flags failures such as overheating.</string>
+    <string name="settings_reminders">Reminders</string>
+    <string name="settings_charge_alert">Charge reminder</string>
+    <string name="settings_charge_alert_sub">Reminds you to unplug at %1$d%%</string>
+    <string name="settings_low_alert">Low battery reminder</string>
+    <string name="settings_low_alert_sub">Reminds you to charge at %1$d%%</string>
+    <string name="settings_protection">App protection</string>
+    <string name="settings_protection_sub">Allow Joule Arc to run without battery restrictions so monitoring and reminders keep working</string>
+    <string name="settings_protection_on">Already running without battery restrictions</string>
+    <string name="settings_design">Design capacity (mAh)</string>
+    <string name="settings_design_hint">Leave empty to use the system value: %1$s</string>
+    <string name="settings_design_none">not reported</string>
+    <string name="settings_dual_cell">Dual-cell battery</string>
+    <string name="settings_dual_cell_sub">For phones with two battery cells (usually 65 W or more). Doubles the current, the charge and the capacity to match the rated values.</string>
+    <string name="settings_temp_unit">Temperature unit</string>
+    <string name="settings_reset_recorded">Reset recorded values</string>
+    <string name="settings_reset_recorded_sub">Highest and lowest current recorded</string>
+    <string name="settings_reset_done">Recorded values reset</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_language">Language</string>
+    <string name="language_system">System</string>
+    <string name="settings_help">Help and privacy</string>
+    <string name="settings_report">Report a problem</string>
+    <string name="settings_report_sub">Opens an email to the developer with your phone details filled in. Nothing is sent until you send it.</string>
+    <string name="settings_source">Source code</string>
+    <string name="settings_version">Joule Arc %1$s</string>
+    <string name="report_subject">Joule Arc: problem report</string>
+    <string name="report_body">Describe the problem:\n\n\n---\nApp: %1$s\nAndroid: %2$s\nDevice: %3$s %4$s</string>
+    <string name="no_app_found">No app found to open this</string>
+    <string name="alert_channel_name">Battery reminders</string>
+    <string name="alert_channel_description">Charge and low battery reminders</string>
+    <string name="alert_title">Battery at %1$d%%</string>
+    <string name="alert_charge_text">You can unplug the charger to help the battery last longer.</string>
+    <string name="alert_low_text">Connect the charger.</string>
 </resources>

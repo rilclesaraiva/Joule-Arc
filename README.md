@@ -5,28 +5,26 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 ## Features
 
 **Available now (early development)**
-- Persistent notification while monitoring, with current, level and temperature.
-- Live charging current, battery level, voltage, temperature, power and charge status, updated twice per second while the app is open.
-- Charging estimate: percent per hour and when the battery should be full.
-- Charging session history, and a comparison of what charges fastest and slowest (by power source and time of day).
-- Battery health: estimated capacity, estimated health against the rated capacity you enter, and the cycle count when your device reports it (Android 14+).
-- Battery usage screen: hourly battery level for 24 hours and daily usage for 14 days, with the last charge to 100%, and a per-app ranking with icons (an estimate: the drained percentage is split between apps by foreground and background time, since Android does not expose per-app mAh to regular apps).
-- Consumption tab: how fast the battery drains with the screen on and off (percent and estimated mAh per hour), estimated battery life at those rates, and which time of day drains the most.
-- Swipe between the tabs; the tab buttons are pills.
-- Quick Settings tile and home screen widget.
-- Material 3 Expressive interface with dynamic color.
-
-**Planned**
-- Charts for charging sessions.
+- One home screen with the main readings; history, consumption, battery use by app and settings open as separate pages.
+- Live current on a gauge centered on zero (negative = out of the battery), updated twice per second while the app is open, with % per hour, time to full or time left, and the highest and lowest current recorded.
+- Amber warning when a charger is connected but the battery is not charging or is losing charge.
+- Voltage, temperature, level, power, status, power source, health, technology and cycle count, each with a plain-language rating and a detail sheet that explains it.
+- Battery capacity: charge now, full charge today (estimated), lost to wear and design capacity, with estimated health.
+- Charging session history with current and level curves, and which power source and time of day charge fastest and slowest.
+- Consumption with the screen on and off, estimated battery life, and which time of day drains the most.
+- Battery use by app: 24-hour level chart, 14-day usage chart and a per-app list with an estimated percentage (Android does not expose per-app mAh to regular apps).
+- Charge and low battery reminders.
+- Quick Settings tile, home screen widget and a persistent notification.
+- Material 3 Expressive interface with dynamic color, light and dark themes, English and Portuguese.
 
 ## Privacy and permissions
 
-- **Notifications** (Android 13+): required to show the persistent monitoring notification.
+- **Notifications** (Android 13+): the persistent monitoring notification and, if you turn them on, the charge and low battery reminders.
 - **Foreground service**: keeps the monitor running. Sampling is slower when the device is not charging, to save battery.
 - **Start at boot**: restarts the monitor after the device reboots.
-- **Usage access** (special permission, granted by you in system settings): used to measure how long apps run in the foreground and background for the Apps tab. The app only asks for it when you open that tab. The data is read on demand and not stored.
+- **Usage access** (special permission, granted by you in system settings): used to measure how long apps run in the foreground and background for the battery use by app page. The app only asks for it there. The data is read on demand and not stored.
 
-The charging session history and the 14-day battery level history are stored only on your device, in the app's private storage. The app does not declare the internet permission.
+The charging session history, the 14-day battery level history and your settings are stored only on your device, in the app's private storage. The app does not declare the internet permission. "Report a problem" opens your own email app with a draft; nothing is sent unless you send it.
 
 - [Privacy policy](https://rilclesaraiva.github.io/Joule-Arc/privacy) · [Terms](https://rilclesaraiva.github.io/Joule-Arc/terms) (source in [`docs/`](docs))
 

@@ -4,35 +4,22 @@
 ### Added
 - Project structure (`core` / `data` / `features`), CI workflow and R8 release build without obfuscation.
 - Original adaptive launcher icon with a monochrome layer.
-- Persistent foreground-service notification that keeps monitoring the charging system.
-- Live readings: charging current, battery level, voltage, temperature and charge status.
-- Material 3 Expressive theme with dynamic color.
-- Usage access permission flow (groundwork for the foreground/background app ranking).
-- Power (W) reading, shown with a sign (positive while a charger is connected, negative on battery).
-- Charging estimate: % per hour at the current speed and the time and clock hour when the battery is full (based on the charge counter; charging slows near 100%, so real time is usually longer).
-- Charging session history tab, stored only on the device: duration, level range, average and peak current, peak power, max temperature and average % per hour.
-
-- Current is now shown negative while running on the battery (and in the notification, tile and widget).
-- "Fastest charging" insights in the History tab: compares your sessions by power source and by time of day.
-- Health tab: estimated capacity (from the charge counter), estimated health (against the rated capacity you enter), cycle count (Android 14+, when the device reports it), condition and technology.
-- Apps tab: ranking of foreground and background usage over 24 hours or 7 days (an estimate based on usage time, not exact mAh). Uses the special usage access permission.
+- Persistent foreground-service notification that keeps monitoring the charging system, restarted after reboot.
+- Single home screen with the main readings, and separate pages for charging history, consumption, battery use by app and settings.
+- Current gauge centered on zero (negative = out of the battery, positive = into it), with % per hour, time to full or time left, and the highest and lowest current recorded (with reset).
+- Amber state and warning when a charger is connected but the battery is not charging or is losing charge (weak or faulty charger or cable, charging limit or protection). The current direction is learned per device from the sign it reports.
+- Battery capacity card: charge now, full charge today (estimated), lost to wear and design capacity, with estimated health. The design capacity comes from the system power profile when available, or from the value you type in Settings.
+- Readings grid with small gauges and plain-language ratings (for example Normal, Warm, Good, Fast, Heavy use): voltage, temperature, level, power, status, power source, health, technology and cycle count. Tap any reading for a detail sheet with a colored range, lowest and highest since the app was opened, what the charger offers (when the system reports it) and what the value means.
+- Device section: Android version, manufacturer and model.
+- Charging session history (stored only on the device), a comparison of the fastest and slowest power source and time of day, and a page for each session with its current and level curves.
+- Consumption page: battery drain with the screen on and off (percent and estimated mAh per hour), estimated battery life at those rates, and the times of day that drain the most and the least.
+- Battery use by app page inspired by Android's own: hourly level for 24 hours, daily usage for 14 days, last charge to 100%, and a per-app list with icons and an estimated percentage (Android does not let regular apps read per-app mAh).
+- Charge reminder (unplug at a chosen level) and low battery reminder, off by default.
+- Settings: reminders, app protection (battery restrictions), design capacity, dual-cell battery, °C or °F, reset recorded values, theme (system, light, dark), language (Android 13+), report a problem by email, source code.
 - Quick Settings tile and home screen widget with the live current, status, level and power.
-- Privacy policy and terms in `docs/` (for GitHub Pages), linked in the README and in the app.
-
-- Battery level history (14 days, on the device only) and a battery usage screen inspired by Android's own: hourly level chart for 24 hours, daily usage chart for 14 days, last charge to 100%, and a per-app list with icons and an estimated percentage.
-- The tabs can be swiped, and the tab buttons are now pills; the 24 hours / 14 days switch is a pill too.
-
-- Consumption tab: battery drain with the screen on and off (percent and estimated mAh per hour), estimated battery life at those rates, and the times of day that drain the most and the least. Computed from the level history, which now also records the screen state.
-- The charging comparison now also points out the slowest power source and time of day.
-
-### Changed
-- App usage time now comes from usage events clipped to the selected window (the previous aggregated stats could include whole days outside the window). The window is shortened to the start of the level history so the drained percentage and the usage times cover the same period. The ranges are now 24 hours and 14 days (what Android keeps may be shorter).
-
-### Fixed
-- A large empty gap appeared above the content of each tab: the pager centered short pages vertically. Pages now start at the top.
-- The status could lag by up to 30 s after plugging or unplugging the charger (it showed "Discharging" while charging). The monitor now reacts instantly to battery broadcasts and samples every 500 ms while the app is visible (2 s while charging with the screen off).
+- Material 3 Expressive theme with dynamic color. The app's animations run at the app's own speed, regardless of the system animation scale.
+- Privacy policy and terms in `docs/` (GitHub Pages), linked in the README and in the app.
 
 ### Known issues
-- Not built or tested on a device yet.
-- The tile, widget, health, apps and insights views are new and untested on a device.
-- Charging session charts are not implemented yet.
+- Not tested on a device yet beyond the first screens; the new home, sheets, reminders, tile and widget are untested.
+- What the charger offers, the design capacity from the system and the cycle count depend on the device and may not appear.

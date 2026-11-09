@@ -3,51 +3,66 @@ package com.joulearc.app
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joulearc.app.core.AppMotion
 import com.joulearc.app.core.JouleArcTheme
-import com.joulearc.app.core.PillTabRow
-import com.joulearc.app.core.SupportFooter
+import com.joulearc.app.core.Tone
+import com.joulearc.app.core.appRecomposer
+import com.joulearc.app.core.isAppInDarkTheme
+import com.joulearc.app.core.statusPalette
 import com.joulearc.app.data.AppUsageReader
 import com.joulearc.app.data.BatteryRepository
+import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.LevelHistoryRepository
+import com.joulearc.app.data.PowerState
 import com.joulearc.app.data.SessionRepository
 import com.joulearc.app.data.SettingsRepository
 import com.joulearc.app.data.computeDrainStats
@@ -55,172 +70,55 @@ import com.joulearc.app.data.computeInsights
 import com.joulearc.app.data.drainedPercent
 import com.joulearc.app.data.rankAppUsage
 import com.joulearc.app.features.drain.DrainScreen
-import com.joulearc.app.features.health.HealthScreen
 import com.joulearc.app.features.history.HistoryScreen
-import com.joulearc.app.features.monitor.MonitorScreen
+import com.joulearc.app.features.history.SessionDetailScreen
+import com.joulearc.app.features.home.HomeScreen
+import com.joulearc.app.features.home.HomeState
 import com.joulearc.app.features.monitor.MonitorService
+import com.joulearc.app.features.settings.SettingsScreen
 import com.joulearc.app.features.usage.BatteryUsageScreen
 import com.joulearc.app.features.usage.UsageAccessCard
 import com.joulearc.app.features.usage.UsageReport
 import com.joulearc.app.features.usage.isUsageAccessGranted
 import com.joulearc.app.features.usage.usageAccessSettingsIntent
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val DAY_MS = 24L * 3_600_000L
-private const val USAGE_PAGE = 4
 
-/** Entry point: wires the features together. Features never import each other. */
+// Routes. The back stack is kept as "home|history|session:123" so it survives recreation.
+private const val HOME = "home"
+private const val HISTORY = "history"
+private const val SESSION = "session:"
+private const val DRAIN = "drain"
+private const val USAGE = "usage"
+private const val SETTINGS = "settings"
+
+/** Entry point: wires the features together and owns navigation. Features never import each other. */
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        SessionRepository.init(this)
         SettingsRepository.init(this)
+        SessionRepository.init(this)
         LevelHistoryRepository.init(this)
+        if (savedInstanceState == null) BatteryRepository.resetExtremes()
         MonitorService.start(this)
 
-        setContent {
-            JouleArcTheme {
-                val context = LocalContext.current
-                val scope = rememberCoroutineScope()
-                val snapshot by BatteryRepository.snapshot.collectAsStateWithLifecycle()
-                val estimate by BatteryRepository.estimate.collectAsStateWithLifecycle()
-                val sessions by SessionRepository.sessions.collectAsStateWithLifecycle()
-                val activeSession by SessionRepository.active.collectAsStateWithLifecycle()
-                val capacityMah by BatteryRepository.capacityMah.collectAsStateWithLifecycle()
-                val designCapacity by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
-                val levelSamples by LevelHistoryRepository.samples.collectAsStateWithLifecycle()
-                val insights = remember(sessions) { computeInsights(sessions) }
-                val drainStats = remember(levelSamples) {
-                    val now = System.currentTimeMillis()
-                    computeDrainStats(levelSamples, now - 14L * DAY_MS, now)
-                }
-
-                val pagerState = rememberPagerState { 5 }
-                var windowDays by rememberSaveable { mutableIntStateOf(1) }
-                var notificationsGranted by remember { mutableStateOf(hasNotificationPermission()) }
-                var usageGranted by remember { mutableStateOf(isUsageAccessGranted(context)) }
-
-                val notificationLauncher = rememberLauncherForActivityResult(
-                    ActivityResultContracts.RequestPermission(),
-                ) { notificationsGranted = it }
-
-                LifecycleResumeEffect(Unit) {
-                    notificationsGranted = hasNotificationPermission()
-                    usageGranted = isUsageAccessGranted(context)
-                    onPauseOrDispose { }
-                }
-
-                val report by produceState<UsageReport?>(null, usageGranted, windowDays, pagerState.currentPage) {
-                    if (pagerState.currentPage != USAGE_PAGE || !usageGranted) return@produceState
-                    value = null
-                    value = withContext(Dispatchers.IO) { buildUsageReport(context, windowDays) }
-                }
-
-                val tabLabels = listOf(
-                    stringResource(R.string.tab_live),
-                    stringResource(R.string.tab_history),
-                    stringResource(R.string.tab_drain),
-                    stringResource(R.string.tab_health),
-                    stringResource(R.string.tab_apps),
+        // The app's own recomposer: animations ignore the system animation scale.
+        setContent(parent = appRecomposer()) {
+            val themeMode by SettingsRepository.themeMode.collectAsStateWithLifecycle()
+            val dark = isAppInDarkTheme(themeMode)
+            LaunchedEffect(dark) {
+                val transparent = Color.TRANSPARENT
+                enableEdgeToEdge(
+                    statusBarStyle = if (dark) SystemBarStyle.dark(transparent) else SystemBarStyle.light(transparent, transparent),
+                    navigationBarStyle = if (dark) SystemBarStyle.dark(transparent) else SystemBarStyle.light(transparent, transparent),
                 )
-
-                Scaffold { padding ->
-                    Column(Modifier.padding(padding)) {
-                        Text(
-                            text = stringResource(R.string.app_name),
-                            style = MaterialTheme.typography.headlineLarge,
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 12.dp),
-                        )
-                        PillTabRow(
-                            labels = tabLabels,
-                            selected = pagerState.currentPage,
-                            onSelect = { scope.launch { pagerState.animateScrollToPage(it) } },
-                            modifier = Modifier.padding(bottom = 8.dp),
-                        )
-
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.Top,
-                        ) { page ->
-                            when (page) {
-                                0 -> Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .verticalScroll(rememberScrollState())
-                                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                                ) {
-                                    if (!notificationsGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        ElevatedCard(Modifier.fillMaxWidth()) {
-                                            Column(
-                                                Modifier.padding(24.dp),
-                                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                            ) {
-                                                Text(
-                                                    text = stringResource(R.string.notifications_title),
-                                                    style = MaterialTheme.typography.titleMedium,
-                                                )
-                                                Text(
-                                                    text = stringResource(R.string.notifications_body),
-                                                    style = MaterialTheme.typography.bodyMedium,
-                                                )
-                                                Button(onClick = {
-                                                    notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                                }) { Text(stringResource(R.string.notifications_action)) }
-                                            }
-                                        }
-                                    }
-                                    MonitorScreen(snapshot = snapshot, estimate = estimate)
-                                    SupportFooter()
-                                }
-
-                                1 -> HistoryScreen(
-                                    active = activeSession,
-                                    sessions = sessions,
-                                    insights = insights,
-                                    modifier = Modifier.fillMaxSize(),
-                                )
-
-                                2 -> DrainScreen(
-                                    stats = drainStats,
-                                    levelPercent = snapshot?.levelPercent,
-                                    capacityMah = capacityMah,
-                                    modifier = Modifier.fillMaxSize(),
-                                )
-
-                                3 -> HealthScreen(
-                                    snapshot = snapshot,
-                                    capacityMah = capacityMah,
-                                    designCapacityMah = designCapacity,
-                                    onDesignCapacityChange = { SettingsRepository.setDesignCapacityMah(it) },
-                                    modifier = Modifier.fillMaxSize(),
-                                )
-
-                                else -> if (!usageGranted) {
-                                    Column(Modifier.fillMaxSize().padding(16.dp)) {
-                                        UsageAccessCard(
-                                            granted = false,
-                                            onOpenSettings = { context.startActivity(usageAccessSettingsIntent()) },
-                                        )
-                                    }
-                                } else {
-                                    BatteryUsageScreen(
-                                        report = report,
-                                        samples = levelSamples,
-                                        windowDays = windowDays,
-                                        onWindowChange = { windowDays = it },
-                                        modifier = Modifier.fillMaxSize(),
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+            }
+            JouleArcTheme(themeMode) {
+                AppContent(hasNotificationPermission = ::hasNotificationPermission)
             }
         }
     }
@@ -239,6 +137,214 @@ class MainActivity : ComponentActivity() {
         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
             PackageManager.PERMISSION_GRANTED
+}
+
+@Composable
+private fun AppContent(hasNotificationPermission: () -> Boolean) {
+    val context = LocalContext.current
+    val snapshot by BatteryRepository.snapshot.collectAsStateWithLifecycle()
+    val estimate by BatteryRepository.estimate.collectAsStateWithLifecycle()
+    val capacityMah by BatteryRepository.capacityMah.collectAsStateWithLifecycle()
+    val extremes by BatteryRepository.extremes.collectAsStateWithLifecycle()
+    val sessions by SessionRepository.sessions.collectAsStateWithLifecycle()
+    val activeSession by SessionRepository.active.collectAsStateWithLifecycle()
+    val levelSamples by LevelHistoryRepository.samples.collectAsStateWithLifecycle()
+    val designUser by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
+    val recorded by SettingsRepository.recorded.collectAsStateWithLifecycle()
+    val fahrenheit by SettingsRepository.useFahrenheit.collectAsStateWithLifecycle()
+    val systemDesign by produceState<Int?>(null) {
+        value = withContext(Dispatchers.IO) { DeviceInfo.systemDesignCapacityMah(context) }
+    }
+    val insights = remember(sessions) { computeInsights(sessions) }
+    val drainStats = remember(levelSamples) {
+        val now = System.currentTimeMillis()
+        computeDrainStats(levelSamples, now - 14L * DAY_MS, now)
+    }
+
+    var stack by rememberSaveable { mutableStateOf(HOME) }
+    val route = stack.substringAfterLast('|')
+    val open: (String) -> Unit = { stack = "$stack|$it" }
+    val back: () -> Unit = { stack = stack.substringBeforeLast('|') }
+    BackHandler(enabled = stack.contains('|')) { back() }
+
+    var notificationsGranted by remember { mutableStateOf(hasNotificationPermission()) }
+    var usageGranted by remember { mutableStateOf(isUsageAccessGranted(context)) }
+    var windowDays by rememberSaveable { mutableIntStateOf(1) }
+    val notificationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { notificationsGranted = it }
+    LifecycleResumeEffect(Unit) {
+        notificationsGranted = hasNotificationPermission()
+        usageGranted = isUsageAccessGranted(context)
+        onPauseOrDispose { }
+    }
+
+    val report by produceState<UsageReport?>(null, usageGranted, windowDays, route) {
+        if (route != USAGE || !usageGranted) return@produceState
+        value = null
+        value = withContext(Dispatchers.IO) { buildUsageReport(context, windowDays) }
+    }
+
+    AnimatedContent(
+        targetState = stack,
+        transitionSpec = {
+            val forward = targetState.count { it == '|' } >= initialState.count { it == '|' }
+            val direction = if (forward) 1 else -1
+            (slideInHorizontally(tween(AppMotion.MEDIUM)) { it / 5 * direction } + fadeIn(tween(AppMotion.MEDIUM)))
+                .togetherWith(
+                    slideOutHorizontally(tween(AppMotion.MEDIUM)) { -it / 5 * direction } + fadeOut(tween(AppMotion.SHORT)),
+                )
+        },
+        label = "pages",
+    ) { target ->
+        val page = target.substringAfterLast('|')
+        when {
+            page == HOME -> {
+                val homeState = HomeState(
+                    snapshot = snapshot,
+                    estimate = estimate,
+                    capacityMah = capacityMah,
+                    designCapacityMah = designUser ?: systemDesign,
+                    designFromSystem = designUser == null && systemDesign != null,
+                    recorded = recorded,
+                    extremes = extremes,
+                    fahrenheit = fahrenheit,
+                    sessionCount = sessions.size,
+                    insights = insights,
+                    drain = drainStats,
+                    notificationsGranted = notificationsGranted,
+                )
+                HomePage(
+                    state = homeState,
+                    onSettings = { open(SETTINGS) },
+                ) { modifier ->
+                    HomeScreen(
+                        state = homeState,
+                        onRequestNotifications = {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        },
+                        onOpenHistory = { open(HISTORY) },
+                        onOpenDrain = { open(DRAIN) },
+                        onOpenUsage = { open(USAGE) },
+                        onResetRecorded = { SettingsRepository.resetRecorded() },
+                        modifier = modifier,
+                    )
+                }
+            }
+
+            page == HISTORY -> Page(stringResource(R.string.nav_history_title), back) { modifier ->
+                HistoryScreen(
+                    active = activeSession,
+                    sessions = sessions,
+                    insights = insights,
+                    onSessionClick = { open(SESSION + it.startMs) },
+                    modifier = modifier,
+                )
+            }
+
+            page.startsWith(SESSION) -> Page(stringResource(R.string.page_session), back) { modifier ->
+                val start = page.removePrefix(SESSION).toLongOrNull()
+                val session = activeSession?.takeIf { it.startMs == start }
+                    ?: sessions.firstOrNull { it.startMs == start }
+                if (session != null) SessionDetailScreen(session, modifier)
+            }
+
+            page == DRAIN -> Page(stringResource(R.string.drain_title), back) { modifier ->
+                DrainScreen(
+                    stats = drainStats,
+                    levelPercent = snapshot?.levelPercent,
+                    capacityMah = capacityMah,
+                    modifier = modifier,
+                )
+            }
+
+            page == USAGE -> Page(stringResource(R.string.usage_per_app), back) { modifier ->
+                if (!usageGranted) {
+                    Column(modifier.padding(16.dp)) {
+                        UsageAccessCard(
+                            granted = false,
+                            onOpenSettings = { context.startActivity(usageAccessSettingsIntent()) },
+                        )
+                    }
+                } else {
+                    BatteryUsageScreen(
+                        report = report,
+                        samples = levelSamples,
+                        windowDays = windowDays,
+                        onWindowChange = { windowDays = it },
+                        modifier = modifier,
+                    )
+                }
+            }
+
+            page == SETTINGS -> Page(stringResource(R.string.settings_title), back) { modifier ->
+                SettingsScreen(systemDesignMah = systemDesign, modifier = modifier)
+            }
+        }
+    }
+}
+
+/** Home scaffold: the top bar takes the color of the battery state (green, red or amber). */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomePage(state: HomeState, onSettings: () -> Unit, content: @Composable (Modifier) -> Unit) {
+    val s = state.snapshot
+    val palette = statusPalette()
+    val tone = when (s?.powerState) {
+        PowerState.CHARGING, PowerState.FULL -> Tone.GOOD
+        PowerState.DISCHARGING -> Tone.BAD
+        PowerState.PLUGGED_DRAINING, PowerState.PLUGGED_PAUSED -> Tone.CAUTION
+        null -> null
+    }
+    val surface = MaterialTheme.colorScheme.surface
+    val barColor by animateColorAsState(
+        targetValue = tone?.let { palette.of(it).copy(alpha = 0.22f).compositeOver(surface) } ?: surface,
+        animationSpec = tween(AppMotion.LONG),
+        label = "barColor",
+    )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Column {
+                        Text(stringResource(R.string.app_name))
+                        if (s != null) {
+                            Text(
+                                text = stringResource(MonitorService.stateLabel(s.powerState)) + " · ${s.levelPercent}%",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onSettings) {
+                        Icon(painterResource(R.drawable.ic_settings), stringResource(R.string.settings_title))
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = barColor, scrolledContainerColor = barColor),
+            )
+        },
+    ) { padding -> content(Modifier.padding(padding).fillMaxSize()) }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Page(title: String, onBack: () -> Unit, content: @Composable (Modifier) -> Unit) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(title) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(painterResource(R.drawable.ic_arrow_back), stringResource(R.string.cd_back))
+                    }
+                },
+            )
+        },
+    ) { padding -> content(Modifier.padding(padding).fillMaxSize()) }
 }
 
 /**

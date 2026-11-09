@@ -12,10 +12,18 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+/** Resolves the theme choice: 0 = follow the system, 1 = light, 2 = dark. */
+@Composable
+fun isAppInDarkTheme(themeMode: Int): Boolean = when (themeMode) {
+    1 -> false
+    2 -> true
+    else -> isSystemInDarkTheme()
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun JouleArcTheme(content: @Composable () -> Unit) {
-    val dark = isSystemInDarkTheme()
+fun JouleArcTheme(themeMode: Int = 0, content: @Composable () -> Unit) {
+    val dark = isAppInDarkTheme(themeMode)
     val context = LocalContext.current
     val colorScheme = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->

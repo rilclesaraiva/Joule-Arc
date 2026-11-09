@@ -2,6 +2,9 @@ package com.joulearc.app.data
 
 import kotlin.math.max
 
+/** One point of a session curve: seconds since the start, battery level and charging current. */
+data class SessionPoint(val offsetSec: Int, val level: Int, val currentMa: Int)
+
 data class ChargeSession(
     val startMs: Long,
     /** Timestamp of the last charging sample. */
@@ -15,6 +18,8 @@ data class ChargeSession(
     val maxTempC: Float,
     val source: PowerSource,
     val ongoing: Boolean,
+    /** Sparse curve (every 30 s or when the level changes), oldest first. */
+    val points: List<SessionPoint> = emptyList(),
 ) {
     val durationMs: Long get() = lastMs - startMs
     val gainPercent: Int get() = endLevel - startLevel
@@ -26,8 +31,11 @@ data class ChargeSession(
         } else null
 }
 
+private const val POINT_INTERVAL_MS = 30_000L
+private const val MAX_POINTS = 360
+
 /**
- * Groups charging samples into sessions. A session starts with the first CHARGING sample and
+ * Groups charging samples into sessions. A session starts with the first charging sample and
  * ends when the charger is unplugged or no charging sample arrives for [gapMs].
  */
 class ChargeSessionTracker(
@@ -66,6 +74,7 @@ class ChargeSessionTracker(
         maxTempC = s.temperatureC,
         source = s.source,
         ongoing = true,
+        points = listOf(SessionPoint(0, s.levelPercent, s.currentMa ?: 0)),
     )
 
     private fun ChargeSession.plus(s: BatterySnapshot): ChargeSession {
@@ -74,6 +83,19 @@ class ChargeSessionTracker(
         val dt = (s.timestampMs - lastMs).toDouble()
         val avg = if (c != null && elapsed + dt > 0.0) (avgCurrentMa * elapsed + c * dt) / (elapsed + dt)
         else avgCurrentMa
+
+        val offsetSec = ((s.timestampMs - startMs) / 1000L).toInt()
+        val lastPoint = points.lastOrNull()
+        val newPoints = if (
+            lastPoint == null || lastPoint.level != s.levelPercent ||
+            (offsetSec - lastPoint.offsetSec) * 1000L >= POINT_INTERVAL_MS
+        ) {
+            val appended = points + SessionPoint(offsetSec, s.levelPercent, c ?: 0)
+            if (appended.size > MAX_POINTS) {
+                appended.filterIndexed { i, _ -> i % 2 == 0 || i == appended.lastIndex }
+            } else appended
+        } else points
+
         return copy(
             lastMs = s.timestampMs,
             endLevel = s.levelPercent,
@@ -81,6 +103,7 @@ class ChargeSessionTracker(
             avgCurrentMa = avg,
             peakPowerMw = max(peakPowerMw, s.powerMw ?: 0),
             maxTempC = max(maxTempC, s.temperatureC),
+            points = newPoints,
         )
     }
 }

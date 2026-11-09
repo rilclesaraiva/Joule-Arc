@@ -6,6 +6,19 @@ enum class PowerSource { AC, USB, WIRELESS, BATTERY }
 
 enum class BatteryHealthState { GOOD, OVERHEAT, DEAD, OVER_VOLTAGE, COLD, FAILURE, UNKNOWN }
 
+/** What is really happening, combining the plug state, the system status and the current direction. */
+enum class PowerState {
+    CHARGING,
+    DISCHARGING,
+    FULL,
+
+    /** A charger is connected but current flows out of the battery (weak or faulty charger or cable). */
+    PLUGGED_DRAINING,
+
+    /** A charger is connected but the battery is not charging (charge limit, protection, or a problem). */
+    PLUGGED_PAUSED,
+}
+
 data class BatterySnapshot(
     val levelPercent: Int,
     /** Absolute current in mA, or null when the device does not report it. */
@@ -23,17 +36,42 @@ data class BatterySnapshot(
     val technology: String? = null,
     /** True while the screen is on (interactive). */
     val screenOn: Boolean = true,
+    /** True when a charger is connected but current flows out of the battery. */
+    val pluggedDischarging: Boolean = false,
+    /** What the charger offers, when the system reports it (not on every device). */
+    val chargerMaxVoltageMv: Int? = null,
+    val chargerMaxCurrentMa: Int? = null,
 ) {
-    val isCharging: Boolean get() = status == ChargeStatus.CHARGING
+    val powerState: PowerState
+        get() = when {
+            source == PowerSource.BATTERY -> PowerState.DISCHARGING
+            status == ChargeStatus.FULL -> PowerState.FULL
+            pluggedDischarging -> PowerState.PLUGGED_DRAINING
+            status == ChargeStatus.CHARGING -> PowerState.CHARGING
+            else -> PowerState.PLUGGED_PAUSED
+        }
 
-    /** Current in mA: positive with a charger connected, negative while running on the battery. */
+    /** True only while the battery is really receiving charge. */
+    val isCharging: Boolean get() = powerState == PowerState.CHARGING
+
+    /** True while current flows out of the battery, with or without a charger. */
+    val drawingFromBattery: Boolean
+        get() = powerState == PowerState.DISCHARGING || powerState == PowerState.PLUGGED_DRAINING
+
+    /** Current in mA: positive into the battery, negative out of it. */
     val signedCurrentMa: Int?
-        get() = currentMa?.let { if (source == PowerSource.BATTERY) -it else it }
+        get() = currentMa?.let { if (drawingFromBattery) -it else it }
 
     /** Power in mW (voltage x current), always positive. Null without a current reading. */
     val powerMw: Int? get() = currentMa?.let { (voltageMv.toLong() * it / 1000L).toInt() }
 
-    /** Positive while a charger is connected, negative while running on the battery. */
+    /** Power in mW: positive into the battery, negative out of it. */
     val signedPowerMw: Int?
-        get() = powerMw?.let { if (source == PowerSource.BATTERY) -it else it }
+        get() = powerMw?.let { if (drawingFromBattery) -it else it }
+
+    /** Maximum power the charger offers, in mW, when the system reports it. */
+    val chargerMaxMw: Int?
+        get() = if (chargerMaxVoltageMv != null && chargerMaxCurrentMa != null) {
+            (chargerMaxVoltageMv.toLong() * chargerMaxCurrentMa / 1000L).toInt()
+        } else null
 }

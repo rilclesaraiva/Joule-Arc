@@ -15,6 +15,8 @@ object SessionRepository {
     private const val MAX_SESSIONS = 200
     private const val MIN_DURATION_MS = 60_000L
     private const val SAVE_INTERVAL_MS = 30_000L
+    /** Only the newest sessions keep their curve, to keep the file small. */
+    private const val MAX_SESSIONS_WITH_CURVE = 30
 
     private val mutex = Mutex()
     private var store: SessionStore? = null
@@ -45,7 +47,13 @@ object SessionRepository {
             var mustSave = false
             if (closed != null) {
                 if (closed.durationMs >= MIN_DURATION_MS) {
-                    _sessions.value = (listOf(closed) + _sessions.value).take(MAX_SESSIONS)
+                    _sessions.value = (listOf(closed) + _sessions.value)
+                        .take(MAX_SESSIONS)
+                        .mapIndexed { i, session ->
+                            if (i >= MAX_SESSIONS_WITH_CURVE && session.points.isNotEmpty()) {
+                                session.copy(points = emptyList())
+                            } else session
+                        }
                 }
                 mustSave = true
             }

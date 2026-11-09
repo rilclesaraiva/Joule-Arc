@@ -15,16 +15,20 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
-import com.joulearc.app.MainActivity
 import com.joulearc.app.R
 import com.joulearc.app.core.ACTION_REFRESH_WIDGETS
+import com.joulearc.app.core.formatTemperature
+import com.joulearc.app.data.AlertKind
+import com.joulearc.app.data.AlertTracker
 import com.joulearc.app.data.BatteryReader
 import com.joulearc.app.data.BatteryRepository
 import com.joulearc.app.data.BatterySnapshot
 import com.joulearc.app.data.ChargeEstimator
-import com.joulearc.app.data.ChargeStatus
 import com.joulearc.app.data.LevelHistoryRepository
+import com.joulearc.app.data.PowerSource
+import com.joulearc.app.data.PowerState
 import com.joulearc.app.data.SessionRepository
+import com.joulearc.app.data.SettingsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -35,22 +39,23 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
 /**
- * Foreground service that keeps sampling the battery and updates a persistent notification.
- * It samples fast while the app is visible or the device charges, and wakes up immediately
- * on any battery broadcast (plug, unplug, level change).
+ * Foreground service that keeps sampling the battery, updates a persistent notification and sends
+ * the charge and low battery reminders. It samples fast while the app is visible or the device
+ * charges, and wakes up immediately on any battery or screen broadcast.
  */
 class MonitorService : Service() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val wake = Channel<Unit>(Channel.CONFLATED)
     private val estimator = ChargeEstimator()
+    private val alerts = AlertTracker()
     private var started = false
     private var lastNotifyMs = 0L
     private var lastWidgetMs = 0L
     private var lastNotifyText: String? = null
     private var lastSnapshot: BatterySnapshot? = null
 
-    private val batteryReceiver = object : BroadcastReceiver() {
+    private val wakeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             wake.trySend(Unit)
         }
@@ -59,7 +64,8 @@ class MonitorService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        createChannel()
+        createChannels()
+        SettingsRepository.init(this)
         SessionRepository.init(this)
         LevelHistoryRepository.init(this)
         val reader = BatteryReader(this)
@@ -75,14 +81,11 @@ class MonitorService : Service() {
             started = true
             ContextCompat.registerReceiver(
                 this,
-                batteryReceiver,
-                IntentFilter(Intent.ACTION_BATTERY_CHANGED),
-                ContextCompat.RECEIVER_NOT_EXPORTED,
-            )
-            ContextCompat.registerReceiver(
-                this,
-                batteryReceiver,
-                IntentFilter(Intent.ACTION_SCREEN_ON).apply { addAction(Intent.ACTION_SCREEN_OFF) },
+                wakeReceiver,
+                IntentFilter(Intent.ACTION_BATTERY_CHANGED).apply {
+                    addAction(Intent.ACTION_SCREEN_ON)
+                    addAction(Intent.ACTION_SCREEN_OFF)
+                },
                 ContextCompat.RECEIVER_NOT_EXPORTED,
             )
             scope.launch {
@@ -100,7 +103,7 @@ class MonitorService : Service() {
 
     override fun onDestroy() {
         if (started) {
-            unregisterReceiver(batteryReceiver)
+            unregisterReceiver(wakeReceiver)
             started = false
         }
         scope.cancel()
@@ -115,13 +118,16 @@ class MonitorService : Service() {
         BatteryRepository.publishCapacity(estimator.capacityMah)
         SessionRepository.onSnapshot(snapshot)
         LevelHistoryRepository.onSnapshot(snapshot)
+        SettingsRepository.recordCurrent(snapshot)
+        checkAlerts(snapshot)
 
         val text = notificationText(snapshot)
         val now = System.currentTimeMillis()
+        val manager = getSystemService(NotificationManager::class.java)
         if (text != lastNotifyText && now - lastNotifyMs >= NOTIFY_MIN_INTERVAL_MS) {
             lastNotifyText = text
             lastNotifyMs = now
-            getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, buildNotification(text))
+            manager.notify(NOTIFICATION_ID, buildNotification(text))
         }
 
         val widgetInterval = if (snapshot.isCharging || BatteryRepository.uiVisible.value) {
@@ -133,19 +139,55 @@ class MonitorService : Service() {
         }
     }
 
+    private fun checkAlerts(s: BatterySnapshot) {
+        val events = alerts.update(
+            level = s.levelPercent,
+            plugged = s.source != PowerSource.BATTERY,
+            chargeAt = SettingsRepository.chargeAlertLevel.value.takeIf { SettingsRepository.chargeAlertEnabled.value },
+            lowAt = SettingsRepository.lowAlertLevel.value.takeIf { SettingsRepository.lowAlertEnabled.value },
+        )
+        val manager = getSystemService(NotificationManager::class.java)
+        events.forEach { kind ->
+            val (id, text) = when (kind) {
+                AlertKind.CHARGE_LIMIT -> ALERT_CHARGE_ID to getString(R.string.alert_charge_text)
+                AlertKind.LOW_BATTERY -> ALERT_LOW_ID to getString(R.string.alert_low_text)
+            }
+            val notification = NotificationCompat.Builder(this, ALERT_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_stat_bolt)
+                .setContentTitle(getString(R.string.alert_title, s.levelPercent))
+                .setContentText(text)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+                .setContentIntent(openAppIntent())
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                .build()
+            manager.notify(id, notification)
+        }
+    }
+
     private fun nextIntervalMs(): Long = when {
         BatteryRepository.uiVisible.value -> VISIBLE_INTERVAL_MS
         lastSnapshot?.isCharging == true -> CHARGING_INTERVAL_MS
         else -> IDLE_INTERVAL_MS
     }
 
-    private fun createChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            getString(R.string.monitor_channel_name),
-            NotificationManager.IMPORTANCE_LOW,
-        ).apply { description = getString(R.string.monitor_channel_description) }
-        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+    private fun createChannels() {
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ID,
+                getString(R.string.monitor_channel_name),
+                NotificationManager.IMPORTANCE_LOW,
+            ).apply { description = getString(R.string.monitor_channel_description) },
+        )
+        manager.createNotificationChannel(
+            NotificationChannel(
+                ALERT_CHANNEL_ID,
+                getString(R.string.alert_channel_name),
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply { description = getString(R.string.alert_channel_description) },
+        )
     }
 
     private fun notificationText(snapshot: BatterySnapshot?): String =
@@ -154,35 +196,38 @@ class MonitorService : Service() {
         } else {
             getString(
                 R.string.notification_text,
-                getString(statusLabel(snapshot.status)),
+                getString(stateLabel(snapshot.powerState)),
                 snapshot.signedCurrentMa ?: 0,
                 snapshot.levelPercent,
-                snapshot.temperatureC,
+                formatTemperature(snapshot.temperatureC, SettingsRepository.useFahrenheit.value),
             )
         }
 
-    private fun buildNotification(text: String): Notification {
-        val openApp = PendingIntent.getActivity(
-            this,
-            0,
-            Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+    private fun openAppIntent(): PendingIntent? {
+        val launch = packageManager.getLaunchIntentForPackage(packageName) ?: return null
+        return PendingIntent.getActivity(
+            this, 0, launch, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+    }
+
+    private fun buildNotification(text: String): Notification =
+        NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_bolt)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(text)
-            .setContentIntent(openApp)
+            .setContentIntent(openAppIntent())
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setSilent(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .build()
-    }
 
     companion object {
         private const val CHANNEL_ID = "monitor"
+        private const val ALERT_CHANNEL_ID = "alerts"
         private const val NOTIFICATION_ID = 1
+        private const val ALERT_CHARGE_ID = 2
+        private const val ALERT_LOW_ID = 3
         private const val VISIBLE_INTERVAL_MS = 500L
         private const val CHARGING_INTERVAL_MS = 2_000L
         private const val IDLE_INTERVAL_MS = 30_000L
@@ -194,12 +239,12 @@ class MonitorService : Service() {
             ContextCompat.startForegroundService(context, Intent(context, MonitorService::class.java))
         }
 
-        fun statusLabel(status: ChargeStatus): Int = when (status) {
-            ChargeStatus.CHARGING -> R.string.status_charging
-            ChargeStatus.DISCHARGING -> R.string.status_discharging
-            ChargeStatus.FULL -> R.string.status_full
-            ChargeStatus.NOT_CHARGING -> R.string.status_not_charging
-            ChargeStatus.UNKNOWN -> R.string.status_unknown
+        fun stateLabel(state: PowerState): Int = when (state) {
+            PowerState.CHARGING -> R.string.status_charging
+            PowerState.DISCHARGING -> R.string.status_discharging
+            PowerState.FULL -> R.string.status_full
+            PowerState.PLUGGED_DRAINING -> R.string.status_draining
+            PowerState.PLUGGED_PAUSED -> R.string.status_paused
         }
     }
 }

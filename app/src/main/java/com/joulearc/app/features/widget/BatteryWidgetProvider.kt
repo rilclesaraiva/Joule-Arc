@@ -11,7 +11,7 @@ import com.joulearc.app.R
 import com.joulearc.app.core.ACTION_REFRESH_WIDGETS
 import com.joulearc.app.core.formatPower
 import com.joulearc.app.data.BatteryReader
-import com.joulearc.app.data.ChargeStatus
+import com.joulearc.app.data.PowerState
 
 /** Home screen widget with the live current, power and level. Redrawn by the monitor service. */
 class BatteryWidgetProvider : AppWidgetProvider() {
@@ -38,12 +38,12 @@ class BatteryWidgetProvider : AppWidgetProvider() {
             views.setTextViewText(R.id.widget_current, "—")
             views.setTextViewText(R.id.widget_detail, context.getString(R.string.monitor_starting))
         } else {
-            val statusRes = when (s.status) {
-                ChargeStatus.CHARGING -> R.string.status_charging
-                ChargeStatus.DISCHARGING -> R.string.status_discharging
-                ChargeStatus.FULL -> R.string.status_full
-                ChargeStatus.NOT_CHARGING -> R.string.status_not_charging
-                ChargeStatus.UNKNOWN -> R.string.status_unknown
+            val statusRes = when (s.powerState) {
+                PowerState.CHARGING -> R.string.status_charging
+                PowerState.DISCHARGING -> R.string.status_discharging
+                PowerState.FULL -> R.string.status_full
+                PowerState.PLUGGED_DRAINING -> R.string.status_draining
+                PowerState.PLUGGED_PAUSED -> R.string.status_paused
             }
             views.setTextViewText(
                 R.id.widget_status,

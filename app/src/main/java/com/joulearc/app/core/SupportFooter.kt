@@ -20,6 +20,7 @@ import com.joulearc.app.R
 const val REPOSITORY_URL = "https://github.com/rilclesaraiva/Joule-Arc"
 const val PRIVACY_URL = "https://rilclesaraiva.github.io/Joule-Arc/privacy"
 const val TERMS_URL = "https://rilclesaraiva.github.io/Joule-Arc/terms"
+const val SUPPORT_EMAIL = "saraivarilcle@gmail.com"
 
 /** Invite that leads to the repository, plus the legal links. Never mentions donations or payments. */
 @Composable

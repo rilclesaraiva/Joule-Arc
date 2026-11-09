@@ -12,6 +12,10 @@ class BatteryReader(context: Context) {
     private val batteryManager = appContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
     private val powerManager = appContext.getSystemService(Context.POWER_SERVICE) as PowerManager
 
+    init {
+        SettingsRepository.init(appContext)
+    }
+
     fun read(): BatterySnapshot? {
         val intent = appContext.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
             ?: return null
@@ -46,17 +50,34 @@ class BatteryReader(context: Context) {
             else -> BatteryHealthState.UNKNOWN
         }
 
+        // Dual-cell phones report half the real current and charge; the user can turn on doubling.
+        val multiplier = if (SettingsRepository.dualCellBattery.value) 2 else 1
         val rawCurrent = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+        val baseMa = normalizeCurrentMa(rawCurrent)
         val counter = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
             .takeIf { it != Long.MIN_VALUE && it > 0L }
+            ?.let { it * multiplier }
+
+        val sign = java.lang.Long.signum(rawCurrent)
+        if (baseMa != null) {
+            signLearner.observe(sign, source == PowerSource.BATTERY && status == ChargeStatus.DISCHARGING, baseMa)
+        }
+        val pluggedDischarging = source != PowerSource.BATTERY && status != ChargeStatus.FULL && (
+            status == ChargeStatus.DISCHARGING || (baseMa != null && signLearner.isDischarge(sign, baseMa))
+            )
 
         val cycles = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             intent.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, -1).takeIf { it > 0 }
         } else null
 
+        // Not public constants: present in the sticky battery broadcast on many devices, absent on others.
+        val maxChargerUa = intent.getIntExtra("max_charging_current", 0)
+        val maxChargerUv = intent.getIntExtra("max_charging_voltage", 0)
+        val plugged = source != PowerSource.BATTERY
+
         return BatterySnapshot(
             levelPercent = percent,
-            currentMa = normalizeCurrentMa(rawCurrent),
+            currentMa = baseMa?.let { it * multiplier },
             voltageMv = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0),
             temperatureC = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10f,
             status = status,
@@ -67,6 +88,14 @@ class BatteryReader(context: Context) {
             healthState = healthState,
             technology = intent.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)?.takeIf { it.isNotBlank() },
             screenOn = powerManager.isInteractive,
+            pluggedDischarging = pluggedDischarging,
+            chargerMaxVoltageMv = if (plugged && maxChargerUv > 0) maxChargerUv / 1000 else null,
+            chargerMaxCurrentMa = if (plugged && maxChargerUa > 0) maxChargerUa / 1000 else null,
         )
+    }
+
+    private companion object {
+        /** Shared by every reader in the process, so the service, tile and widget learn together. */
+        val signLearner = CurrentSignLearner()
     }
 }

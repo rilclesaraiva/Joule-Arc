@@ -5,23 +5,16 @@
     <string name="monitor_channel_name">Monitor de bateria</string>
     <string name="monitor_channel_description">Notificação persistente que mantém o monitor de carga ativo</string>
     <string name="monitor_starting">Iniciando o monitor…</string>
-    <string name="notification_text">%1$s · %2$d mA · %3$d%% · %4$.1f °C</string>
+    <string name="notification_text">%1$s · %2$d mA · %3$d%% · %4$s</string>
 
     <string name="status_charging">Carregando</string>
     <string name="status_discharging">Descarregando</string>
     <string name="status_full">Completa</string>
-    <string name="status_not_charging">Sem carregar</string>
-    <string name="status_unknown">Desconhecido</string>
-
-    <string name="current_label_charging">Corrente de carga</string>
-    <string name="current_label_discharging">Corrente de descarga</string>
-    <string name="current_unavailable">Indisponível neste aparelho</string>
     <string name="unit_ma">mA</string>
 
     <string name="stat_level">Nível</string>
     <string name="stat_voltage">Tensão</string>
     <string name="stat_temperature">Temperatura</string>
-    <string name="stat_source">Fonte de energia</string>
     <string name="source_ac">Tomada</string>
     <string name="source_usb">USB</string>
     <string name="source_wireless">Sem fio</string>
@@ -39,17 +32,6 @@
     <string name="support_invite">Quer apoiar o projeto? Entre no repositório do projeto.</string>
 
     <string name="stat_power">Potência</string>
-
-    <string name="estimate_title">Estimativa de carga</string>
-    <string name="estimate_rate">%1$.1f%% por hora</string>
-    <string name="estimate_full">Cheia em %1$s · por volta de %2$s</string>
-    <string name="estimate_capacity">Capacidade estimada: %1$d mAh</string>
-    <string name="estimate_note">Baseada na velocidade de carga atual. A carga desacelera perto de 100%, então o tempo real costuma ser maior.</string>
-    <string name="estimate_calculating">Calculando…</string>
-    <string name="estimate_unavailable">Este aparelho não informa o contador de carga da bateria, então a estimativa não está disponível.</string>
-
-    <string name="tab_live">Ao vivo</string>
-    <string name="tab_history">Histórico</string>
     <string name="history_empty">Nenhuma sessão de carga ainda. Elas aparecem aqui depois de carregar por pelo menos um minuto.</string>
     <string name="history_active">Carregando agora</string>
     <string name="history_level">%1$d%% → %2$d%% (+%3$d%%)</string>
@@ -58,9 +40,6 @@
     <string name="history_peak">Pico: %1$d mA · %2$s</string>
     <string name="history_rate">Média: %1$.1f%% por hora</string>
     <string name="history_temp">Temperatura máxima: %1$.1f °C</string>
-
-    <string name="tab_health">Saúde</string>
-    <string name="tab_apps">Apps</string>
 
     <string name="insights_title">Carga mais rápida</string>
     <string name="insights_need_more">Carregue mais algumas vezes para ver o que carrega mais rápido. Cada opção precisa de pelo menos 2 sessões de 5 minutos ou mais que começaram abaixo de 80%.</string>
@@ -74,19 +53,8 @@
     <string name="period_morning">Manhã (6–12 h)</string>
     <string name="period_afternoon">Tarde (12–18 h)</string>
     <string name="period_evening">Noite (18–24 h)</string>
-
-    <string name="health_title">Saúde da bateria</string>
-    <string name="health_soh">Saúde estimada</string>
-    <string name="health_soh_value">%1$d%%</string>
     <string name="health_not_reported">Não informado por este aparelho</string>
-    <string name="health_soh_need_design">Informe a capacidade nominal abaixo para ver uma estimativa</string>
-    <string name="health_design_label">Capacidade nominal (mAh)</string>
-    <string name="health_design_hint">Está nas especificações do celular, por exemplo 5000</string>
     <string name="health_cycles">Ciclos de carga</string>
-    <string name="health_capacity">Capacidade estimada</string>
-    <string name="health_capacity_value">%1$d mAh</string>
-    <string name="health_capacity_wait">Medindo… precisa de nível de bateria de 10% ou mais</string>
-    <string name="health_state">Condição</string>
     <string name="health_technology">Tecnologia</string>
     <string name="health_good">Boa</string>
     <string name="health_overheat">Superaquecida</string>
@@ -95,9 +63,6 @@
     <string name="health_cold">Fria</string>
     <string name="health_failure">Falha</string>
     <string name="health_unknown">Desconhecida</string>
-    <string name="health_note">Saúde = capacidade estimada dividida pela capacidade nominal que você informa. A capacidade vem do contador de carga e do nível da bateria e pode errar alguns por cento, então use o resultado como referência aproximada. A contagem de ciclos vem do aparelho (Android 14 ou mais novo, e só se o fabricante informar).</string>
-
-    <string name="apps_title">Primeiro e segundo plano</string>
     <string name="apps_window_24h">24 horas</string>
     <string name="apps_window_14d">14 dias</string>
     <string name="apps_row">Primeiro plano %1$s · Segundo plano %2$s</string>
@@ -121,8 +86,6 @@
     <string name="usage_since">Dados desde %1$s</string>
     <string name="usage_percent_less">&lt; 1%</string>
     <string name="usage_no_history">Coletando o histórico da bateria. Os gráficos se completam conforme você usa o celular.</string>
-
-    <string name="tab_drain">Consumo</string>
     <string name="insights_worst_source">Fonte mais lenta até agora: %1$s</string>
     <string name="insights_worst_period">Período mais lento: %1$s</string>
 
@@ -141,4 +104,167 @@
     <string name="drain_period_row_mah">%1$s · %2$.1f%% por hora · cerca de %3$d mAh</string>
     <string name="drain_tracked">Baseado em %1$s com a tela ligada e %2$s com a tela apagada, sem carregar, nos últimos 14 dias.</string>
     <string name="drain_note">Estimativas a partir do histórico de nível da bateria que o Joule Arc grava (em passos de 1%), não medições exatas. Os mAh usam a capacidade estimada da bateria. O tempo carregando não entra na conta.</string>
+    <string name="home_battery">Bateria</string>
+    <string name="home_tap_hint">Toque em uma leitura para ver detalhes</string>
+    <string name="home_section_analysis">Análises</string>
+    <string name="home_section_device">Dispositivo</string>
+    <string name="hero_per_hour">%1$.0f%% por hora</string>
+    <string name="hero_per_hour_drain">%1$.1f%% por hora</string>
+    <string name="hero_measuring">Medindo…</string>
+    <string name="hero_full_at">Cheia às %1$s</string>
+    <string name="hero_time_to_full">Tempo até encher</string>
+    <string name="hero_remaining">Dura cerca de</string>
+    <string name="hero_recorded_max">Máximo registrado</string>
+    <string name="hero_recorded_min">Mínimo registrado</string>
+    <string name="hero_reset">Redefinir</string>
+    <string name="status_draining">Perdendo carga</string>
+    <string name="status_paused">Não está carregando</string>
+    <string name="source_on_battery">Na bateria</string>
+    <string name="warn_draining_title">Carregador conectado, mas a bateria perde carga</string>
+    <string name="warn_draining_body">O carregador está conectado, mas sai mais energia da bateria do que entra. O carregador ou o cabo podem ser fracos demais para o uso atual, ou podem estar com defeito. Tente outro carregador ou cabo, ou use menos o celular enquanto carrega.</string>
+    <string name="warn_paused_title">Carregador conectado, mas não está carregando</string>
+    <string name="warn_paused_body">A bateria não está recebendo carga. Pode ser o limite de carga do sistema ou a proteção da bateria (por exemplo quando está quente), ou um problema no carregador ou no cabo.</string>
+    <string name="capacity_title">Capacidade da bateria</string>
+    <string name="capacity_now">Na bateria agora</string>
+    <string name="capacity_now_value">%1$s mAh · %2$d%%</string>
+    <string name="capacity_full">Carga total hoje (estimada)</string>
+    <string name="capacity_lost">Perdida com o desgaste</string>
+    <string name="capacity_design">Capacidade de projeto</string>
+    <string name="capacity_design_system">Capacidade de projeto informada pelo sistema.</string>
+    <string name="capacity_design_user">Capacidade de projeto informada por você.</string>
+    <string name="capacity_design_missing">Capacidade de projeto desconhecida: informe nas configurações.</string>
+    <string name="capacity_unavailable">Este aparelho não informa o contador de carga, então a capacidade não pode ser medida.</string>
+    <string name="capacity_note">A carga total é estimada a partir do contador de carga e do nível, e pode errar alguns por cento.</string>
+    <string name="value_mah">%1$d mAh</string>
+    <string name="health_chip">Saúde %1$d%%</string>
+    <string name="health_condition">Verificação do celular</string>
+    <string name="tile_status">Status</string>
+    <string name="tile_source">Conectado</string>
+    <string name="tile_health">Saúde</string>
+    <string name="device_android">Versão do Android</string>
+    <string name="device_manufacturer">Fabricante</string>
+    <string name="device_model">Modelo</string>
+    <string name="nav_history_title">Histórico de cargas</string>
+    <string name="nav_history_sessions">Sessões: %1$d</string>
+    <string name="nav_drain_collecting">Coletando dados</string>
+    <string name="nav_drain_rates">Tela ligada %1$s%%/h · Repouso %2$s%%/h</string>
+    <string name="nav_usage_sub">Gráficos de 24 horas e 14 dias, e apps</string>
+    <string name="page_session">Sessão de carga</string>
+    <string name="session_chart_current">Corrente de carga (mA)</string>
+    <string name="session_chart_level">Nível da bateria</string>
+    <string name="session_chart_note" formatted="false">A carga costuma desacelerar conforme a bateria enche, principalmente acima de 80%.</string>
+    <string name="session_no_chart">Esta sessão não tem curva: foi gravada antes das curvas existirem, ou é uma das sessões mais antigas.</string>
+    <string name="cd_back">Voltar</string>
+    <string name="settings_title">Configurações</string>
+    <string name="rating_too_low">Muito baixa</string>
+    <string name="rating_low">Baixa</string>
+    <string name="rating_normal">Normal</string>
+    <string name="rating_high">Alta</string>
+    <string name="rating_too_high">Muito alta</string>
+    <string name="rating_too_cold">Muito fria</string>
+    <string name="rating_cold">Fria</string>
+    <string name="rating_warm">Morna</string>
+    <string name="rating_hot">Quente</string>
+    <string name="rating_too_hot">Muito quente</string>
+    <string name="rating_critical">Crítica</string>
+    <string name="rating_good">Boa</string>
+    <string name="rating_fullish">Alta</string>
+    <string name="rating_slow">Lento</string>
+    <string name="rating_fast">Rápido</string>
+    <string name="rating_very_fast">Muito rápido</string>
+    <string name="rating_ultra_fast">Ultrarrápido</string>
+    <string name="rating_light_use">Uso leve</string>
+    <string name="rating_normal_use">Uso normal</string>
+    <string name="rating_heavy_use">Uso intenso</string>
+    <string name="rating_very_heavy_use">Uso muito intenso</string>
+    <string name="rating_fair">Razoável</string>
+    <string name="rating_worn">Desgastada</string>
+    <string name="rating_poor">Ruim</string>
+    <string name="sheet_meaning">O que isso significa</string>
+    <string name="sheet_min_opened">Mínimo desde que você abriu o app</string>
+    <string name="sheet_max_opened">Máximo desde que você abriu o app</string>
+    <string name="sheet_typical">Faixa típica</string>
+    <string name="sheet_charger_max">O carregador fornece até</string>
+    <string name="sheet_fastest_opened">Carregamento mais rápido desde que você abriu o app</string>
+    <string name="sheet_drain_opened">Maior consumo desde que você abriu o app</string>
+    <string name="sheet_current">Corrente</string>
+    <string name="sheet_average">Média das últimas leituras</string>
+    <string name="sheet_power_in">Entrando na bateria</string>
+    <string name="sheet_power_out">Saindo da bateria</string>
+    <string name="meaning_current" formatted="false">Valores positivos são corrente entrando na bateria, negativos são corrente saindo dela. As estimativas de velocidade e tempo usam a média das últimas leituras. A carga desacelera perto de 100%, então o tempo real até encher costuma ser maior.</string>
+    <string name="meaning_voltage_low">Voltagem baixa. A bateria está quase vazia ou o celular está sob uso pesado.</string>
+    <string name="meaning_voltage_normal">Uma leitura saudável. A voltagem sobe ao carregar e cai conforme você usa o celular.</string>
+    <string name="meaning_voltage_high">Voltagem alta, comum no fim de uma carga.</string>
+    <string name="meaning_voltage_too_high">Acima da faixa comum. Se continuar assim, desconecte o carregador e verifique-o.</string>
+    <string name="meaning_temp_too_cold">Muito fria. Baterias perdem capacidade e carregam mal no frio. Evite carregar até o celular esquentar.</string>
+    <string name="meaning_temp_cold">Fria. A bateria pode segurar um pouco menos de carga no frio.</string>
+    <string name="meaning_temp_normal">Temperatura ideal para a bateria.</string>
+    <string name="meaning_temp_warm">Normal ao carregar, jogar ou usar a câmera. Ficar morna por horas desgasta a bateria um pouco mais rápido.</string>
+    <string name="meaning_temp_hot">Quente. Dê uma pausa no celular, tire da capinha ou pare de carregar por um tempo.</string>
+    <string name="meaning_temp_too_hot">Muito quente. Pare de carregar e de usar pesado até esfriar.</string>
+    <string name="meaning_level_critical">Quase vazia. Carregue logo para o celular não desligar.</string>
+    <string name="meaning_level_low">Baixa. Um bom momento para carregar.</string>
+    <string name="meaning_level_good" formatted="false">As baterias duram mais quando ficam entre 20% e 80%.</string>
+    <string name="meaning_level_high" formatted="false">Acima de 80%. Tudo bem de vez em quando, mas ficar cheia por muito tempo desgasta a bateria um pouco mais rápido.</string>
+    <string name="meaning_power_slow">Carregamento lento. O carregador, o cabo ou o uso do celular podem estar limitando a velocidade.</string>
+    <string name="meaning_power_normal">Velocidade normal de carregamento.</string>
+    <string name="meaning_power_fast">Carregamento rápido: o carregador e o cabo estão funcionando bem juntos.</string>
+    <string name="meaning_use_light">Uso leve. A bateria está rendendo bem.</string>
+    <string name="meaning_use_normal">Uso normal.</string>
+    <string name="meaning_use_heavy">Uso intenso. Brilho da tela, jogos, câmera ou navegação gastam a bateria mais rápido.</string>
+    <string name="meaning_status_charging">Carregando normalmente.</string>
+    <string name="meaning_status_discharging">Usando a bateria.</string>
+    <string name="meaning_status_full">A bateria está cheia.</string>
+    <string name="meaning_source_ac">Um carregador de tomada, geralmente a forma mais rápida de carregar.</string>
+    <string name="meaning_source_usb">Uma porta USB, como um computador ou uma power bank. Geralmente mais lento que um carregador de tomada.</string>
+    <string name="meaning_source_wireless">Um carregador sem fio. Prático, mas mais lento e esquenta mais que o cabo.</string>
+    <string name="meaning_source_battery">Nenhum carregador conectado.</string>
+    <string name="meaning_health_good">A bateria ainda guarda quase toda a carga original.</string>
+    <string name="meaning_health_fair">Algum desgaste normal. A bateria guarda um pouco menos do que quando era nova.</string>
+    <string name="meaning_health_worn">Desgaste perceptível. A bateria guarda bem menos do que quando era nova e descarrega mais rápido.</string>
+    <string name="meaning_health_poor">Desgaste forte. Considere trocar a bateria se ela acabar rápido demais.</string>
+    <string name="meaning_health_unknown">Informe a capacidade de projeto nas configurações para estimar a saúde da bateria.</string>
+    <string name="meaning_technology" formatted="false">As baterias de lítio duram mais quando ficam frescas e carregadas entre 20% e 80%. Uma carga completa de vez em quando não tem problema.</string>
+    <string name="meaning_cycles" formatted="false">Um ciclo equivale a usar 100% da carga da bateria, mesmo que espalhado por vários dias. Muitas baterias de celular mantêm cerca de 80% da capacidade depois de 500 a 800 ciclos.</string>
+    <string name="note_voltage">Esta é a tensão da bateria. Carregadores rápidos usam tensão maior no cabo, e o celular reduz para a bateria. A voltagem pula um pouco quando você conecta ou desconecta o carregador.</string>
+    <string name="note_temperature">O Android informa a temperatura da bateria, que acompanha o quanto o celular inteiro está quente.</string>
+    <string name="note_power">Potência é voltagem vezes corrente: a velocidade com que a energia entra ou sai da bateria. Ao carregar ela é menor que a potência do carregador: parte alimenta o celular, parte vira calor, e ela cai conforme a bateria enche.</string>
+    <string name="note_health">A saúde é a carga total estimada de hoje comparada com a capacidade de projeto. A verificação do celular só avisa falhas como superaquecimento.</string>
+    <string name="settings_reminders">Lembretes</string>
+    <string name="settings_charge_alert">Lembrete de carregamento</string>
+    <string name="settings_charge_alert_sub">Lembra você de desconectar em %1$d%%</string>
+    <string name="settings_low_alert">Lembrete de bateria fraca</string>
+    <string name="settings_low_alert_sub">Lembra você de carregar em %1$d%%</string>
+    <string name="settings_protection">Proteção do app</string>
+    <string name="settings_protection_sub">Permita que o Joule Arc rode sem restrição de bateria para o monitoramento e os lembretes continuarem funcionando</string>
+    <string name="settings_protection_on">Já roda sem restrição de bateria</string>
+    <string name="settings_design">Capacidade de projeto (mAh)</string>
+    <string name="settings_design_hint">Deixe vazio para usar o valor do sistema: %1$s</string>
+    <string name="settings_design_none">não informado</string>
+    <string name="settings_dual_cell">Bateria de duas células</string>
+    <string name="settings_dual_cell_sub">Para celulares com duas células de bateria (geralmente 65 W ou mais). Dobra a corrente, a carga e a capacidade para corresponder aos valores nominais.</string>
+    <string name="settings_temp_unit">Unidade de temperatura</string>
+    <string name="settings_reset_recorded">Redefinir valores registrados</string>
+    <string name="settings_reset_recorded_sub">Corrente máxima e mínima registradas</string>
+    <string name="settings_reset_done">Valores registrados redefinidos</string>
+    <string name="settings_appearance">Aparência</string>
+    <string name="settings_theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="settings_language">Idioma</string>
+    <string name="language_system">Sistema</string>
+    <string name="settings_help">Ajuda e privacidade</string>
+    <string name="settings_report">Informar um problema</string>
+    <string name="settings_report_sub">Abre um e-mail para o desenvolvedor com os dados do celular preenchidos. Nada é enviado até você enviar.</string>
+    <string name="settings_source">Código-fonte</string>
+    <string name="settings_version">Joule Arc %1$s</string>
+    <string name="report_subject">Joule Arc: relato de problema</string>
+    <string name="report_body">Descreva o problema:\n\n\n---\nApp: %1$s\nAndroid: %2$s\nAparelho: %3$s %4$s</string>
+    <string name="no_app_found">Nenhum app encontrado para abrir isto</string>
+    <string name="alert_channel_name">Lembretes da bateria</string>
+    <string name="alert_channel_description">Lembretes de carregamento e de bateria fraca</string>
+    <string name="alert_title">Bateria em %1$d%%</string>
+    <string name="alert_charge_text">Você pode desconectar o carregador para ajudar a bateria a durar mais.</string>
+    <string name="alert_low_text">Conecte o carregador.</string>
 </resources>

@@ -28,6 +28,7 @@ fun HistoryScreen(
     active: ChargeSession?,
     sessions: List<ChargeSession>,
     insights: ChargeInsights,
+    onSessionClick: (ChargeSession) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -37,7 +38,7 @@ fun HistoryScreen(
     ) {
         item(key = "insights") { InsightsCard(insights) }
         if (active != null) {
-            item(key = "active") { SessionCard(active) }
+            item(key = "active") { SessionCard(active, onSessionClick) }
         }
         if (sessions.isEmpty() && active == null) {
             item(key = "empty") {
@@ -47,13 +48,13 @@ fun HistoryScreen(
                 )
             }
         }
-        items(sessions, key = { it.startMs }) { SessionCard(it) }
+        items(sessions, key = { it.startMs }) { SessionCard(it, onSessionClick) }
     }
 }
 
 @Composable
-private fun SessionCard(session: ChargeSession) {
-    ElevatedCard(Modifier.fillMaxWidth()) {
+private fun SessionCard(session: ChargeSession, onClick: (ChargeSession) -> Unit) {
+    ElevatedCard(onClick = { onClick(session) }, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
                 text = if (session.ongoing) stringResource(R.string.history_active)

@@ -69,4 +69,16 @@ class ChargeSessionTrackerTest {
         }.current!!
         assertEquals(60f, long.percentPerHour!!, 0.1f)
     }
+
+    @Test fun recordsSparseCurvePoints() {
+        val tracker = ChargeSessionTracker()
+        tracker.onSnapshot(snap(0, level = 40, current = 1000))
+        tracker.onSnapshot(snap(10_000, level = 40, current = 1100))  // too soon, same level: no point
+        tracker.onSnapshot(snap(40_000, level = 40, current = 1200))  // 30 s passed: point
+        tracker.onSnapshot(snap(45_000, level = 41, current = 1300))  // level changed: point
+        val points = tracker.current!!.points
+        assertEquals(listOf(0, 40, 45), points.map { it.offsetSec })
+        assertEquals(listOf(40, 40, 41), points.map { it.level })
+        assertEquals(1300, points.last().currentMa)
+    }
 }
