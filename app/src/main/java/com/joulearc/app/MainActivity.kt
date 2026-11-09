@@ -30,6 +30,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material3.DropdownMenu
@@ -190,6 +191,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
 
     // Kept here, above the page switch, so coming back from a page returns to the same spot.
     val homeScroll = rememberSaveable(saver = ScrollState.Saver) { ScrollState(0) }
+    val usageList = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
     var stack by rememberSaveable { mutableStateOf(HOME) }
     val route = stack.substringAfterLast('|')
     val open: (String) -> Unit = { stack = "$stack|$it" }
@@ -376,6 +378,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                         },
                         onSelectHour = { selectedHour = it },
                         onAppClick = { open(APP + it) },
+                        listState = usageList,
                         modifier = modifier,
                     )
                 }

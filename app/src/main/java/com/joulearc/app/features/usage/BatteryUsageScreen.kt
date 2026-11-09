@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -69,10 +70,12 @@ fun BatteryUsageScreen(
     onSelectDay: (Long?) -> Unit,
     onSelectHour: (Long?) -> Unit,
     onAppClick: (String) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     val options = listOf(stringResource(R.string.apps_window_24h), stringResource(R.string.apps_window_14d))
     LazyColumn(
+        state = listState,
         modifier = modifier,
         contentPadding = insetsPadding(16.dp, 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),

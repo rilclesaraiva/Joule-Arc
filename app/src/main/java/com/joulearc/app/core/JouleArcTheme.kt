@@ -37,7 +37,7 @@ private fun ColorScheme.amoled(): ColorScheme = copy(
     surfaceContainerLow = Color(0xFF0B0B0B),
     surfaceContainer = Color(0xFF111111),
     surfaceContainerHigh = Color(0xFF181818),
-    surfaceContainerHighest = Color(0xFF1F1F1F),
+    surfaceContainerHighest = Color(0xFF303030),
 )
 
 /** Digits of equal width, so a changing number never changes the width of its line. */

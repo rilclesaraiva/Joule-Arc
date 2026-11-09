@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 ### Changed
+- Uso por app keeps its scroll position when you open an app and come back.
+- AMOLED theme: selected items (toggle pill, selected chart area) are a little lighter so they stand out from the black.
 - Uso por app: tap a bar in the charts to see only that hour (24 hours view) or that day (14 days view, which also shows the hours of the chosen day). The list, the percentages and the per-app pages follow the selection; tap the same bar again to go back to the overall view. Holding a bar shows its time in a small label.
 - The battery bar on an app's page now fills by the share of the whole battery (active, then background), like Android's, instead of by time.
 - The Device sheet no longer shows the capacity diagnostics; the source of a detected capacity is in the row label.
