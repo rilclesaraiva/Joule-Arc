@@ -21,6 +21,10 @@
 - Privacy policy and terms in `docs/` (GitHub Pages), linked in the README and in the app.
 
 ### Changed
+- No fixed top bars: page titles scroll with the content, and the home title and settings button sit at the start of the home. Only a round, slightly transparent back button stays over inner pages.
+- Settings are now plain ordered lists with icons (no categories); About is the only heading and opens a page with the developer, project links, legal pages, license and an invitation to the repository. The home footer is gone.
+- Reset buttons need two quick taps; the first tap shows a small hint.
+- "In the battery now" shows whole mAh (for example 1.509).
 - Settings has a fourth theme, AMOLED (pure black surfaces).
 - The home no longer shifts while numbers change: tabular digits, one-line subtitles on the main card.
 - The home remembers its scroll position when you come back from a page.

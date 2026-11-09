@@ -17,6 +17,7 @@ import com.joulearc.app.R
 import com.joulearc.app.core.formatDuration
 import com.joulearc.app.data.DayPeriod
 import com.joulearc.app.data.DrainStats
+import com.joulearc.app.core.PageTitle
 import kotlin.math.roundToInt
 
 @Composable
@@ -32,10 +33,7 @@ fun DrainScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(
-            text = stringResource(R.string.drain_title),
-            style = MaterialTheme.typography.titleLarge,
-        )
+        PageTitle(stringResource(R.string.drain_title))
 
         if (stats.screenOnPph == null && stats.screenOffPph == null) {
             Text(

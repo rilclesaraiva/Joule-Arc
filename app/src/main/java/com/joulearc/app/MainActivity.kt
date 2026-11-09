@@ -21,16 +21,15 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -51,6 +49,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joulearc.app.core.AppMotion
+import com.joulearc.app.core.BackButton
+import com.joulearc.app.core.PageTitle
 import com.joulearc.app.core.JouleArcTheme
 import com.joulearc.app.core.appRecomposer
 import com.joulearc.app.core.isAppInDarkTheme
@@ -70,6 +70,7 @@ import com.joulearc.app.features.history.SessionDetailScreen
 import com.joulearc.app.features.home.HomeScreen
 import com.joulearc.app.features.home.HomeState
 import com.joulearc.app.features.monitor.MonitorService
+import com.joulearc.app.features.settings.AboutScreen
 import com.joulearc.app.features.settings.SettingsScreen
 import com.joulearc.app.features.usage.BatteryUsageScreen
 import com.joulearc.app.features.usage.UsageAccessCard
@@ -88,6 +89,7 @@ private const val SESSION = "session:"
 private const val DRAIN = "drain"
 private const val USAGE = "usage"
 private const val SETTINGS = "settings"
+private const val ABOUT = "about"
 
 /** Entry point: wires the features together and owns navigation. Features never import each other. */
 class MainActivity : ComponentActivity() {
@@ -211,7 +213,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     drain = drainStats,
                     notificationsGranted = notificationsGranted,
                 )
-                HomePage(onSettings = { open(SETTINGS) }) { modifier ->
+                HomePage { modifier ->
                     HomeScreen(
                         state = homeState,
                         onRequestNotifications = {
@@ -223,13 +225,14 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                         onOpenDrain = { open(DRAIN) },
                         onOpenUsage = { open(USAGE) },
                         onResetRecorded = { SettingsRepository.resetRecorded() },
+                        onSettings = { open(SETTINGS) },
                         scrollState = homeScroll,
                         modifier = modifier,
                     )
                 }
             }
 
-            page == HISTORY -> Page(stringResource(R.string.nav_history_title), back) { modifier ->
+            page == HISTORY -> Page(back) { modifier ->
                 HistoryScreen(
                     active = activeSession,
                     sessions = sessions,
@@ -239,14 +242,14 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 )
             }
 
-            page.startsWith(SESSION) -> Page(stringResource(R.string.page_session), back) { modifier ->
+            page.startsWith(SESSION) -> Page(back) { modifier ->
                 val start = page.removePrefix(SESSION).toLongOrNull()
                 val session = activeSession?.takeIf { it.startMs == start }
                     ?: sessions.firstOrNull { it.startMs == start }
                 if (session != null) SessionDetailScreen(session, modifier)
             }
 
-            page == DRAIN -> Page(stringResource(R.string.drain_title), back) { modifier ->
+            page == DRAIN -> Page(back) { modifier ->
                 DrainScreen(
                     stats = drainStats,
                     levelPercent = snapshot?.levelPercent,
@@ -255,9 +258,10 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 )
             }
 
-            page == USAGE -> Page(stringResource(R.string.usage_per_app), back) { modifier ->
+            page == USAGE -> Page(back) { modifier ->
                 if (!usageGranted) {
                     Column(modifier.padding(16.dp)) {
+                        PageTitle(stringResource(R.string.usage_per_app))
                         UsageAccessCard(
                             granted = false,
                             onOpenSettings = { context.startActivity(usageAccessSettingsIntent()) },
@@ -274,46 +278,30 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 }
             }
 
-            page == SETTINGS -> Page(stringResource(R.string.settings_title), back) { modifier ->
-                SettingsScreen(systemDesignMah = systemDesign, modifier = modifier)
+            page == SETTINGS -> Page(back) { modifier ->
+                SettingsScreen(systemDesignMah = systemDesign, onOpenAbout = { open(ABOUT) }, modifier = modifier)
             }
+
+            page == ABOUT -> Page(back) { modifier -> AboutScreen(modifier) }
         }
     }
 }
 
-/** Home scaffold: a plain top bar; the battery state is shown on the main card, not here. */
-@OptIn(ExperimentalMaterial3Api::class)
+/** Home: no fixed bar. The title and the settings button are part of the scrolling content. */
 @Composable
-private fun HomePage(onSettings: () -> Unit, content: @Composable (Modifier) -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
-                actions = {
-                    IconButton(onClick = onSettings) {
-                        Icon(painterResource(R.drawable.ic_settings), stringResource(R.string.settings_title))
-                    }
-                },
-            )
-        },
-    ) { padding -> content(Modifier.padding(padding).fillMaxSize()) }
+private fun HomePage(content: @Composable (Modifier) -> Unit) {
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        content(Modifier.fillMaxSize().systemBarsPadding())
+    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+/** Inner page: the title scrolls with the content; only the round back button stays over the page. */
 @Composable
-private fun Page(title: String, onBack: () -> Unit, content: @Composable (Modifier) -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(title) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(painterResource(R.drawable.ic_arrow_back), stringResource(R.string.cd_back))
-                    }
-                },
-            )
-        },
-    ) { padding -> content(Modifier.padding(padding).fillMaxSize()) }
+private fun Page(onBack: () -> Unit, content: @Composable (Modifier) -> Unit) {
+    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        content(Modifier.fillMaxSize().systemBarsPadding())
+        BackButton(onBack, Modifier.align(Alignment.TopStart).statusBarsPadding().padding(12.dp))
+    }
 }
 
 /**

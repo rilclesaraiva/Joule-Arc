@@ -29,7 +29,6 @@
     <string name="usage_granted">Acesso ao uso concedido</string>
     <string name="usage_action">Abrir ajustes</string>
 
-    <string name="support_invite">Quer apoiar o projeto? Entre no repositório do projeto.</string>
 
     <string name="stat_power">Potência</string>
     <string name="history_empty">Nenhuma sessão de carga ainda. Elas aparecem aqui depois de carregar por pelo menos um minuto.</string>
@@ -232,7 +231,6 @@
     <string name="note_temperature">O Android informa a temperatura da bateria, que acompanha o quanto o celular inteiro está quente.</string>
     <string name="note_power">Potência é voltagem vezes corrente: a velocidade com que a energia entra ou sai da bateria. Ao carregar ela é menor que a potência do carregador: parte alimenta o celular, parte vira calor, e ela cai conforme a bateria enche.</string>
     <string name="note_health">A saúde é a carga total estimada de hoje comparada com a capacidade de projeto. A verificação do celular só avisa falhas como superaquecimento.</string>
-    <string name="settings_reminders">Lembretes</string>
     <string name="settings_charge_alert">Lembrete de carregamento</string>
     <string name="settings_charge_alert_sub">Lembra você de desconectar em %1$d%%</string>
     <string name="settings_low_alert">Lembrete de bateria fraca</string>
@@ -249,7 +247,6 @@
     <string name="settings_reset_recorded">Redefinir valores registrados</string>
     <string name="settings_reset_recorded_sub">Corrente máxima e mínima registradas</string>
     <string name="settings_reset_done">Valores registrados redefinidos</string>
-    <string name="settings_appearance">Aparência</string>
     <string name="settings_theme">Tema</string>
     <string name="theme_system">Sistema</string>
     <string name="theme_light">Claro</string>
@@ -257,11 +254,9 @@
     <string name="theme_amoled">AMOLED</string>
     <string name="settings_language">Idioma</string>
     <string name="language_system">Sistema</string>
-    <string name="settings_help">Ajuda e privacidade</string>
     <string name="settings_report">Informar um problema</string>
     <string name="settings_report_sub">Abre um e-mail para o desenvolvedor com os dados do celular preenchidos. Nada é enviado até você enviar.</string>
     <string name="settings_source">Código-fonte</string>
-    <string name="settings_version">Joule Arc %1$s</string>
     <string name="report_subject">Joule Arc: relato de problema</string>
     <string name="report_body">Descreva o problema:\n\n\n---\nApp: %1$s\nAndroid: %2$s\nAparelho: %3$s %4$s</string>
     <string name="no_app_found">Nenhum app encontrado para abrir isto</string>
@@ -270,4 +265,23 @@
     <string name="alert_title">Bateria em %1$d%%</string>
     <string name="alert_charge_text">Você pode desconectar o carregador para ajudar a bateria a durar mais.</string>
     <string name="alert_low_text">Conecte o carregador.</string>
+
+    <string name="confirm_double_tap">Toque duas vezes rapidamente para confirmar</string>
+    <string name="about_title">Sobre o Joule Arc</string>
+    <string name="about_sub">Versão %1$s, licença e código-fonte</string>
+    <string name="about_section">Sobre</string>
+    <string name="about_description">Monitor de bateria e carregamento, gratuito, sem anúncios e sem conta. Feito no Brasil, com auxílio de IA, sob direção e revisão do autor.</string>
+    <string name="about_developer">Desenvolvedor</string>
+    <string name="about_developer_sub">Feito no Brasil · github.com/rilclesaraiva</string>
+    <string name="about_project">Projeto</string>
+    <string name="about_source_sub">github.com/rilclesaraiva/Joule-Arc</string>
+    <string name="about_changelog">Novidades</string>
+    <string name="about_changelog_sub">Cada versão e o que mudou nela</string>
+    <string name="about_legal">Legal</string>
+    <string name="about_privacy_sub">O que fica no seu aparelho</string>
+    <string name="about_terms_sub">As regras para usar o app</string>
+    <string name="about_license">Licença</string>
+    <string name="about_license_sub">GPL-3.0, software livre</string>
+    <string name="support_title">Quer apoiar o projeto?</string>
+    <string name="support_sub">Entre no repositório do projeto.</string>
 </resources>

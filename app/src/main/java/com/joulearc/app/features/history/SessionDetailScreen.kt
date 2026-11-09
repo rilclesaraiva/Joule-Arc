@@ -21,6 +21,7 @@ import com.joulearc.app.core.formatDateTime
 import com.joulearc.app.core.formatDuration
 import com.joulearc.app.core.formatWatts
 import com.joulearc.app.core.statusPalette
+import com.joulearc.app.core.PageTitle
 import com.joulearc.app.data.ChargeSession
 
 /** One charging session with its current and level curves. */
@@ -32,6 +33,7 @@ fun SessionDetailScreen(session: ChargeSession, modifier: Modifier = Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        PageTitle(stringResource(R.string.page_session))
         Text(formatDateTime(session.startMs), style = MaterialTheme.typography.titleLarge)
         Text(
             text = stringResource(R.string.history_level, session.startLevel, session.endLevel, session.gainPercent),

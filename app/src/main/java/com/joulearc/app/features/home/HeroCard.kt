@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.joulearc.app.core.AppMotion
+import com.joulearc.app.core.rememberDoubleTapConfirm
 import com.joulearc.app.core.rememberStableGaugeRange
 import com.joulearc.app.data.PowerState
 import androidx.compose.foundation.layout.Column
@@ -244,6 +245,6 @@ private fun RecordedRow(s: BatterySnapshot, recorded: RecordedCurrents, onReset:
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        TextButton(onClick = onReset) { Text(stringResource(R.string.hero_reset)) }
+        TextButton(onClick = rememberDoubleTapConfirm(onReset)) { Text(stringResource(R.string.hero_reset)) }
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.joulearc.app.R
 import com.joulearc.app.core.BarChart
+import com.joulearc.app.core.PageTitle
 import com.joulearc.app.core.PillToggle
 import com.joulearc.app.core.formatClock
 import com.joulearc.app.core.formatDateTime
@@ -68,6 +69,7 @@ fun BatteryUsageScreen(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        item(key = "title") { PageTitle(stringResource(R.string.usage_per_app)) }
         item(key = "toggle") {
             PillToggle(
                 options = options,

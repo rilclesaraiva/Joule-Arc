@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.joulearc.app.R
-import com.joulearc.app.core.SupportFooter
 import com.joulearc.app.core.statusPalette
 import com.joulearc.app.data.BatterySnapshot
 import com.joulearc.app.data.DeviceInfo
@@ -43,6 +43,7 @@ fun HomeScreen(
     onOpenDrain: () -> Unit,
     onOpenUsage: () -> Unit,
     onResetRecorded: () -> Unit,
+    onSettings: () -> Unit,
     scrollState: ScrollState,
     modifier: Modifier = Modifier,
 ) {
@@ -55,6 +56,20 @@ fun HomeScreen(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 8.dp, top = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier.weight(1f),
+            )
+            FilledTonalIconButton(onClick = onSettings) {
+                Icon(painterResource(R.drawable.ic_settings), stringResource(R.string.settings_title))
+            }
+        }
+
         if (!state.notificationsGranted) NotificationCard(onRequestNotifications)
 
         if (s == null) {
@@ -108,7 +123,6 @@ fun HomeScreen(
             ),
         )
 
-        SupportFooter()
     }
 
     val reading = openReading

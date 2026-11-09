@@ -29,7 +29,6 @@
     <string name="usage_granted">Usage access granted</string>
     <string name="usage_action">Open settings</string>
 
-    <string name="support_invite">Want to support the project? Visit the project repository.</string>
 
     <string name="stat_power">Power</string>
     <string name="history_empty">No charging sessions yet. They appear here after you charge for at least one minute.</string>
@@ -232,7 +231,6 @@
     <string name="note_temperature">Android reports the battery temperature, which follows how warm the whole phone is.</string>
     <string name="note_power">Power is voltage times current: how fast energy goes into or out of the battery. While charging it is lower than the charger power: part runs the phone, part is lost as heat, and it drops as the battery fills.</string>
     <string name="note_health">Health is the estimated full charge today compared with the design capacity. The phone battery check only flags failures such as overheating.</string>
-    <string name="settings_reminders">Reminders</string>
     <string name="settings_charge_alert">Charge reminder</string>
     <string name="settings_charge_alert_sub">Reminds you to unplug at %1$d%%</string>
     <string name="settings_low_alert">Low battery reminder</string>
@@ -249,7 +247,6 @@
     <string name="settings_reset_recorded">Reset recorded values</string>
     <string name="settings_reset_recorded_sub">Highest and lowest current recorded</string>
     <string name="settings_reset_done">Recorded values reset</string>
-    <string name="settings_appearance">Appearance</string>
     <string name="settings_theme">Theme</string>
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
@@ -257,11 +254,9 @@
     <string name="theme_amoled">AMOLED</string>
     <string name="settings_language">Language</string>
     <string name="language_system">System</string>
-    <string name="settings_help">Help and privacy</string>
     <string name="settings_report">Report a problem</string>
     <string name="settings_report_sub">Opens an email to the developer with your phone details filled in. Nothing is sent until you send it.</string>
     <string name="settings_source">Source code</string>
-    <string name="settings_version">Joule Arc %1$s</string>
     <string name="report_subject">Joule Arc: problem report</string>
     <string name="report_body">Describe the problem:\n\n\n---\nApp: %1$s\nAndroid: %2$s\nDevice: %3$s %4$s</string>
     <string name="no_app_found">No app found to open this</string>
@@ -270,4 +265,23 @@
     <string name="alert_title">Battery at %1$d%%</string>
     <string name="alert_charge_text">You can unplug the charger to help the battery last longer.</string>
     <string name="alert_low_text">Connect the charger.</string>
+
+    <string name="confirm_double_tap">Tap twice quickly to confirm</string>
+    <string name="about_title">About Joule Arc</string>
+    <string name="about_sub">Version %1$s, license and source code</string>
+    <string name="about_section">About</string>
+    <string name="about_description">Battery and charging monitor, free, with no ads and no account. Made in Brazil with the help of AI, under the author\'s direction and review.</string>
+    <string name="about_developer">Developer</string>
+    <string name="about_developer_sub">Made in Brazil · github.com/rilclesaraiva</string>
+    <string name="about_project">Project</string>
+    <string name="about_source_sub">github.com/rilclesaraiva/Joule-Arc</string>
+    <string name="about_changelog">What\'s new</string>
+    <string name="about_changelog_sub">Every version and what changed in it</string>
+    <string name="about_legal">Legal</string>
+    <string name="about_privacy_sub">What stays on your device</string>
+    <string name="about_terms_sub">The rules for using the app</string>
+    <string name="about_license">License</string>
+    <string name="about_license_sub">GPL-3.0, free software</string>
+    <string name="support_title">Want to support the project?</string>
+    <string name="support_sub">Visit the project repository.</string>
 </resources>

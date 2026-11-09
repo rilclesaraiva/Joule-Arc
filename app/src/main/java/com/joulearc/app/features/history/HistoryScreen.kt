@@ -21,6 +21,7 @@ import com.joulearc.app.core.formatWatts
 import com.joulearc.app.data.ChargeInsights
 import com.joulearc.app.data.ChargeSession
 import com.joulearc.app.data.DayPeriod
+import com.joulearc.app.core.PageTitle
 import com.joulearc.app.data.PowerSource
 
 @Composable
@@ -36,6 +37,7 @@ fun HistoryScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        item(key = "title") { PageTitle(stringResource(R.string.nav_history_title)) }
         item(key = "insights") { InsightsCard(insights) }
         if (active != null) {
             item(key = "active") { SessionCard(active, onSessionClick) }

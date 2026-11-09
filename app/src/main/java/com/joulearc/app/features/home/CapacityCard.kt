@@ -26,6 +26,7 @@ import com.joulearc.app.data.BatterySnapshot
 import com.joulearc.app.data.Scales
 import com.joulearc.app.data.estimateHealthPercent
 import java.util.Locale
+import kotlin.math.roundToInt
 
 /** Battery capacity: charge now, full charge today, lost to wear and design capacity. */
 @Composable
@@ -117,5 +118,5 @@ internal fun CapacityCard(
     }
 }
 
-internal fun formatMah(mah: Float): String = String.format(Locale.getDefault(), "%,.1f", mah)
+internal fun formatMah(mah: Float): String = String.format(Locale.getDefault(), "%,d", mah.roundToInt())
 
