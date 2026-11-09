@@ -74,6 +74,7 @@ import com.joulearc.app.core.appRecomposer
 import com.joulearc.app.core.isAppInDarkTheme
 import com.joulearc.app.data.AppUsageReader
 import com.joulearc.app.data.BatteryRepository
+import com.joulearc.app.data.DetectedCapacity
 import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.LevelHistoryRepository
 import com.joulearc.app.data.SessionRepository
@@ -177,8 +178,8 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     val designUser by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
     val recorded by SettingsRepository.recorded.collectAsStateWithLifecycle()
     val fahrenheit by SettingsRepository.useFahrenheit.collectAsStateWithLifecycle()
-    val systemDesign by produceState<Int?>(null) {
-        value = withContext(Dispatchers.IO) { DeviceInfo.systemDesignCapacityMah(context) }
+    val systemDesign by produceState<DetectedCapacity?>(null) {
+        value = withContext(Dispatchers.IO) { DeviceInfo.detectDesignCapacity(context) }
     }
     val insights = remember(sessions) { computeInsights(sessions) }
     val drainStats = remember(levelSamples) {
@@ -261,7 +262,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     snapshot = snapshot,
                     estimate = estimate,
                     capacityMah = capacityMah,
-                    designCapacityMah = designUser ?: systemDesign,
+                    designCapacityMah = designUser ?: systemDesign?.mah,
                     designFromSystem = designUser == null && systemDesign != null,
                     recorded = recorded,
                     extremes = extremes,
@@ -375,7 +376,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
             }
 
             page == SETTINGS -> Page(goBack) { modifier ->
-                SettingsScreen(systemDesignMah = systemDesign, onOpenAbout = { open(ABOUT) }, modifier = modifier)
+                SettingsScreen(systemDesign = systemDesign, onOpenAbout = { open(ABOUT) }, modifier = modifier)
             }
 
             page == ABOUT -> Page(goBack) { modifier -> AboutScreen(modifier) }

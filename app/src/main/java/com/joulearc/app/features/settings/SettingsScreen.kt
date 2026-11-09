@@ -54,6 +54,8 @@ import com.joulearc.app.core.RowIcon
 import com.joulearc.app.core.SUPPORT_EMAIL
 import com.joulearc.app.core.rememberDoubleTapConfirm
 import com.joulearc.app.data.AppLanguage
+import com.joulearc.app.data.CapacitySource
+import com.joulearc.app.data.DetectedCapacity
 import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.SettingsRepository
 import kotlin.math.roundToInt
@@ -62,7 +64,7 @@ private val LANGUAGE_TAGS = listOf("", "en", "pt-BR")
 
 /** Settings as plain lists, most used first. The only heading is About, at the end. */
 @Composable
-fun SettingsScreen(systemDesignMah: Int?, onOpenAbout: () -> Unit, modifier: Modifier = Modifier) {
+fun SettingsScreen(systemDesign: DetectedCapacity?, onOpenAbout: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val chargeOn by SettingsRepository.chargeAlertEnabled.collectAsStateWithLifecycle()
     val chargeLevel by SettingsRepository.chargeAlertLevel.collectAsStateWithLifecycle()
@@ -169,7 +171,9 @@ fun SettingsScreen(systemDesignMah: Int?, onOpenAbout: () -> Unit, modifier: Mod
                                 Text(
                                     stringResource(
                                         R.string.settings_design_hint,
-                                        systemDesignMah?.let { stringResource(R.string.value_mah, it) }
+                                        systemDesign?.let {
+                                            stringResource(R.string.value_mah, it.mah) + " (" + stringResource(sourceLabel(it.source)) + ")"
+                                        }
                                             ?: stringResource(R.string.settings_design_none),
                                     ),
                                 )
@@ -421,4 +425,10 @@ private fun UpdateAlertsDialog(onDismiss: () -> Unit) {
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.update_dialog_cancel)) } },
     )
+}
+
+private fun sourceLabel(source: CapacitySource): Int = when (source) {
+    CapacitySource.POWER_PROFILE -> R.string.capacity_source_profile
+    CapacitySource.POWER_PROFILE_XML -> R.string.capacity_source_xml
+    CapacitySource.KERNEL -> R.string.capacity_source_kernel
 }

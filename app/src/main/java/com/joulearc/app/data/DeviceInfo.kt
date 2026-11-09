@@ -7,6 +7,11 @@ import android.os.Build
 import android.os.PowerManager
 import java.io.File
 
+/** Where a detected capacity came from, shown to the user so a wrong value can be traced. */
+enum class CapacitySource { POWER_PROFILE, POWER_PROFILE_XML, KERNEL }
+
+data class DetectedCapacity(val mah: Int, val source: CapacitySource)
+
 /** Device facts shown in the app and used in problem reports. Nothing here leaves the device. */
 object DeviceInfo {
     val androidVersion: String get() = Build.VERSION.RELEASE ?: ""
@@ -22,8 +27,10 @@ object DeviceInfo {
      * battery node. Any of them can be missing, blocked or a placeholder, so the result is only a
      * starting point: the value the user types in Settings always wins.
      */
-    fun systemDesignCapacityMah(context: Context): Int? =
-        fromPowerProfile(context) ?: fromPowerProfileXml() ?: fromKernelNode()
+    fun detectDesignCapacity(context: Context): DetectedCapacity? =
+        fromPowerProfile(context)?.let { DetectedCapacity(it, CapacitySource.POWER_PROFILE) }
+            ?: fromPowerProfileXml()?.let { DetectedCapacity(it, CapacitySource.POWER_PROFILE_XML) }
+            ?: fromKernelNode()?.let { DetectedCapacity(it, CapacitySource.KERNEL) }
 
     private fun fromPowerProfile(context: Context): Int? =
         try {

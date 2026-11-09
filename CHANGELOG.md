@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Changed
+- Settings now shows where the detected device capacity came from (system power profile, system resources or kernel file), so a wrong or missing value can be traced.
 - Uso por app hides system apps by default (built-in apps that were never updated, and background parts with no launcher icon). The three-dot button at the top right opens a small menu over it to show or hide them. The percentages still count them, so the shown apps may add up to less than the total.
 - The on-screen back button now plays the same slide-out as the back gesture.
 - Device capacity detection has one more source: the system power profile read as the framework's XML resource through public calls, tried before the kernel node.

@@ -331,4 +331,7 @@
     <string name="usage_show_system">Mostrar apps do sistema</string>
     <string name="usage_hide_system">Ocultar apps do sistema</string>
     <string name="usage_more_options">Mais opções</string>
+    <string name="capacity_source_profile">perfil de energia do sistema</string>
+    <string name="capacity_source_xml">recursos do sistema</string>
+    <string name="capacity_source_kernel">arquivo do kernel</string>
 </resources>
