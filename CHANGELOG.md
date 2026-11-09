@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- A phone that was still charging (for example at 90%, with 1 A going in) could be shown as "Losing charge" with the amber warning. The learned current direction now uses votes (a discharge on battery and a steady charge both count) instead of the last single reading, and once it is known the current decides, even when the system status says discharging.
+
 ### Changed
 - Privacy policy: the list of links that open in the browser now matches the app (developer profile, changelog and license were missing).
 

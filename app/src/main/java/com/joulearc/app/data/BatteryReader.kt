@@ -60,11 +60,20 @@ class BatteryReader(context: Context) {
 
         val sign = java.lang.Long.signum(rawCurrent)
         if (baseMa != null) {
-            signLearner.observe(sign, source == PowerSource.BATTERY && status == ChargeStatus.DISCHARGING, baseMa)
-        }
-        val pluggedDischarging = source != PowerSource.BATTERY && status != ChargeStatus.FULL && (
-            status == ChargeStatus.DISCHARGING || (baseMa != null && signLearner.isDischarge(sign, baseMa))
+            signLearner.observe(
+                sign,
+                knownDischarging = source == PowerSource.BATTERY && status == ChargeStatus.DISCHARGING,
+                magnitudeMa = baseMa,
+                knownCharging = source != PowerSource.BATTERY && status == ChargeStatus.CHARGING,
             )
+        }
+        // Once the sign is learned, the current decides: some phones report DISCHARGING (or a stale sign)
+        // while a charger is still pushing current in, for example near the end of a charge.
+        val pluggedDischarging = source != PowerSource.BATTERY && status != ChargeStatus.FULL && when {
+            baseMa != null && signLearner.isDischarge(sign, baseMa) -> true
+            baseMa != null && signLearner.isCharge(sign, baseMa) -> false
+            else -> status == ChargeStatus.DISCHARGING
+        }
 
         val cycles = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             intent.getIntExtra(BatteryManager.EXTRA_CYCLE_COUNT, -1).takeIf { it > 0 }
