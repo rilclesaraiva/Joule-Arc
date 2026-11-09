@@ -53,7 +53,7 @@ read every line. Found something careless? Please [open an issue](../../issues).
 
 ## Installation
 
-No public release yet. Signed builds will be attached to the [Releases](../../releases) page.
+Signed builds are attached to each release on the [Releases](../../releases) page.
 
 ## License
 
