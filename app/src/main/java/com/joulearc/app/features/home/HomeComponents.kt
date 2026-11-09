@@ -84,9 +84,9 @@ internal fun SectionHeader(title: String, hint: String? = null) {
 
 /** Label/value rows inside an outlined card. */
 @Composable
-internal fun InfoRows(rows: List<Pair<String, String>>, modifier: Modifier = Modifier) {
+internal fun InfoRows(rows: List<Pair<String, String>>, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null) {
     if (rows.isEmpty()) return
-    OutlinedCard(modifier.fillMaxWidth()) {
+    val content: @Composable () -> Unit = {
         Column {
             rows.forEachIndexed { i, (label, value) ->
                 if (i > 0) HorizontalDivider(Modifier.padding(horizontal = 16.dp))
@@ -105,6 +105,11 @@ internal fun InfoRows(rows: List<Pair<String, String>>, modifier: Modifier = Mod
                 }
             }
         }
+    }
+    if (onClick != null) {
+        OutlinedCard(onClick = onClick, modifier = modifier.fillMaxWidth()) { content() }
+    } else {
+        OutlinedCard(modifier.fillMaxWidth()) { content() }
     }
 }
 

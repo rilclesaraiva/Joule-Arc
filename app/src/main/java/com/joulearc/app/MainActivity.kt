@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
-import androidx.activity.BackEventCompat
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
@@ -87,6 +86,7 @@ import com.joulearc.app.features.monitor.MonitorService
 import com.joulearc.app.features.settings.AboutScreen
 import com.joulearc.app.features.settings.SettingsScreen
 import com.joulearc.app.features.updates.UpdateScreen
+import com.joulearc.app.features.usage.AppUsageScreen
 import com.joulearc.app.features.usage.BatteryUsageScreen
 import com.joulearc.app.features.usage.UsageAccessCard
 import com.joulearc.app.features.usage.UsageReport
@@ -103,6 +103,7 @@ private const val HISTORY = "history"
 private const val SESSION = "session:"
 private const val DRAIN = "drain"
 private const val USAGE = "usage"
+private const val APP = "app:"
 private const val SETTINGS = "settings"
 private const val ABOUT = "about"
 
@@ -188,17 +189,13 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     // Back gesture: with the preview on, the page slides with the finger and the page below shows through.
     val predictive by SettingsRepository.predictiveBack.collectAsStateWithLifecycle()
     val backProgress = remember { Animatable(0f) }
-    var backFromRight by remember { mutableStateOf(false) }
     // Set just before a committed back gesture, so the page change does not animate twice.
     val instant = remember { booleanArrayOf(false) }
     LaunchedEffect(stack) { instant[0] = false }
     if (predictive) {
         PredictiveBackHandler(enabled = stack.contains('|')) { events ->
             try {
-                events.collect {
-                    backFromRight = it.swipeEdge == BackEventCompat.EDGE_RIGHT
-                    backProgress.snapTo(it.progress)
-                }
+                events.collect { backProgress.snapTo(it.progress) }
                 // Finished: slide the rest of the way out, then swap pages without a second animation.
                 backProgress.animateTo(1f, tween(AppMotion.SHORT))
                 instant[0] = true
@@ -224,8 +221,9 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
         onPauseOrDispose { }
     }
 
-    val report by produceState<UsageReport?>(null, usageGranted, windowDays, route) {
-        if (route != USAGE || !usageGranted) return@produceState
+    val onUsagePages = route == USAGE || route.startsWith(APP)
+    val report by produceState<UsageReport?>(null, usageGranted, windowDays, onUsagePages) {
+        if (!onUsagePages || !usageGranted) return@produceState
         value = null
         value = withContext(Dispatchers.IO) { buildUsageReport(context, windowDays) }
     }
@@ -308,9 +306,20 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                         samples = levelSamples,
                         windowDays = windowDays,
                         onWindowChange = { windowDays = it },
+                        onAppClick = { open(APP + it) },
                         modifier = modifier,
                     )
                 }
+            }
+
+            page.startsWith(APP) -> Page(back) { modifier ->
+                AppUsageScreen(
+                    packageName = page.removePrefix(APP),
+                    report = report,
+                    windowDays = windowDays,
+                    onWindowChange = { windowDays = it },
+                    modifier = modifier,
+                )
             }
 
             page == SETTINGS -> Page(back) { modifier ->
@@ -321,13 +330,12 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
         }
     }
     val gesturing by remember { derivedStateOf { backProgress.value > 0f } }
-    val sign = if (backFromRight) -1f else 1f
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceDim)) {
     if (gesturing && stack.contains('|')) {
         // The page below, revealed as the current one slides away (slight parallax, fading scrim).
         Box(
             Modifier.fillMaxSize().graphicsLayer {
-                translationX = -sign * size.width * 0.2f * (1f - backProgress.value)
+                translationX = -size.width * 0.2f * (1f - backProgress.value)
             },
         ) {
             renderPage(stack.substringBeforeLast('|'))
@@ -337,7 +345,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     Box(
         Modifier.fillMaxSize().graphicsLayer {
             val p = backProgress.value
-            translationX = sign * size.width * p
+            translationX = size.width * p
             if (p > 0f) {
                 shadowElevation = 24.dp.toPx()
                 shape = RoundedCornerShape((28f * minOf(1f, p * 6f)).dp)

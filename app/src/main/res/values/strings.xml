@@ -5,7 +5,6 @@
     <string name="monitor_channel_name">Battery monitor</string>
     <string name="monitor_channel_description">Persistent notification that keeps the charging monitor running</string>
     <string name="monitor_starting">Starting the monitor…</string>
-    <string name="notification_text">%1$s · %2$d mA · %3$d%% · %4$s</string>
 
     <string name="status_charging">Charging</string>
     <string name="status_discharging">Discharging</string>
@@ -316,4 +315,17 @@
     <string name="meaning_level_high_charging">Above 80%. Charging to 100% is normal; to preserve the battery, unplug near 80% when you can.</string>
     <string name="note_voltage_unplugged">This is the battery voltage. It slowly drops as the charge runs out and rises a little when you plug in a charger.</string>
     <string name="note_power_out">Power is voltage times current: how fast energy leaves the battery to run the phone. It rises with the screen on, high brightness, games, the camera and a weak mobile signal.</string>
+    <string name="device_this_phone">This phone</string>
+    <string name="device_api">API level</string>
+    <string name="device_patch">Security update</string>
+    <string name="device_code">Device code</string>
+    <string name="device_capacity_detected">Device capacity (detected)</string>
+    <string name="device_capacity_user">Device capacity (set by you)</string>
+    <string name="device_note">These details stay on your phone. The device capacity is what the battery was built to hold; Joule Arc compares it with the current estimate of the full charge to estimate health. If it is wrong, type the right value in Settings.</string>
+    <string name="usage_app_total">Total time: %1$s — Battery: %2$s</string>
+    <string name="usage_app_active">Active: %1$s — Battery: %2$s</string>
+    <string name="usage_app_background">Background: %1$s — Battery: %2$s</string>
+    <string name="usage_app_note">An estimate: Android does not let regular apps read the battery used by a single app. Joule Arc splits the battery drained in the period by usage time (background counts half). Active is time with the app on screen; background is time running a foreground service.</string>
+    <string name="usage_app_none">No recorded use of this app in this period.</string>
+    <string name="notification_text_short">%1$d mA · %2$d%% · %3$s</string>
 </resources>

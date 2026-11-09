@@ -73,7 +73,7 @@ class MonitorService : Service() {
         ServiceCompat.startForeground(
             this,
             NOTIFICATION_ID,
-            buildNotification(notificationText(first)),
+            buildNotification(notificationTitle(first), notificationText(first)),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0,
         )
@@ -121,13 +121,15 @@ class MonitorService : Service() {
         SettingsRepository.recordCurrent(snapshot)
         checkAlerts(snapshot)
 
+        val title = notificationTitle(snapshot)
         val text = notificationText(snapshot)
         val now = System.currentTimeMillis()
         val manager = getSystemService(NotificationManager::class.java)
-        if (text != lastNotifyText && now - lastNotifyMs >= NOTIFY_MIN_INTERVAL_MS) {
-            lastNotifyText = text
+        val key = title + "|" + text
+        if (key != lastNotifyText && now - lastNotifyMs >= NOTIFY_MIN_INTERVAL_MS) {
+            lastNotifyText = key
             lastNotifyMs = now
-            manager.notify(NOTIFICATION_ID, buildNotification(text))
+            manager.notify(NOTIFICATION_ID, buildNotification(title, text))
         }
 
         val widgetInterval = if (snapshot.isCharging || BatteryRepository.uiVisible.value) {
@@ -190,13 +192,16 @@ class MonitorService : Service() {
         )
     }
 
+    /** The state ("Charging", "Discharging"...) is the title, so the app name is not repeated. */
+    private fun notificationTitle(snapshot: BatterySnapshot?): String =
+        if (snapshot == null) getString(R.string.app_name) else getString(stateLabel(snapshot.powerState))
+
     private fun notificationText(snapshot: BatterySnapshot?): String =
         if (snapshot == null) {
             getString(R.string.monitor_starting)
         } else {
             getString(
-                R.string.notification_text,
-                getString(stateLabel(snapshot.powerState)),
+                R.string.notification_text_short,
                 snapshot.signedCurrentMa ?: 0,
                 snapshot.levelPercent,
                 formatTemperature(snapshot.temperatureC, SettingsRepository.useFahrenheit.value),
@@ -210,10 +215,10 @@ class MonitorService : Service() {
         )
     }
 
-    private fun buildNotification(text: String): Notification =
+    private fun buildNotification(title: String, text: String): Notification =
         NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_bolt)
-            .setContentTitle(getString(R.string.app_name))
+            .setContentTitle(title)
             .setContentText(text)
             .setContentIntent(openAppIntent())
             .setOngoing(true)

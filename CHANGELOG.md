@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 ### Changed
+- Tapping an app in "Uso por app" opens its own page: total time, active and background time and the estimated battery share of each, with the 24 hours / 14 days switch.
+- The Device section is now one tappable panel that opens a single sheet (model, manufacturer, Android version, API level, security update, device code, device capacity).
+- The full-charge estimate no longer flickers: it is sampled only when the battery level changes and smoothed slowly.
+- Predictive back always slides the page out to the right, back to where it came from, whichever edge you swipe from.
+- The persistent notification shows the state ("Charging", "Discharging"...) as its title instead of the app name, with current, level and temperature below.
 - Reading details now fit the situation: with no charger connected, the voltage, temperature and level texts no longer tell you to unplug or keep charging, and the power note explains discharge. Portuguese uses "Tensão" everywhere (no more "Voltagem").
 - Predictive back now works like a page stack: the current page slides with your finger over the page below (with a shadow and rounded corners), and the swipe finishes without a second animation.
 - "Design capacity" is now called "Device capacity" (Settings, capacity card and detail texts).

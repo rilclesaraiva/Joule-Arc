@@ -1,6 +1,7 @@
 package com.joulearc.app.features.usage
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,6 +63,7 @@ fun BatteryUsageScreen(
     samples: List<LevelSample>,
     windowDays: Int,
     onWindowChange: (Int) -> Unit,
+    onAppClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val options = listOf(stringResource(R.string.apps_window_24h), stringResource(R.string.apps_window_14d))
@@ -106,7 +108,7 @@ fun BatteryUsageScreen(
             report.apps.isEmpty() -> item(key = "empty") {
                 Text(stringResource(R.string.apps_empty), style = MaterialTheme.typography.bodyMedium)
             }
-            else -> items(report.apps, key = { it.packageName }) { app -> AppRow(app, report) }
+            else -> items(report.apps, key = { it.packageName }) { app -> AppRow(app, report) { onAppClick(app.packageName) } }
         }
     }
 }
@@ -161,7 +163,7 @@ private fun ChartSection(samples: List<LevelSample>, windowDays: Int) {
 }
 
 @Composable
-private fun AppRow(app: AppUsage, report: UsageReport) {
+private fun AppRow(app: AppUsage, report: UsageReport, onClick: () -> Unit) {
     val percent = report.drainedPercent?.let { app.share * it }
     val trailing = when {
         percent == null -> formatDuration(app.foregroundMs + app.backgroundMs)
@@ -169,7 +171,7 @@ private fun AppRow(app: AppUsage, report: UsageReport) {
         else -> stringResource(R.string.apps_share, percent.roundToInt())
     }
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).clickable(onClick = onClick).padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {

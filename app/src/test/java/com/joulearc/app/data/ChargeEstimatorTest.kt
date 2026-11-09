@@ -44,4 +44,12 @@ class ChargeEstimatorTest {
         val e = estimator.update(snap(2, current = 3000, counterUah = 2_500_000))
         assertEquals(2500, e.avgCurrentMa)
     }
+
+    @Test fun capacityDoesNotJumpBetweenLevelChanges() {
+        val estimator = ChargeEstimator()
+        estimator.update(snap(0, level = 50, current = 500, counterUah = 2_500_000))
+        // Same level, counter drifting down: must not move the estimate.
+        val e = estimator.update(snap(1, level = 50, current = 500, counterUah = 2_400_000))
+        assertEquals(5000, e.capacityMah)
+    }
 }

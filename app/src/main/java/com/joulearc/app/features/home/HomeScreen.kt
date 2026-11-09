@@ -49,6 +49,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     var openReading by rememberSaveable { mutableStateOf<Reading?>(null) }
+    var showDevice by rememberSaveable { mutableStateOf(false) }
     val s = state.snapshot
 
     Column(
@@ -115,10 +116,12 @@ fun HomeScreen(
                 stringResource(R.string.device_manufacturer) to DeviceInfo.manufacturer,
                 stringResource(R.string.device_model) to DeviceInfo.model,
             ),
+            onClick = { showDevice = true },
         )
 
     }
 
+    if (showDevice) DeviceSheet(state) { showDevice = false }
     val reading = openReading
     if (reading != null && s != null) {
         ReadingSheet(reading, state, s) { openReading = null }

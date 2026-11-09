@@ -5,7 +5,6 @@
     <string name="monitor_channel_name">Monitor de bateria</string>
     <string name="monitor_channel_description">Notificação persistente que mantém o monitor de carga ativo</string>
     <string name="monitor_starting">Iniciando o monitor…</string>
-    <string name="notification_text">%1$s · %2$d mA · %3$d%% · %4$s</string>
 
     <string name="status_charging">Carregando</string>
     <string name="status_discharging">Descarregando</string>
@@ -316,4 +315,17 @@
     <string name="meaning_level_high_charging">Acima de 80%. Carregar até 100% é normal; para preservar a bateria, desconecte perto de 80% quando der.</string>
     <string name="note_voltage_unplugged">Esta é a tensão da bateria. Ela cai aos poucos conforme a carga acaba e sobe um pouco ao conectar o carregador.</string>
     <string name="note_power_out">Potência é tensão vezes corrente: a velocidade com que a energia sai da bateria para alimentar o celular. Ela sobe com tela acesa, brilho alto, jogos, câmera e rede móvel fraca.</string>
+    <string name="device_this_phone">Este celular</string>
+    <string name="device_api">Nível da API</string>
+    <string name="device_patch">Atualização de segurança</string>
+    <string name="device_code">Código do aparelho</string>
+    <string name="device_capacity_detected">Capacidade do dispositivo (detectada)</string>
+    <string name="device_capacity_user">Capacidade do dispositivo (informada)</string>
+    <string name="device_note">Estes dados ficam só no seu celular. A capacidade do dispositivo é quanto a bateria foi feita para guardar; o Joule Arc compara com a estimativa atual da carga total para estimar a saúde. Se estiver errada, digite o valor certo em Configurações.</string>
+    <string name="usage_app_total">Tempo total: %1$s — Bateria: %2$s</string>
+    <string name="usage_app_active">Ativo: %1$s — Bateria: %2$s</string>
+    <string name="usage_app_background">Segundo plano: %1$s — Bateria: %2$s</string>
+    <string name="usage_app_note">É uma estimativa: o Android não deixa apps comuns ler a bateria usada por um único app. O Joule Arc divide a bateria gasta no período pelo tempo de uso (segundo plano conta metade). Ativo é o tempo com o app na tela; segundo plano é o tempo com um serviço em primeiro plano.</string>
+    <string name="usage_app_none">Nenhum uso registrado deste app neste período.</string>
+    <string name="notification_text_short">%1$d mA · %2$d%% · %3$s</string>
 </resources>

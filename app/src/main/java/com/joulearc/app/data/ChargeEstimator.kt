@@ -23,16 +23,20 @@ class ChargeEstimator(private val windowSize: Int = 30) {
     private val currents = ArrayDeque<Int>()
     private val drains = ArrayDeque<Int>()
     private var capacity: Float? = null
+    private var lastLevel = -1
 
     /** Latest capacity estimate in mAh, kept across charging and discharging. */
     val capacityMah: Int? get() = capacity?.roundToInt()
 
     fun update(s: BatterySnapshot): ChargeEstimate {
         val counter = s.chargeCounterUah
-        if (counter != null && s.levelPercent >= 10) {
+        // The counter moves continuously but the level only in whole percents, so sampling on every
+        // reading makes the estimate saw-tooth. Sample only when the level changes, and smooth slowly.
+        if (counter != null && s.levelPercent >= 10 && (capacity == null || s.levelPercent != lastLevel)) {
             val sample = counter / 1000f / (s.levelPercent / 100f)
-            capacity = capacity?.let { it * 0.95f + sample * 0.05f } ?: sample
+            capacity = capacity?.let { it * 0.9f + sample * 0.1f } ?: sample
         }
+        lastLevel = s.levelPercent
         val cap = capacity
 
         if (s.isCharging) {

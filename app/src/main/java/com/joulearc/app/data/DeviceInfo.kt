@@ -10,6 +10,9 @@ object DeviceInfo {
     val androidVersion: String get() = Build.VERSION.RELEASE ?: ""
     val manufacturer: String get() = Build.MANUFACTURER ?: ""
     val model: String get() = Build.MODEL ?: ""
+    val apiLevel: Int get() = Build.VERSION.SDK_INT
+    val securityPatch: String get() = Build.VERSION.SECURITY_PATCH ?: ""
+    val deviceCode: String get() = Build.DEVICE ?: ""
 
     /**
      * Device capacity detected by the app itself, trying each source in turn: the system power
