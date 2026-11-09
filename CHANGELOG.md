@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Changed
+- Fixed the detected device capacity on phones where the system reports an adjusted figure: the app now reads the rated "battery.capacity" of the power profile (5000 mAh on the test phone) instead of the adjusted one (4079 mAh).
 - The Device sheet lists every capacity source with its raw result or the reason it failed, to trace a wrong device capacity.
 - Settings now shows where the detected device capacity came from (system power profile, system resources or kernel file), so a wrong or missing value can be traced.
 - Uso por app hides system apps by default (built-in apps that were never updated, and background parts with no launcher icon). The three-dot button at the top right opens a small menu over it to show or hide them. The percentages still count them, so the shown apps may add up to less than the total.

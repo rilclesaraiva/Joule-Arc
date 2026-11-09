@@ -53,7 +53,9 @@ object DeviceInfo {
             } catch (t: Throwable) {
                 null
             }
-            val value = direct?.takeIf { it > 0.0 } ?: average
+            // getBatteryCapacity() can return a figure adjusted by the system (4079 on a 5000 mAh phone);
+            // the "battery.capacity" entry of the power profile is the rated one, which is what we want.
+            val value = average
             SourceReading(
                 CapacitySource.POWER_PROFILE,
                 value?.toInt(),
