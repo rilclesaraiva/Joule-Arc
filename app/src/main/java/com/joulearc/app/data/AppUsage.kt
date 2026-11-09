@@ -26,7 +26,7 @@ const val BACKGROUND_WEIGHT = 0.5
 /** Ranks apps by an estimated share of battery use based on usage time. */
 fun rankAppUsage(
     raw: List<RawAppUsage>,
-    limit: Int = 100,
+    limit: Int = 30,
     minMs: Long = 30_000L,
 ): List<AppUsage> {
     fun weight(r: RawAppUsage) = r.foregroundMs + r.backgroundMs * BACKGROUND_WEIGHT

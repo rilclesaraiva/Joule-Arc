@@ -482,7 +482,7 @@ private fun buildUsageReport(context: Context, windowDays: Int): UsageReport {
     val windowStart = now - windowDays * DAY_MS
     val from = samples.firstOrNull()?.let { maxOf(windowStart, it.timeMs) } ?: windowStart
     val reader = AppUsageReader(context)
-    val apps = rankAppUsage(reader.read(from, now))
+    val apps = rankAppUsage(reader.read(from, now), limit = 100)
     val icons = apps.mapNotNull { app ->
         val bitmap = reader.icon(app.packageName)?.toBitmap(96, 96)?.asImageBitmap()
         if (bitmap == null) null else app.packageName to bitmap
