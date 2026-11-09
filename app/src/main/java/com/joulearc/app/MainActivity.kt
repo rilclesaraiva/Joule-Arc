@@ -2,6 +2,8 @@ package com.joulearc.app
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
@@ -23,7 +25,9 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,6 +65,7 @@ import com.joulearc.app.data.LevelHistoryRepository
 import com.joulearc.app.data.SessionRepository
 import com.joulearc.app.data.SettingsRepository
 import com.joulearc.app.data.computeDrainStats
+import com.joulearc.app.data.updates.GitHubUpdatesRepository
 import com.joulearc.app.data.computeInsights
 import com.joulearc.app.data.drainedPercent
 import com.joulearc.app.data.rankAppUsage
@@ -72,6 +77,7 @@ import com.joulearc.app.features.home.HomeState
 import com.joulearc.app.features.monitor.MonitorService
 import com.joulearc.app.features.settings.AboutScreen
 import com.joulearc.app.features.settings.SettingsScreen
+import com.joulearc.app.features.updates.UpdateScreen
 import com.joulearc.app.features.usage.BatteryUsageScreen
 import com.joulearc.app.features.usage.UsageAccessCard
 import com.joulearc.app.features.usage.UsageReport
@@ -98,6 +104,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         SettingsRepository.init(this)
+        GitHubUpdatesRepository.init(this)
+        coldStart = savedInstanceState == null
         SessionRepository.init(this)
         LevelHistoryRepository.init(this)
         if (savedInstanceState == null) BatteryRepository.resetExtremes()
@@ -120,8 +128,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private var coldStart = false
+
     override fun onStart() {
         super.onStart()
+        GitHubUpdatesRepository.checkIfDue(coldStart)
+        coldStart = false
         BatteryRepository.setUiVisible(true)
     }
 
@@ -184,6 +196,8 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
         value = withContext(Dispatchers.IO) { buildUsageReport(context, windowDays) }
     }
 
+    val prompt by GitHubUpdatesRepository.prompt.collectAsStateWithLifecycle()
+    Box(Modifier.fillMaxSize()) {
     AnimatedContent(
         targetState = stack,
         transitionSpec = {
@@ -260,7 +274,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
 
             page == USAGE -> Page(back) { modifier ->
                 if (!usageGranted) {
-                    Column(modifier.padding(16.dp)) {
+                    Column(modifier.windowInsetsPadding(WindowInsets.systemBars).padding(16.dp)) {
                         PageTitle(stringResource(R.string.usage_per_app))
                         UsageAccessCard(
                             granted = false,
@@ -285,13 +299,29 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
             page == ABOUT -> Page(back) { modifier -> AboutScreen(modifier) }
         }
     }
+    prompt?.let { release ->
+        BackHandler { GitHubUpdatesRepository.dismissForNow() }
+        UpdateScreen(
+            release = release,
+            installedVersion = GitHubUpdatesRepository.installed,
+            onDownload = {
+                val url = release.apkUrl ?: release.pageUrl
+                runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+            },
+            onNotNow = GitHubUpdatesRepository::dismissForNow,
+            onSnoozeWeek = { GitHubUpdatesRepository.snooze(7) },
+            onSnoozeMonth = { GitHubUpdatesRepository.snooze(30) },
+            onSkip = { GitHubUpdatesRepository.skip(release.version) },
+        )
+    }
+    }
 }
 
 /** Home: no fixed bar. The title and the settings button are part of the scrolling content. */
 @Composable
 private fun HomePage(content: @Composable (Modifier) -> Unit) {
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        content(Modifier.fillMaxSize().systemBarsPadding())
+        content(Modifier.fillMaxSize())
     }
 }
 
@@ -300,7 +330,7 @@ private fun HomePage(content: @Composable (Modifier) -> Unit) {
 private fun Page(onBack: () -> Unit, content: @Composable (Modifier) -> Unit) {
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Box(Modifier.fillMaxSize()) {
-            content(Modifier.fillMaxSize().systemBarsPadding())
+            content(Modifier.fillMaxSize())
             BackButton(onBack, Modifier.align(Alignment.TopStart).statusBarsPadding().padding(12.dp))
         }
     }

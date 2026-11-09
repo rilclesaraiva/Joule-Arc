@@ -14,9 +14,10 @@ Contact: [saraivarilcle@gmail.com](mailto:saraivarilcle@gmail.com).
 
 ## Short version
 
-Joule Arc works on your device. The app does not declare the internet permission, has no
-analytics, advertising or tracking libraries, and no account. The developer does not receive
-any data from the app.
+Joule Arc works on your device. The only thing it does over the internet is ask GitHub two
+things: whether a newer version was published, and the developer's profile picture. It sends
+nothing about you or your battery. The app has no analytics, advertising or tracking libraries,
+and no account. The developer does not receive any data from the app.
 
 ## What the app reads, and why
 
@@ -28,10 +29,13 @@ any data from the app.
 | Design capacity: read from the system power profile when available, or typed by you | Estimate battery health and capacity lost to wear | The typed value is stored on your device in the app's private storage. Not sent anywhere |
 | Settings and recorded values: reminders and their levels, theme, temperature unit, dual-cell option, highest and lowest current recorded | Remember your choices | Stored on your device in the app's private storage. Not sent anywhere |
 | Device facts: Android version, manufacturer and model | Show them on the home screen and fill in a problem report | Shown on screen. Only included in an email if you choose "Report a problem" and send the draft yourself |
+| Update check: the app asks `api.github.com` for the newest public release of the project (version, notes, download link) | Tell you when a newer version exists | The request carries no data about you. It identifies the app and its version (`JouleArc/<version>`), as every request does. GitHub, like any website, sees the request and your IP address. The last answer, its ETag, the time of the check and your choices (snooze, skipped version) are stored on your device |
+| Developer picture: the app downloads `github.com/rilclesaraiva.png` the first time you open the About page, and looks for a new one at most once a week | Show the developer's photo in the About page | Same as above: no data about you is sent. The picture is stored in the app's private storage |
 | App usage events (when each app is in the foreground or runs a foreground service), only if you grant the special "Usage access" permission | Rank which apps use the most battery (an estimate) | Read on demand, turned into totals per app and shown on screen. Not stored and not sent anywhere |
 
 ## Permissions
 
+- **Internet:** only for the two requests to GitHub described above. The app never sends your battery readings, history or settings.
 - **Notifications:** show the persistent monitoring notification and, if you turn them on, the charge and low battery reminders.
 - **Foreground service:** keep the monitor running.
 - **Receive boot completed:** restart the monitor after the device reboots.
@@ -44,13 +48,14 @@ any data from the app.
 ## Sharing, retention and deletion
 
 The app does not share data with third parties. The session history, the battery level history and your settings stay on your device until
-you clear the app's storage in Android settings or uninstall the app, which deletes it.
+you clear the app's storage in Android settings or uninstall the app, which deletes it. This includes the saved answer of the update check and the developer picture.
 Automatic Android backup of the app's data is turned off.
 
 ## Links that leave the app
 
 The links in the app to the project repository, this policy and the terms open in your browser.
-Those sites (GitHub) have their own privacy policies.
+So does "Download" in the new version notice: the app never downloads or installs an update by
+itself. Those sites (GitHub) have their own privacy policies.
 
 ## Your rights
 

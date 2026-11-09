@@ -22,6 +22,7 @@ import com.joulearc.app.data.ChargeInsights
 import com.joulearc.app.data.ChargeSession
 import com.joulearc.app.data.DayPeriod
 import com.joulearc.app.core.PageTitle
+import com.joulearc.app.core.insetsPadding
 import com.joulearc.app.data.PowerSource
 
 @Composable
@@ -34,7 +35,7 @@ fun HistoryScreen(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+        contentPadding = insetsPadding(16.dp, 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item(key = "title") { PageTitle(stringResource(R.string.nav_history_title)) }

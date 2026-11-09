@@ -8,6 +8,9 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.text.style.TextAlign
+import com.joulearc.app.data.updates.GitHubUpdatesRepository
+import com.joulearc.app.data.updates.ManualCheckResult
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -69,6 +78,12 @@ fun SettingsScreen(systemDesignMah: Int?, onOpenAbout: () -> Unit, modifier: Mod
         protectionOk = DeviceInfo.isIgnoringBatteryOptimizations(context)
         onPauseOrDispose { }
     }
+    val checking by GitHubUpdatesRepository.checking.collectAsStateWithLifecycle()
+    val manual by GitHubUpdatesRepository.manualResult.collectAsStateWithLifecycle()
+    val latest by GitHubUpdatesRepository.latest.collectAsStateWithLifecycle()
+    val snoozeUntil by GitHubUpdatesRepository.snoozeUntilMs.collectAsStateWithLifecycle()
+    var showAlerts by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { GitHubUpdatesRepository.clearManualResult() }
     val confirmReset = rememberDoubleTapConfirm {
         SettingsRepository.resetRecorded()
         Toast.makeText(context, R.string.settings_reset_done, Toast.LENGTH_SHORT).show()
@@ -77,6 +92,7 @@ fun SettingsScreen(systemDesignMah: Int?, onOpenAbout: () -> Unit, modifier: Mod
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
+            .windowInsetsPadding(WindowInsets.systemBars)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -231,7 +247,46 @@ fun SettingsScreen(systemDesignMah: Int?, onOpenAbout: () -> Unit, modifier: Mod
             },
         )
 
+        RowGroup(
+            listOf(
+                {
+                    ClickRow(
+                        icon = R.drawable.ic_download,
+                        title = stringResource(R.string.update_check),
+                        subtitle = when {
+                            checking -> stringResource(R.string.update_checking)
+                            manual is ManualCheckResult.UpToDate ->
+                                stringResource(R.string.update_up_to_date, (manual as ManualCheckResult.UpToDate).version)
+                            manual is ManualCheckResult.Failed -> stringResource(R.string.update_failed)
+                            manual is ManualCheckResult.Available ->
+                                stringResource(R.string.update_found, latest?.version ?: "")
+                            else -> stringResource(R.string.update_check_sub)
+                        },
+                        onClick = GitHubUpdatesRepository::checkNow,
+                        chevron = false,
+                    )
+                },
+                {
+                    ClickRow(
+                        icon = R.drawable.ic_notifications_off,
+                        title = stringResource(R.string.update_alerts),
+                        subtitle = if (snoozeUntil > System.currentTimeMillis()) {
+                            stringResource(
+                                R.string.update_alerts_snoozed,
+                                java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT).format(java.util.Date(snoozeUntil)),
+                            )
+                        } else {
+                            stringResource(R.string.update_alerts_on)
+                        },
+                        onClick = { showAlerts = true },
+                        chevron = false,
+                    )
+                },
+            ),
+        )
+
         GroupLabel(stringResource(R.string.about_section))
+        if (showAlerts) UpdateAlertsDialog { showAlerts = false }
         RowGroup(
             listOf {
                 ClickRow(
@@ -277,7 +332,14 @@ private fun SwitchRow(icon: Int, title: String, subtitle: String, checked: Boole
 }
 
 @Composable
-internal fun ClickRow(icon: Int, title: String, subtitle: String, onClick: () -> Unit, chevron: Boolean = true) {
+internal fun ClickRow(
+    icon: Int,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    chevron: Boolean = true,
+    iconContent: (@Composable () -> Unit)? = null,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -286,7 +348,7 @@ internal fun ClickRow(icon: Int, title: String, subtitle: String, onClick: () ->
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        RowIcon(icon)
+        if (iconContent != null) iconContent() else RowIcon(icon)
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.titleMedium)
             Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -327,4 +389,26 @@ internal fun sendReport(context: Context) {
         putExtra(Intent.EXTRA_TEXT, body)
     }
     open(context, intent)
+}
+
+@Composable
+private fun UpdateAlertsDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.update_alerts)) },
+        text = {
+            Column {
+                listOf(
+                    R.string.update_alerts_normal to 0,
+                    R.string.update_snooze_week to 7,
+                    R.string.update_snooze_month to 30,
+                ).forEach { (label, days) ->
+                    TextButton(onClick = { GitHubUpdatesRepository.snooze(days); onDismiss() }) {
+                        Text(stringResource(label), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.update_dialog_cancel)) } },
+    )
 }

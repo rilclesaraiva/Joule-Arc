@@ -284,4 +284,25 @@
     <string name="about_license_sub">GPL-3.0, software livre</string>
     <string name="support_title">Quer apoiar o projeto?</string>
     <string name="support_sub">Entre no repositório do projeto.</string>
+
+    <string name="update_title">Nova versão disponível!</string>
+    <string name="update_versions">v%1$s · você tem a v%2$s</string>
+    <string name="update_download">Baixar</string>
+    <string name="update_not_now">Agora não</string>
+    <string name="update_snooze_week">Não avisar por uma semana</string>
+    <string name="update_snooze_month">Não avisar por um mês</string>
+    <string name="update_skip">Pular esta versão</string>
+    <string name="update_snooze_menu">Mais opções</string>
+    <string name="update_no_notes">Esta versão não tem notas.</string>
+    <string name="update_check">Verificar atualizações</string>
+    <string name="update_check_sub">Procurar uma versão mais nova no GitHub</string>
+    <string name="update_checking">Verificando…</string>
+    <string name="update_up_to_date">Você já está na versão mais nova (%1$s)</string>
+    <string name="update_failed">Não foi possível verificar. Confira a conexão e tente de novo.</string>
+    <string name="update_found">A versão %1$s está disponível</string>
+    <string name="update_alerts">Avisos de atualização</string>
+    <string name="update_alerts_on">Ligados: um aviso aparece quando sai versão nova</string>
+    <string name="update_alerts_snoozed">Pausados até %1$s</string>
+    <string name="update_alerts_normal">Avisar normalmente</string>
+    <string name="update_dialog_cancel">Cancelar</string>
 </resources>

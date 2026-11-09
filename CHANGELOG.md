@@ -20,7 +20,13 @@
 - Material 3 Expressive theme with dynamic color. The app's animations run at the app's own speed, regardless of the system animation scale.
 - Privacy policy and terms in `docs/` (GitHub Pages), linked in the README and in the app.
 
+### Added
+- New version notice: the app asks GitHub for the latest release (kept with its ETag, so an unchanged answer costs nothing), compares it number by number with the installed version and, if newer, shows a full-screen notice with the release notes. "Not now" lasts until the app is opened again, the bell snoozes for a week or a month or skips that version, and Settings has a manual check and the alert options. It checks on every cold start and at most every 10 minutes when coming back. Updates are never installed by the app: "Download" opens the browser.
+- The developer's GitHub picture in About, saved on the device and refreshed at most once a week (every 10 minutes while there is none).
+- The app now declares the internet permission, used only for these two requests. Privacy policy and README updated.
+
 ### Fixed
+- Pages now draw under the status bar instead of stopping below it; page titles sit to the side of the back button, so the button never covers them.
 - Text on the home and pages was too dark in the dark and AMOLED themes (the pages lost their content color when the top bars were removed).
 
 ### Changed

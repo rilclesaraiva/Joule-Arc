@@ -4,7 +4,9 @@ import android.os.SystemClock
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -32,7 +34,7 @@ fun PageTitle(title: String, modifier: Modifier = Modifier) {
     Text(
         text = title,
         style = MaterialTheme.typography.headlineLarge,
-        modifier = modifier.fillMaxWidth().padding(start = 8.dp, top = 64.dp, bottom = 4.dp),
+        modifier = modifier.fillMaxWidth().padding(start = 56.dp, top = 72.dp, bottom = 4.dp),
     )
 }
 
@@ -112,5 +114,18 @@ fun GroupLabel(text: String, modifier: Modifier = Modifier) {
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier.padding(start = 12.dp, top = 12.dp),
+    )
+}
+
+/** Content padding for lists that scroll under the system bars: the bars' size plus the page margin. */
+@Composable
+fun insetsPadding(horizontal: androidx.compose.ui.unit.Dp, vertical: androidx.compose.ui.unit.Dp): androidx.compose.foundation.layout.PaddingValues {
+    val bars = androidx.compose.foundation.layout.WindowInsets.systemBars.asPaddingValues()
+    val dir = androidx.compose.ui.platform.LocalLayoutDirection.current
+    return androidx.compose.foundation.layout.PaddingValues(
+        start = horizontal + bars.calculateLeftPadding(dir),
+        top = vertical + bars.calculateTopPadding(),
+        end = horizontal + bars.calculateRightPadding(dir),
+        bottom = vertical + bars.calculateBottomPadding(),
     )
 }

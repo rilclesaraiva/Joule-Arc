@@ -1,6 +1,19 @@
 package com.joulearc.app.features.settings
 
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import com.joulearc.app.data.updates.DeveloperAvatar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,9 +50,28 @@ import com.joulearc.app.data.DeviceInfo
 @Composable
 fun AboutScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    // The saved picture shows at once; GitHub is asked for a new one only when it is time.
+    val avatar by produceState<ImageBitmap?>(null) {
+        value = withContext(Dispatchers.IO) { DeveloperAvatar.cached(context)?.asImageBitmap() }
+        val changed = withContext(Dispatchers.IO) {
+            DeveloperAvatar.refreshIfDue(context, "JouleArc/" + DeviceInfo.appVersion(context))
+        }
+        if (changed) value = withContext(Dispatchers.IO) { DeveloperAvatar.cached(context)?.asImageBitmap() }
+    }
+    val avatarContent: (@Composable () -> Unit)? = avatar?.let { bitmap ->
+        @Composable {
+            Image(
+                bitmap = bitmap,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(48.dp).clip(CircleShape),
+            )
+        }
+    }
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
+            .windowInsetsPadding(WindowInsets.systemBars)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -81,6 +113,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
                     subtitle = stringResource(R.string.about_developer_sub),
                     onClick = { openUrl(context, DEVELOPER_URL) },
                     chevron = false,
+                    iconContent = avatarContent,
                 )
             },
         )

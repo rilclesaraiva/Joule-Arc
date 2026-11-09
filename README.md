@@ -14,6 +14,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Consumption with the screen on and off, estimated battery life, and which time of day drains the most.
 - Battery use by app: 24-hour level chart, 14-day usage chart and a per-app list with an estimated percentage (Android does not expose per-app mAh to regular apps).
 - Charge and low battery reminders.
+- New version notice (checks GitHub releases, with snooze, skip and a manual check in Settings) and the developer's picture in About.
 - Quick Settings tile, home screen widget and a persistent notification.
 - Material 3 Expressive interface with dynamic color, light, dark and AMOLED themes, English and Portuguese.
 
@@ -22,9 +23,10 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - **Notifications** (Android 13+): the persistent monitoring notification and, if you turn them on, the charge and low battery reminders.
 - **Foreground service**: keeps the monitor running. Sampling is slower when the device is not charging, to save battery.
 - **Start at boot**: restarts the monitor after the device reboots.
+- **Internet**: only to ask GitHub whether a newer version was published and for the developer's profile picture in the About page. Nothing about you or your battery is sent. Updates are never installed by the app: "Download" opens your browser.
 - **Usage access** (special permission, granted by you in system settings): used to measure how long apps run in the foreground and background for the battery use by app page. The app only asks for it there. The data is read on demand and not stored.
 
-The charging session history, the 14-day battery level history and your settings are stored only on your device, in the app's private storage. The app does not declare the internet permission. "Report a problem" opens your own email app with a draft; nothing is sent unless you send it.
+The charging session history, the 14-day battery level history and your settings are stored only on your device, in the app's private storage. "Report a problem" opens your own email app with a draft; nothing is sent unless you send it.
 
 - [Privacy policy](https://rilclesaraiva.github.io/Joule-Arc/privacy) · [Terms](https://rilclesaraiva.github.io/Joule-Arc/terms) (source in [`docs/`](docs))
 
