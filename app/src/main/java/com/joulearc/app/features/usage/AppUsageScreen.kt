@@ -100,7 +100,7 @@ private fun Breakdown(app: AppUsage, report: UsageReport) {
     val totalPercent = report.drainedPercent?.let { app.share * it }
     val activePercent = totalPercent?.let { if (weightSum > 0) (it * fgWeight / weightSum).toFloat() else 0f }
     val backgroundPercent = totalPercent?.let { it - (activePercent ?: 0f) }
-    fun percentText(p: Float?): String = when {
+    @Composable fun percentText(p: Float?): String = when {
         p == null -> "—"
         p < 1f -> stringResource(R.string.usage_percent_less)
         else -> stringResource(R.string.apps_share, p.roundToInt())
