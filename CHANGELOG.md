@@ -7,7 +7,7 @@
 - Charging power: very fast and ultra fast (65 W and up) are now blue instead of green, matching the other readings, where blue means above the ideal range but not harmful.
 
 ### Added
-- New app icon (a glowing "J" cut by a lightning bolt), as an adaptive icon with a monochrome layer, also shown in About.
+- New app icon: the electrical battery symbol (alternating short and long plates, with minus and plus), as an adaptive icon with a monochrome layer, also shown in About.
 - Predictive back gesture: while you swipe back, the page follows your finger (shrinks and rounds its corners). On by default; Settings has a switch. The switch controls the in-app animation; the system's own back-to-home preview follows Android.
 - Project structure (`core` / `data` / `features`), CI workflow and R8 release build without obfuscation.
 - Original adaptive launcher icon with a monochrome layer.
