@@ -5,10 +5,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build
+import android.os.PowerManager
 
 class BatteryReader(context: Context) {
     private val appContext = context.applicationContext
     private val batteryManager = appContext.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+    private val powerManager = appContext.getSystemService(Context.POWER_SERVICE) as PowerManager
 
     fun read(): BatterySnapshot? {
         val intent = appContext.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
@@ -64,6 +66,7 @@ class BatteryReader(context: Context) {
             cycleCount = cycles,
             healthState = healthState,
             technology = intent.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)?.takeIf { it.isNotBlank() },
+            screenOn = powerManager.isInteractive,
         )
     }
 }

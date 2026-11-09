@@ -21,6 +21,8 @@ data class BatterySnapshot(
     val cycleCount: Int? = null,
     val healthState: BatteryHealthState = BatteryHealthState.UNKNOWN,
     val technology: String? = null,
+    /** True while the screen is on (interactive). */
+    val screenOn: Boolean = true,
 ) {
     val isCharging: Boolean get() = status == ChargeStatus.CHARGING
 

@@ -161,6 +161,20 @@ private fun InsightsCard(insights: ChargeInsights) {
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
+            insights.worstSource?.let {
+                Text(
+                    text = stringResource(R.string.insights_worst_source, stringResource(sourceRes(it))),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            insights.worstPeriod?.let {
+                Text(
+                    text = stringResource(R.string.insights_worst_period, stringResource(periodRes(it))),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
             if (insights.bestSource == null && insights.bestPeriod == null) {
                 Text(
                     text = stringResource(R.string.insights_need_more),

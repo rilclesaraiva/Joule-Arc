@@ -50,9 +50,11 @@ import com.joulearc.app.data.BatteryRepository
 import com.joulearc.app.data.LevelHistoryRepository
 import com.joulearc.app.data.SessionRepository
 import com.joulearc.app.data.SettingsRepository
+import com.joulearc.app.data.computeDrainStats
 import com.joulearc.app.data.computeInsights
 import com.joulearc.app.data.drainedPercent
 import com.joulearc.app.data.rankAppUsage
+import com.joulearc.app.features.drain.DrainScreen
 import com.joulearc.app.features.health.HealthScreen
 import com.joulearc.app.features.history.HistoryScreen
 import com.joulearc.app.features.monitor.MonitorScreen
@@ -67,7 +69,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val DAY_MS = 24L * 3_600_000L
-private const val USAGE_PAGE = 3
+private const val USAGE_PAGE = 4
 
 /** Entry point: wires the features together. Features never import each other. */
 class MainActivity : ComponentActivity() {
@@ -92,8 +94,12 @@ class MainActivity : ComponentActivity() {
                 val designCapacity by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
                 val levelSamples by LevelHistoryRepository.samples.collectAsStateWithLifecycle()
                 val insights = remember(sessions) { computeInsights(sessions) }
+                val drainStats = remember(levelSamples) {
+                    val now = System.currentTimeMillis()
+                    computeDrainStats(levelSamples, now - 14L * DAY_MS, now)
+                }
 
-                val pagerState = rememberPagerState { 4 }
+                val pagerState = rememberPagerState { 5 }
                 var windowDays by rememberSaveable { mutableIntStateOf(1) }
                 var notificationsGranted by remember { mutableStateOf(hasNotificationPermission()) }
                 var usageGranted by remember { mutableStateOf(isUsageAccessGranted(context)) }
@@ -117,6 +123,7 @@ class MainActivity : ComponentActivity() {
                 val tabLabels = listOf(
                     stringResource(R.string.tab_live),
                     stringResource(R.string.tab_history),
+                    stringResource(R.string.tab_drain),
                     stringResource(R.string.tab_health),
                     stringResource(R.string.tab_apps),
                 )
@@ -179,7 +186,14 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.fillMaxSize(),
                                 )
 
-                                2 -> HealthScreen(
+                                2 -> DrainScreen(
+                                    stats = drainStats,
+                                    levelPercent = snapshot?.levelPercent,
+                                    capacityMah = capacityMah,
+                                    modifier = Modifier.fillMaxSize(),
+                                )
+
+                                3 -> HealthScreen(
                                     snapshot = snapshot,
                                     capacityMah = capacityMah,
                                     designCapacityMah = designCapacity,

@@ -24,13 +24,16 @@ data class ChargeInsights(
     /** Set only when there are at least two options and the winner has 2+ sessions. */
     val bestSource: PowerSource?,
     val bestPeriod: DayPeriod?,
+    /** Slowest option, with the same conditions as the best one (and different from it). */
+    val worstSource: PowerSource?,
+    val worstPeriod: DayPeriod?,
     val usedSessions: Int,
 )
 
 private const val MIN_SESSION_MS = 300_000L
 private const val MAX_START_LEVEL = 80
 
-private fun localHour(ms: Long): Int =
+internal fun localHour(ms: Long): Int =
     Calendar.getInstance().apply { timeInMillis = ms }.get(Calendar.HOUR_OF_DAY)
 
 /**
@@ -53,6 +56,8 @@ fun computeInsights(
         byPeriod = byPeriod,
         bestSource = best(bySource),
         bestPeriod = best(byPeriod),
+        worstSource = worst(bySource),
+        worstPeriod = worst(byPeriod),
         usedSessions = eligible.size,
     )
 }
@@ -66,3 +71,6 @@ private fun <T> speedStats(list: List<ChargeSession>, key: (ChargeSession) -> T)
 
 private fun <T> best(stats: List<SpeedStat<T>>): T? =
     if (stats.size >= 2 && stats.first().sessions >= 2) stats.first().key else null
+
+private fun <T> worst(stats: List<SpeedStat<T>>): T? =
+    if (stats.size >= 2 && stats.last().sessions >= 2 && stats.last().key != stats.first().key) stats.last().key else null

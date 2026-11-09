@@ -39,12 +39,13 @@ object LevelHistoryRepository {
             val list = _samples.value
             val last = list.lastOrNull()
             val pluggedChanged = last != null && last.plugged != plugged
-            val changed = last == null || pluggedChanged || last.level != snapshot.levelPercent ||
+            val screenChanged = last != null && last.screenOn != snapshot.screenOn
+            val changed = last == null || pluggedChanged || screenChanged || last.level != snapshot.levelPercent ||
                 snapshot.timestampMs - last.timeMs >= MIN_INTERVAL_MS
             if (!changed) return
 
             val cutoff = snapshot.timestampMs - RETENTION_MS
-            val updated = (list + LevelSample(snapshot.timestampMs, snapshot.levelPercent, plugged))
+            val updated = (list + LevelSample(snapshot.timestampMs, snapshot.levelPercent, plugged, snapshot.screenOn))
                 .dropWhile { it.timeMs < cutoff }
             _samples.value = updated
 

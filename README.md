@@ -8,9 +8,10 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Persistent notification while monitoring, with current, level and temperature.
 - Live charging current, battery level, voltage, temperature, power and charge status, updated twice per second while the app is open.
 - Charging estimate: percent per hour and when the battery should be full.
-- Charging session history, and a comparison of what charges fastest (by power source and time of day).
+- Charging session history, and a comparison of what charges fastest and slowest (by power source and time of day).
 - Battery health: estimated capacity, estimated health against the rated capacity you enter, and the cycle count when your device reports it (Android 14+).
 - Battery usage screen: hourly battery level for 24 hours and daily usage for 14 days, with the last charge to 100%, and a per-app ranking with icons (an estimate: the drained percentage is split between apps by foreground and background time, since Android does not expose per-app mAh to regular apps).
+- Consumption tab: how fast the battery drains with the screen on and off (percent and estimated mAh per hour), estimated battery life at those rates, and which time of day drains the most.
 - Swipe between the tabs; the tab buttons are pills.
 - Quick Settings tile and home screen widget.
 - Material 3 Expressive interface with dynamic color.

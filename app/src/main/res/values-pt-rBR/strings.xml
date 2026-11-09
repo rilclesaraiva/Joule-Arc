@@ -121,4 +121,24 @@
     <string name="usage_since">Dados desde %1$s</string>
     <string name="usage_percent_less">&lt; 1%</string>
     <string name="usage_no_history">Coletando o histórico da bateria. Os gráficos se completam conforme você usa o celular.</string>
+
+    <string name="tab_drain">Consumo</string>
+    <string name="insights_worst_source">Fonte mais lenta até agora: %1$s</string>
+    <string name="insights_worst_period">Período mais lento: %1$s</string>
+
+    <string name="drain_title">Consumo da bateria</string>
+    <string name="drain_collecting">Coletando dados. Use o celular sem carregar por um tempo (com a tela ligada e apagada) para ver seu consumo.</string>
+    <string name="drain_screen_on">Tela ligada</string>
+    <string name="drain_screen_off">Em repouso (tela apagada)</string>
+    <string name="drain_not_enough">Ainda sem dados suficientes (precisa de pelo menos 30 minutos sem carregar neste estado).</string>
+    <string name="drain_rate">%1$.1f%% por hora</string>
+    <string name="drain_mah">Cerca de %1$d mAh por hora</string>
+    <string name="drain_life">A bateria duraria cerca de %1$s neste ritmo</string>
+    <string name="drain_by_period">Por período do dia</string>
+    <string name="drain_highest">Mais gasta: %1$s</string>
+    <string name="drain_lowest">Menos gasta: %1$s</string>
+    <string name="drain_period_row">%1$s · %2$.1f%% por hora</string>
+    <string name="drain_period_row_mah">%1$s · %2$.1f%% por hora · cerca de %3$d mAh</string>
+    <string name="drain_tracked">Baseado em %1$s com a tela ligada e %2$s com a tela apagada, sem carregar, nos últimos 14 dias.</string>
+    <string name="drain_note">Estimativas a partir do histórico de nível da bateria que o Joule Arc grava (em passos de 1%), não medições exatas. Os mAh usam a capacidade estimada da bateria. O tempo carregando não entra na conta.</string>
 </resources>

@@ -79,6 +79,12 @@ class MonitorService : Service() {
                 IntentFilter(Intent.ACTION_BATTERY_CHANGED),
                 ContextCompat.RECEIVER_NOT_EXPORTED,
             )
+            ContextCompat.registerReceiver(
+                this,
+                batteryReceiver,
+                IntentFilter(Intent.ACTION_SCREEN_ON).apply { addAction(Intent.ACTION_SCREEN_OFF) },
+                ContextCompat.RECEIVER_NOT_EXPORTED,
+            )
             scope.launch {
                 BatteryRepository.uiVisible.collect { wake.trySend(Unit) }
             }

@@ -57,6 +57,24 @@ class ChargeInsightsTest {
         assertEquals(3250, computeInsights(sessions, hourOf).bySource.single().avgCurrentMa)
     }
 
+    @Test fun findsSlowestWhenTwoOptionsHaveSessions() {
+        val sessions = listOf(
+            session(2, 3000.0, PowerSource.AC), session(3, 3200.0, PowerSource.AC),
+            session(14, 1000.0, PowerSource.USB), session(15, 1200.0, PowerSource.USB),
+        )
+        val r = computeInsights(sessions, hourOf)
+        assertEquals(PowerSource.USB, r.worstSource)
+        assertEquals(DayPeriod.AFTERNOON, r.worstPeriod)
+    }
+
+    @Test fun noSlowestWithSingleSessionInLastOption() {
+        val sessions = listOf(
+            session(2, 3000.0, PowerSource.AC), session(3, 3200.0, PowerSource.AC),
+            session(14, 1000.0, PowerSource.USB),
+        )
+        assertNull(computeInsights(sessions, hourOf).worstSource)
+    }
+
     @Test fun periodsByHour() {
         assertEquals(DayPeriod.NIGHT, DayPeriod.ofHour(5))
         assertEquals(DayPeriod.MORNING, DayPeriod.ofHour(6))

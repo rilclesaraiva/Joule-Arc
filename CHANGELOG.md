@@ -22,6 +22,9 @@
 - Battery level history (14 days, on the device only) and a battery usage screen inspired by Android's own: hourly level chart for 24 hours, daily usage chart for 14 days, last charge to 100%, and a per-app list with icons and an estimated percentage.
 - The tabs can be swiped, and the tab buttons are now pills; the 24 hours / 14 days switch is a pill too.
 
+- Consumption tab: battery drain with the screen on and off (percent and estimated mAh per hour), estimated battery life at those rates, and the times of day that drain the most and the least. Computed from the level history, which now also records the screen state.
+- The charging comparison now also points out the slowest power source and time of day.
+
 ### Changed
 - App usage time now comes from usage events clipped to the selected window (the previous aggregated stats could include whole days outside the window). The window is shortened to the start of the level history so the drained percentage and the usage times cover the same period. The ranges are now 24 hours and 14 days (what Android keeps may be shorter).
 

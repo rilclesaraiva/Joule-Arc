@@ -121,4 +121,24 @@
     <string name="usage_since">Data since %1$s</string>
     <string name="usage_percent_less">&lt; 1%</string>
     <string name="usage_no_history">Collecting battery history. The charts fill in as you use the phone.</string>
+
+    <string name="tab_drain">Drain</string>
+    <string name="insights_worst_source">Slowest source so far: %1$s</string>
+    <string name="insights_worst_period">Slowest time of day: %1$s</string>
+
+    <string name="drain_title">Battery consumption</string>
+    <string name="drain_collecting">Collecting data. Use the phone unplugged for a while (screen on and off) to see your consumption.</string>
+    <string name="drain_screen_on">Screen on</string>
+    <string name="drain_screen_off">Standby (screen off)</string>
+    <string name="drain_not_enough">Not enough data yet (needs at least 30 minutes unplugged in this state).</string>
+    <string name="drain_rate">%1$.1f%% per hour</string>
+    <string name="drain_mah">About %1$d mAh per hour</string>
+    <string name="drain_life">Battery would last about %1$s at this rate</string>
+    <string name="drain_by_period">By time of day</string>
+    <string name="drain_highest">Drains most: %1$s</string>
+    <string name="drain_lowest">Drains least: %1$s</string>
+    <string name="drain_period_row">%1$s · %2$.1f%% per hour</string>
+    <string name="drain_period_row_mah">%1$s · %2$.1f%% per hour · about %3$d mAh</string>
+    <string name="drain_tracked">Based on %1$s with the screen on and %2$s with the screen off, unplugged, in the last 14 days.</string>
+    <string name="drain_note">Estimates from the battery level history Joule Arc records (1% steps), not exact measurements. mAh uses the estimated battery capacity. Charging time is not counted.</string>
 </resources>
