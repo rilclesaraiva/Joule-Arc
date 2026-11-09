@@ -334,4 +334,5 @@
     <string name="capacity_source_profile">perfil de energia do sistema</string>
     <string name="capacity_source_xml">recursos do sistema</string>
     <string name="capacity_source_kernel">arquivo do kernel</string>
+    <string name="device_detection_title">Detecção da capacidade</string>
 </resources>

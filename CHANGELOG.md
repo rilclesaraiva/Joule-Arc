@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Changed
+- The Device sheet lists every capacity source with its raw result or the reason it failed, to trace a wrong device capacity.
 - Settings now shows where the detected device capacity came from (system power profile, system resources or kernel file), so a wrong or missing value can be traced.
 - Uso por app hides system apps by default (built-in apps that were never updated, and background parts with no launcher icon). The three-dot button at the top right opens a small menu over it to show or hide them. The percentages still count them, so the shown apps may add up to less than the total.
 - The on-screen back button now plays the same slide-out as the back gesture.
@@ -47,6 +48,7 @@
 - Text on the home and pages was too dark in the dark and AMOLED themes (the pages lost their content color when the top bars were removed).
 
 ### Changed
+- The Device sheet lists every capacity source with its raw result or the reason it failed, to trace a wrong device capacity.
 - Reading details now fit the situation: with no charger connected, the voltage, temperature and level texts no longer tell you to unplug or keep charging, and the power note explains discharge. Portuguese uses "Tensão" everywhere (no more "Voltagem").
 - The settings button on the home is now a floating round button, like the back buttons.
 - "Battery use by app" is now "Usage by app", and page titles keep the same margin on both sides.

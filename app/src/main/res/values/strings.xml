@@ -334,4 +334,5 @@
     <string name="capacity_source_profile">system power profile</string>
     <string name="capacity_source_xml">system resources</string>
     <string name="capacity_source_kernel">kernel file</string>
+    <string name="device_detection_title">Capacity detection</string>
 </resources>

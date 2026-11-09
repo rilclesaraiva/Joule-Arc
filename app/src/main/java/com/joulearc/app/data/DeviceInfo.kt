@@ -12,6 +12,9 @@ enum class CapacitySource { POWER_PROFILE, POWER_PROFILE_XML, KERNEL }
 
 data class DetectedCapacity(val mah: Int, val source: CapacitySource)
 
+/** Raw result of one capacity source (null when it failed) and a short technical note. */
+data class SourceReading(val source: CapacitySource, val rawMah: Int?, val note: String?)
+
 /** Device facts shown in the app and used in problem reports. Nothing here leaves the device. */
 object DeviceInfo {
     val androidVersion: String get() = Build.VERSION.RELEASE ?: ""
@@ -22,45 +25,50 @@ object DeviceInfo {
     val deviceCode: String get() = Build.DEVICE ?: ""
 
     /**
-     * Device capacity detected by the app itself, trying each source in turn: the system power
-     * profile (not a public API, read by reflection) and, on devices that allow it, the kernel
-     * battery node. Any of them can be missing, blocked or a placeholder, so the result is only a
-     * starting point: the value the user types in Settings always wins.
+     * Device capacity detected by the app itself: the first plausible value among the system power
+     * profile (not a public API, read by reflection), the same profile read as a framework XML
+     * resource, and the kernel battery node. Any of them can be missing, blocked or a placeholder, so
+     * the result is only a starting point: the value the user types in Settings always wins.
      */
     fun detectDesignCapacity(context: Context): DetectedCapacity? =
-        fromPowerProfile(context)?.let { DetectedCapacity(it, CapacitySource.POWER_PROFILE) }
-            ?: fromPowerProfileXml()?.let { DetectedCapacity(it, CapacitySource.POWER_PROFILE_XML) }
-            ?: fromKernelNode()?.let { DetectedCapacity(it, CapacitySource.KERNEL) }
+        readCapacitySources(context)
+            .firstOrNull { r -> r.rawMah?.let { it in PLAUSIBLE_MAH } == true }
+            ?.let { DetectedCapacity(it.rawMah!!, it.source) }
 
-    private fun fromPowerProfile(context: Context): Int? =
+    /** Every source with its raw result or the reason it failed, for the diagnostics in the Device sheet. */
+    fun readCapacitySources(context: Context): List<SourceReading> =
+        listOf(readPowerProfile(context), readPowerProfileXml(), readKernelNode())
+
+    private fun readPowerProfile(context: Context): SourceReading =
         try {
             val cls = Class.forName("com.android.internal.os.PowerProfile")
             val profile = cls.getConstructor(Context::class.java).newInstance(context.applicationContext)
             val direct = try {
                 cls.getMethod("getBatteryCapacity").invoke(profile) as Double
             } catch (t: Throwable) {
-                0.0
+                null
             }
-            val value = if (direct > 0.0) {
-                direct
-            } else {
+            val average = try {
                 cls.getMethod("getAveragePower", String::class.java).invoke(profile, "battery.capacity") as Double
+            } catch (t: Throwable) {
+                null
             }
-            value.toInt().takeIf { it in PLAUSIBLE_MAH }
+            val value = direct?.takeIf { it > 0.0 } ?: average
+            SourceReading(
+                CapacitySource.POWER_PROFILE,
+                value?.toInt(),
+                "getBatteryCapacity=${direct ?: "x"} getAveragePower=${average ?: "x"}",
+            )
         } catch (t: Throwable) {
-            null
+            SourceReading(CapacitySource.POWER_PROFILE, null, failure(t))
         }
 
-    /**
-     * The same power profile, read as the framework's own XML resource through public Resources
-     * calls (no hidden class). Vendors put the real battery size in it as "battery.capacity".
-     */
-    private fun fromPowerProfileXml(): Int? =
+    private fun readPowerProfileXml(): SourceReading =
         try {
             val res = Resources.getSystem()
             val id = res.getIdentifier("power_profile", "xml", "android")
             if (id == 0) {
-                null
+                SourceReading(CapacitySource.POWER_PROFILE_XML, null, "resource not found")
             } else {
                 val parser = res.getXml(id)
                 try {
@@ -74,31 +82,37 @@ object DeviceInfo {
                         }
                         event = parser.next()
                     }
-                    value?.toInt()?.takeIf { it in PLAUSIBLE_MAH }
+                    SourceReading(CapacitySource.POWER_PROFILE_XML, value?.toInt(), if (value == null) "item not found" else null)
                 } finally {
                     parser.close()
                 }
             }
         } catch (t: Throwable) {
-            null
+            SourceReading(CapacitySource.POWER_PROFILE_XML, null, failure(t))
         }
 
     /** Kernel value in µAh (some devices use mAh). Usually unreadable by apps, so a failure is normal. */
-    private fun fromKernelNode(): Int? {
+    private fun readKernelNode(): SourceReading {
         val paths = listOf(
             "/sys/class/power_supply/battery/charge_full_design",
             "/sys/class/power_supply/bms/charge_full_design",
         )
+        var note: String? = null
         for (path in paths) {
-            val raw = try {
-                File(path).readText().trim().toLongOrNull()
+            try {
+                val raw = File(path).readText().trim().toLongOrNull() ?: continue
+                val mah = if (raw > 100_000L) raw / 1000L else raw
+                return SourceReading(CapacitySource.KERNEL, mah.toInt(), null)
             } catch (t: Throwable) {
-                null
-            } ?: continue
-            val mah = if (raw > 100_000L) raw / 1000L else raw
-            if (mah.toInt() in PLAUSIBLE_MAH) return mah.toInt()
+                note = failure(t)
+            }
         }
-        return null
+        return SourceReading(CapacitySource.KERNEL, null, note)
+    }
+
+    private fun failure(t: Throwable): String {
+        val cause = t.cause ?: t
+        return (cause.javaClass.simpleName + ": " + (cause.message ?: "")).take(80)
     }
 
     fun appVersion(context: Context): String =
