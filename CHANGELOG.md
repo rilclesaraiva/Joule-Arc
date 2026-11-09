@@ -1,7 +1,9 @@
 # Changelog
 
 ## [Unreleased]
-First public version in progress (0.1.0). Not released yet.
+
+## [0.1.0] - 2026-11-09
+First public version.
 
 ### Added
 - Persistent foreground-service notification that keeps monitoring the charging system, restarted after reboot. Its title is the state ("Charging", "Discharging"...), with current, level and temperature below. Sampling: every 500 ms with the app open, every 2 s while charging with the screen off, every 30 s otherwise, and at once on any battery event.
