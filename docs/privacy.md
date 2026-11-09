@@ -5,7 +5,7 @@ permalink: /privacy
 
 # Privacy policy
 
-**Joule Arc** · Last updated: 2026-11-08
+**Joule Arc** · Last updated: 2026-11-09
 
 ## Who is responsible
 
@@ -26,12 +26,12 @@ and no account. The developer does not receive any data from the app.
 | Battery readings: level, current, voltage, temperature, status, power source, charge counter, condition, technology, and when the device reports them the cycle count and what the charger offers | Show live values, ratings and estimates of speed, time and capacity | Shown on screen and in the notification, tile and widget. Not stored, except as summarized in the history below |
 | Charging session history: start time, duration, battery level at start and end, average and peak current, peak power, maximum temperature, power source | Show the history and compare what charges faster | Stored in a file in the app's private storage on your device (`sessions.json`). Not sent anywhere |
 | Battery level history: time, battery percentage, whether a charger was connected and whether the screen was on, one entry when the level or charger state changes or every 10 minutes, for the last 14 days | Draw the battery level and daily usage charts, compute consumption with the screen on and off, and split the drained percentage between apps | Stored in a file in the app's private storage on your device (`levels.json`). Older entries are deleted automatically. Not sent anywhere |
-| Device capacity: read from the system power profile when available, or typed by you | Estimate battery health and capacity lost to wear | The typed value is stored on your device in the app's private storage. Not sent anywhere |
-| Settings and recorded values: reminders and their levels, theme, temperature unit, dual-cell option, highest and lowest current recorded | Remember your choices | Stored on your device in the app's private storage. Not sent anywhere |
-| Device facts: Android version, manufacturer and model | Show them on the home screen and fill in a problem report | Shown on screen. Only included in an email if you choose "Report a problem" and send the draft yourself |
+| Device capacity: read from the system (power profile, system resources or a kernel file, when readable) when available, or typed by you | Estimate battery health and capacity lost to wear | The typed value is stored on your device in the app's private storage. Not sent anywhere |
+| Settings and recorded values: reminders and their levels, theme, temperature unit, dual-cell option, predictive back option, highest and lowest current recorded | Remember your choices | Stored on your device in the app's private storage. Not sent anywhere |
+| Device facts: Android version, API level, security update date, manufacturer, model and device code | Show them in the Device sheet, and fill in a problem report | Shown on screen. Only the app version, Android version, manufacturer and model are included in an email, and only if you choose "Report a problem" and send the draft yourself |
 | Update check: the app asks `api.github.com` for the newest public release of the project (version, notes, download link) | Tell you when a newer version exists | The request carries no data about you. It identifies the app and its version (`JouleArc/<version>`), as every request does. GitHub, like any website, sees the request and your IP address. The last answer, its ETag, the time of the check and your choices (snooze, skipped version) are stored on your device |
 | Developer picture: the app downloads `github.com/rilclesaraiva.png` the first time you open the About page, and looks for a new one at most once a week | Show the developer's photo in the About page | Same as above: no data about you is sent. The picture is stored in the app's private storage |
-| App usage events (when each app is in the foreground or runs a foreground service), only if you grant the special "Usage access" permission | Rank which apps use the most battery (an estimate) | Read on demand, turned into totals per app and shown on screen. Not stored and not sent anywhere |
+| App usage events (when each app is in the foreground or runs a foreground service) and the names and icons of the apps that have a launcher icon, only if you grant the special "Usage access" permission | Rank which apps use the most battery (an estimate) | Read on demand, turned into totals per app and shown on screen. Not stored and not sent anywhere |
 
 ## Permissions
 

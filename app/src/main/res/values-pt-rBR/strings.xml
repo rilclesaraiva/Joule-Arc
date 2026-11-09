@@ -251,8 +251,6 @@
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Escuro</string>
     <string name="theme_amoled">AMOLED</string>
-    <string name="settings_language">Idioma</string>
-    <string name="language_system">Sistema</string>
     <string name="settings_report">Informar um problema</string>
     <string name="settings_report_sub">Abre um e-mail para o desenvolvedor com os dados do celular preenchidos. Nada é enviado até você enviar.</string>
     <string name="settings_source">Código-fonte</string>

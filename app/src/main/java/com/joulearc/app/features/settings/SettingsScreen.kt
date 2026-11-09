@@ -53,14 +53,12 @@ import com.joulearc.app.core.RowGroup
 import com.joulearc.app.core.RowIcon
 import com.joulearc.app.core.SUPPORT_EMAIL
 import com.joulearc.app.core.rememberDoubleTapConfirm
-import com.joulearc.app.data.AppLanguage
 import com.joulearc.app.core.labelRes
 import com.joulearc.app.data.DetectedCapacity
 import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.SettingsRepository
 import kotlin.math.roundToInt
 
-private val LANGUAGE_TAGS = listOf("", "en", "pt-BR")
 
 /** Settings as plain lists, most used first. The only heading is About, at the end. */
 @Composable
@@ -115,23 +113,6 @@ fun SettingsScreen(systemDesign: DetectedCapacity?, onOpenAbout: () -> Unit, mod
                             selected = themeMode,
                             onSelect = SettingsRepository::setThemeMode,
                         )
-                    }
-                }
-                if (AppLanguage.isSupported) {
-                    add {
-                        ControlRow(R.drawable.ic_language, stringResource(R.string.settings_language)) {
-                            val current = AppLanguage.current(context)
-                            val selected = when {
-                                current.startsWith("pt") -> 2
-                                current.startsWith("en") -> 1
-                                else -> 0
-                            }
-                            PillToggle(
-                                options = listOf(stringResource(R.string.language_system), "English", "Português"),
-                                selected = selected,
-                                onSelect = { AppLanguage.set(context, LANGUAGE_TAGS[it]) },
-                            )
-                        }
                     }
                 }
                 add {

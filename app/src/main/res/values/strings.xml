@@ -251,8 +251,6 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_amoled">AMOLED</string>
-    <string name="settings_language">Language</string>
-    <string name="language_system">System</string>
     <string name="settings_report">Report a problem</string>
     <string name="settings_report_sub">Opens an email to the developer with your phone details filled in. Nothing is sent until you send it.</string>
     <string name="settings_source">Source code</string>

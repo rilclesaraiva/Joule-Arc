@@ -12,11 +12,11 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Battery capacity: charge now, full charge today (estimated), lost to wear and device capacity, with estimated health.
 - Charging session history with current and level curves, and which power source and time of day charge fastest and slowest.
 - Consumption with the screen on and off, estimated battery life, and which time of day drains the most.
-- Battery use by app: 24-hour level chart, 14-day usage chart and a per-app list with an estimated percentage (Android does not expose per-app mAh to regular apps).
+- Usage by app: 24-hour level chart and 14-day usage chart (tap a bar to see only that hour or day), a per-app list with an estimated percentage and a page for each app, with system apps hidden unless you ask (Android does not expose per-app mAh to regular apps).
 - Charge and low battery reminders.
 - New version notice (checks GitHub releases, with snooze, skip and a manual check in Settings) and the developer's picture in About.
 - Quick Settings tile, home screen widget and a persistent notification.
-- Material 3 Expressive interface with dynamic color, light, dark and AMOLED themes, English and Portuguese.
+- Material 3 Expressive interface with dynamic color, light, dark and AMOLED themes, English, Spanish and Portuguese (the language follows Android: choose it in the system settings for the app on Android 13+, or the system language).
 
 ## Privacy and permissions
 
@@ -24,7 +24,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - **Foreground service**: keeps the monitor running. Sampling is slower when the device is not charging, to save battery.
 - **Start at boot**: restarts the monitor after the device reboots.
 - **Internet**: only to ask GitHub whether a newer version was published and for the developer's profile picture in the About page. Nothing about you or your battery is sent. Updates are never installed by the app: "Download" opens your browser.
-- **Usage access** (special permission, granted by you in system settings): used to measure how long apps run in the foreground and background for the battery use by app page. The app only asks for it there. The data is read on demand and not stored.
+- **Usage access** (special permission, granted by you in system settings): used to measure how long apps run in the foreground and background, and to show the names and icons of your apps, for the usage by app page. The app only asks for it there. The data is read on demand and not stored.
 
 The charging session history, the 14-day battery level history and your settings are stored only on your device, in the app's private storage. "Report a problem" opens your own email app with a draft; nothing is sent unless you send it.
 
