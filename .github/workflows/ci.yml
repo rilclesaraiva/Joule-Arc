@@ -93,6 +93,7 @@ jobs:
         if: steps.v.outputs.publish == 'true'
         with:
           tag_name: v${{ steps.v.outputs.version }}
+          name: Joule Arc v${{ steps.v.outputs.version }}
           target_commitish: ${{ github.sha }}
           body_path: notes.md
           files: ${{ env.ARTIFACTS }}
