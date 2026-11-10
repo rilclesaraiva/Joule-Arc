@@ -64,11 +64,17 @@ private fun SessionCard(session: ChargeSession, onClick: (ChargeSession) -> Unit
     ElevatedCard(onClick = { onClick(session) }, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
-                text = if (session.ongoing) stringResource(R.string.history_active)
-                else formatDateTime(session.startMs),
+                text = when {
+                    session.paused -> stringResource(R.string.history_paused)
+                    session.ongoing -> stringResource(R.string.history_active)
+                    else -> formatDateTime(session.startMs)
+                },
                 style = MaterialTheme.typography.titleMedium,
-                color = if (session.ongoing) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurface,
+                color = when {
+                    session.paused -> MaterialTheme.colorScheme.tertiary
+                    session.ongoing -> MaterialTheme.colorScheme.primary
+                    else -> MaterialTheme.colorScheme.onSurface
+                },
             )
             if (session.ongoing) {
                 Text(

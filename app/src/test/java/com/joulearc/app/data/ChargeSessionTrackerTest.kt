@@ -33,6 +33,7 @@ class ChargeSessionTrackerTest {
         assertNull(tracker.onSnapshot(unplugged(61_000)))
         assertNull(tracker.current)
         assertNotNull(tracker.pending)
+        assertTrue(tracker.pending!!.paused)
         assertNull(tracker.onSnapshot(unplugged(200_000)))
         val closed = tracker.onSnapshot(unplugged(60_000 + RESUME_WINDOW_MS + 1_000))
         assertNotNull(closed)
@@ -51,6 +52,7 @@ class ChargeSessionTrackerTest {
         val s = tracker.current!!
         assertNull(tracker.pending)
         assertTrue(s.ongoing)
+        assertFalse(s.paused)
         assertEquals(40, s.startLevel)
         assertEquals(listOf(SessionPause(60, 120)), s.pauses)
         assertEquals(120_000L, s.pausedMs)

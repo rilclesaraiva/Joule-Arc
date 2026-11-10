@@ -22,6 +22,8 @@ data class ChargeSession(
     val points: List<SessionPoint> = emptyList(),
     /** Times the charger was unplugged and plugged back within [RESUME_WINDOW_MS]; the session carried on. */
     val pauses: List<SessionPause> = emptyList(),
+    /** True while the charger is unplugged and the session waits for a reconnection. */
+    val paused: Boolean = false,
 ) {
     val durationMs: Long get() = lastMs - startMs
     val pausedMs: Long get() = pauses.sumOf { it.durationSec * 1000L }
@@ -76,13 +78,13 @@ class ChargeSessionTracker(
             }
             current = start(s)
             pending = null
-            return (cur ?: waiting)?.copy(ongoing = false)
+            return (cur ?: waiting)?.copy(ongoing = false, paused = false)
         }
         if (cur != null) {
             if (s.source == PowerSource.BATTERY && s.timestampMs - cur.lastMs <= RESUME_WINDOW_MS) {
                 // Unplugged: wait a few minutes in case it was only a reconnection.
                 current = null
-                pending = cur
+                pending = cur.copy(paused = true)
                 return null
             }
             if (s.source == PowerSource.BATTERY || s.timestampMs - cur.lastMs > gapMs) {
@@ -92,7 +94,7 @@ class ChargeSessionTracker(
         }
         if (waiting != null && s.timestampMs - waiting.lastMs > RESUME_WINDOW_MS) {
             pending = null
-            return waiting.copy(ongoing = false)
+            return waiting.copy(ongoing = false, paused = false)
         }
         return null
     }
@@ -125,6 +127,7 @@ class ChargeSessionTracker(
             points = points + SessionPoint(offsetSec, s.levelPercent, c),
             pauses = pauses + pause,
             ongoing = true,
+            paused = false,
         )
     }
 

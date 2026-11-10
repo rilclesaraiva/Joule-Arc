@@ -340,4 +340,5 @@
     <string name="session_pauses">Charging paused %1$d× (%2$s in total)</string>
     <string name="session_pause_detail">Paused at %1$s for %2$s</string>
     <string name="session_pauses_note">Reconnected within 5 minutes, so it is counted as one session. The pauses are not part of the charging time or the average.</string>
+    <string name="history_paused">Paused: waiting for the charger to come back</string>
 </resources>

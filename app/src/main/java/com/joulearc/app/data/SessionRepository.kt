@@ -59,7 +59,8 @@ object SessionRepository {
                 mustSave = true
             }
             val activeNow = tracker.current
-            _active.value = activeNow
+            // While waiting for a reconnection the session still shows, marked as paused.
+            _active.value = activeNow ?: tracker.pending
             // A session waiting for a possible reconnection is saved too, so it survives the app dying.
             val toSave = activeNow ?: tracker.pending
             if (mustSave || (toSave != null && snapshot.timestampMs - lastSavedMs >= SAVE_INTERVAL_MS)) {

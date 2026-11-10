@@ -340,4 +340,5 @@
     <string name="session_pauses">Carga en pausa %1$d× (%2$s en total)</string>
     <string name="session_pause_detail">Pausa a las %1$s durante %2$s</string>
     <string name="session_pauses_note">Se reconectó en menos de 5 minutos, por eso cuenta como una sola sesión. Las pausas no entran en el tiempo de carga ni en el promedio.</string>
+    <string name="history_paused">En pausa: esperando que vuelva el cargador</string>
 </resources>

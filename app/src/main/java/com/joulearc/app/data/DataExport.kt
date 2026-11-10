@@ -225,6 +225,7 @@ object DataExport {
             w.name("maxTempC").value(c.maxTempC.toDouble())
             w.name("source").value(c.source.name)
             w.name("ongoing").value(c.ongoing)
+            w.name("paused").value(c.paused)
             w.name("chargingMs").value(c.chargingMs)
             w.name("pauses").beginArray()
             c.pauses.forEach { p ->
