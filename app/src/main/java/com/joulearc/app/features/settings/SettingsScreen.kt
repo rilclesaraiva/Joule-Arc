@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -67,6 +67,7 @@ import kotlin.math.roundToInt
 fun SettingsScreen(
     onOpenAbout: () -> Unit,
     onExport: () -> Unit,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -98,7 +99,7 @@ fun SettingsScreen(
 
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
             .windowInsetsPadding(WindowInsets.systemBars)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),

@@ -14,6 +14,8 @@
 - The active and background colors in an app's usage breakdown are now fixed (blue and amber) instead of following the system color, so they are easy to tell apart.
 
 ### Fixed
+- Settings and History keep their scroll position when you open About or a session and come back.
+- Long one-word values in the reading tiles ("Discharging") no longer break in the middle of the word; the text shrinks to fit.
 - The health details and the device sheet still told the user to set the device capacity in Settings, a field that no longer exists. The texts now describe the system-reported reference. The manufacturer capacity is labeled "theoretical" instead of "assumed".
 - Notification, widget and tile were slow with the screen on and another app in front (every 30 s and 60 s). They now refresh every second and every 2 seconds while the screen is on.
 - Export: hours or days without level samples now say `noLevelData` with a null drain instead of 0, and a drop across a gap is no longer lumped into one hour. The export also lists the gaps in the level history and whether the app is exempt from battery restrictions.

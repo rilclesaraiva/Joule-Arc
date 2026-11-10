@@ -14,6 +14,10 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -106,7 +110,22 @@ private fun TileCard(tile: Tile, onOpen: (Reading) -> Unit, modifier: Modifier) 
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
-            Text(tile.value, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
+            val valueStyle = MaterialTheme.typography.titleMedium
+            if (' ' in tile.value) {
+                Text(tile.value, style = valueStyle, textAlign = TextAlign.Center)
+            } else {
+                // A single long word ("Discharging") must not break in the middle: shrink it to fit.
+                var size by remember(tile.value) { mutableStateOf(valueStyle.fontSize) }
+                Text(
+                    text = tile.value,
+                    style = valueStyle,
+                    fontSize = size,
+                    maxLines = 1,
+                    softWrap = false,
+                    textAlign = TextAlign.Center,
+                    onTextLayout = { if (it.hasVisualOverflow && size.value > 10f) size *= 0.92f },
+                )
+            }
             tile.band?.let {
                 Text(
                     text = stringResource(ratingLabel(it.label)),

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -32,9 +33,11 @@ fun HistoryScreen(
     sessions: List<ChargeSession>,
     insights: ChargeInsights,
     onSessionClick: (ChargeSession) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
+        state = listState,
         modifier = modifier,
         contentPadding = insetsPadding(16.dp, 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),

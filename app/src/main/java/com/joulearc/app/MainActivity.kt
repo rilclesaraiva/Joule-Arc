@@ -197,6 +197,8 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     // Kept here, above the page switch, so coming back from a page returns to the same spot.
     val homeScroll = rememberSaveable(saver = ScrollState.Saver) { ScrollState(0) }
     val usageList = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+    val historyList = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+    val settingsScroll = rememberSaveable(saver = ScrollState.Saver) { ScrollState(0) }
     var stack by rememberSaveable { mutableStateOf(HOME) }
     val route = stack.substringAfterLast('|')
     val open: (String) -> Unit = { stack = "$stack|$it" }
@@ -329,6 +331,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     sessions = sessions,
                     insights = insights,
                     onSessionClick = { open(SESSION + it.startMs) },
+                    listState = historyList,
                     modifier = modifier,
                 )
             }
@@ -425,6 +428,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                 SettingsScreen(
                     onOpenAbout = { open(ABOUT) },
                     onExport = { exportLauncher.launch(DataExport.fileName(System.currentTimeMillis())) },
+                    scrollState = settingsScroll,
                     modifier = modifier,
                 )
             }
