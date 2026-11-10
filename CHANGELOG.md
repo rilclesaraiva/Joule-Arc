@@ -7,7 +7,7 @@
 
 ### Changed
 - Battery health is now measured against the capacity the system reports (the same reference AccuBattery uses), always. The device capacity field in Settings was removed. The capacity card, the device sheet and the health details show the system value and the manufacturer's advertised one, each with its name.
-- The capacity card also shows the capacity the system reports through `getBatteryCapacity` (when it differs from the rated one) and the health against it. The app now logs that value over time, and the export lists it (`systemAdjustedMah`, `systemAdjustedLog`), to show whether it is fixed or follows the battery's wear.
+- The app logs the capacity the system reports over time, and the export lists it (`systemAdjustedLog`, `systemMah`, `manufacturerMah`), to show whether it is fixed or follows the battery's wear.
 - Settings are now grouped by category with a heading each: Appearance, Battery, Notifications and reminders, Data, Updates and About.
 - Large numbers now use the thousands separator of the language (1.570 mA in Portuguese, 1,570 mA in English) everywhere: current, capacity, consumption, history, notification, tile and widget.
 - The "Show system apps" menu has rounded corners and sits slightly away from the three-dot button. The snooze menu of the update screen got the same shape.
