@@ -12,7 +12,7 @@ env:
   # ── Ajuste por stack ──
   VERSION_CMD: grep -m1 -oP 'versionName\s*=?\s*"\K[^"]+' app/build.gradle.kts   # imprime a versão
   TEST_CMD: chmod +x gradlew && ./gradlew testDebugUnitTest assembleRelease   # release = R8 + assinatura
-  TEST_ARTIFACTS: app/build/outputs/apk/release/*.apk   # build para vistoria, em todo push
+  TEST_ARTIFACTS: dist-test/joule-arc_v*.apk   # build para vistoria, em todo push (nome final: joule-arc_vX.Y.Z.apk)
   RELEASE_CMD: ./gradlew assembleRelease   # só APK: o app não vai para a Play Store, então não há .aab
   ARTIFACTS: dist/joule-arc_v*.apk   # nome final: joule-arc_vX.Y.Z.apk
   # ── Assinatura ──
@@ -35,6 +35,11 @@ jobs:
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
           echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"
       - run: eval "$TEST_CMD"
+      - name: Nomear o APK da vistoria
+        run: |
+          V="$(eval "$VERSION_CMD")"
+          mkdir -p dist-test
+          cp app/build/outputs/apk/release/app-release.apk "dist-test/joule-arc_v${V}.apk"
       - uses: actions/upload-artifact@v4
         with:
           name: build-para-vistoria
