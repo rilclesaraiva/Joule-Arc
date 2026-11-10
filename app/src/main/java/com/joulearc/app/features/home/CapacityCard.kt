@@ -1,6 +1,7 @@
 package com.joulearc.app.features.home
 
 import androidx.compose.foundation.Canvas
+import com.joulearc.app.core.formatInt
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -81,16 +82,16 @@ internal fun CapacityCard(
                     stringResource(R.string.capacity_now) to
                         stringResource(R.string.capacity_now_value, formatMah(nowMah), s.levelPercent),
                 )
-                capacityMah?.let { add(stringResource(R.string.capacity_full) to stringResource(R.string.value_mah, it)) }
+                capacityMah?.let { add(stringResource(R.string.capacity_full) to stringResource(R.string.value_mah, formatInt(it))) }
                 if (capacityMah != null && designMah != null) {
                     add(
                         stringResource(R.string.capacity_lost) to
-                            stringResource(R.string.value_mah, (designMah - capacityMah).coerceAtLeast(0)),
+                            stringResource(R.string.value_mah, formatInt((designMah - capacityMah).coerceAtLeast(0))),
                     )
                 }
                 add(
                     stringResource(R.string.capacity_design) to
-                        (designMah?.let { stringResource(R.string.value_mah, it) } ?: "—"),
+                        (designMah?.let { stringResource(R.string.value_mah, formatInt(it)) } ?: "—"),
                 )
             }
             rows.forEach { (label, value) ->
@@ -118,5 +119,5 @@ internal fun CapacityCard(
     }
 }
 
-internal fun formatMah(mah: Float): String = String.format(Locale.getDefault(), "%,d", mah.roundToInt())
+internal fun formatMah(mah: Float): String = formatInt(mah.roundToInt())
 

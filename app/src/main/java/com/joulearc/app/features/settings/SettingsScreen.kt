@@ -1,6 +1,7 @@
 package com.joulearc.app.features.settings
 
 import android.content.ActivityNotFoundException
+import com.joulearc.app.core.formatInt
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -159,7 +160,7 @@ fun SettingsScreen(
                                     stringResource(
                                         R.string.settings_design_hint,
                                         systemDesign?.let {
-                                            stringResource(R.string.value_mah, it.mah) + " (" + stringResource(it.source.labelRes()) + ")"
+                                            stringResource(R.string.value_mah, formatInt(it.mah)) + " (" + stringResource(it.source.labelRes()) + ")"
                                         }
                                             ?: stringResource(R.string.settings_design_none),
                                     ),

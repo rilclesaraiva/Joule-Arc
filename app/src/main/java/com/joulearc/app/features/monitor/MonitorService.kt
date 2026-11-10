@@ -1,6 +1,7 @@
 package com.joulearc.app.features.monitor
 
 import android.app.Notification
+import com.joulearc.app.core.formatInt
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -243,7 +244,7 @@ class MonitorService : Service() {
         } else {
             getString(
                 R.string.notification_text_short,
-                snapshot.signedCurrentMa ?: 0,
+                formatInt(snapshot.signedCurrentMa ?: 0),
                 snapshot.levelPercent,
                 formatTemperature(snapshot.temperatureC, SettingsRepository.useFahrenheit.value),
             )

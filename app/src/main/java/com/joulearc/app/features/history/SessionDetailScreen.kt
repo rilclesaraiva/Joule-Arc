@@ -1,6 +1,7 @@
 package com.joulearc.app.features.history
 
 import androidx.compose.foundation.layout.Arrangement
+import com.joulearc.app.core.formatInt
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -46,8 +47,8 @@ fun SessionDetailScreen(session: ChargeSession, modifier: Modifier = Modifier) {
         ElevatedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(stringResource(R.string.history_duration, formatDuration(session.durationMs)))
-                Text(stringResource(R.string.history_avg, session.avgCurrentMa.toInt()))
-                Text(stringResource(R.string.history_peak, session.peakCurrentMa, formatWatts(session.peakPowerMw)))
+                Text(stringResource(R.string.history_avg, formatInt(session.avgCurrentMa.toInt())))
+                Text(stringResource(R.string.history_peak, formatInt(session.peakCurrentMa), formatWatts(session.peakPowerMw)))
                 session.percentPerHour?.let { Text(stringResource(R.string.history_rate, it)) }
                 Text(stringResource(R.string.history_temp, session.maxTempC))
             }

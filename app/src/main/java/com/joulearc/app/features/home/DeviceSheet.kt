@@ -1,6 +1,7 @@
 package com.joulearc.app.features.home
 
 import androidx.compose.foundation.layout.Arrangement
+import com.joulearc.app.core.formatInt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -59,7 +60,7 @@ internal fun DeviceSheet(state: HomeState, onDismiss: () -> Unit) {
                     stringResource(R.string.device_api) to DeviceInfo.apiLevel.toString(),
                     DeviceInfo.securityPatch.takeIf { it.isNotBlank() }?.let { stringResource(R.string.device_patch) to it },
                     DeviceInfo.deviceCode.takeIf { it.isNotBlank() }?.let { stringResource(R.string.device_code) to it },
-                    state.designCapacityMah?.let { capacityLabel to stringResource(R.string.value_mah, it) },
+                    state.designCapacityMah?.let { capacityLabel to stringResource(R.string.value_mah, formatInt(it)) },
                 ),
             )
             MeaningBox(stringResource(R.string.sheet_meaning), stringResource(R.string.device_note), null)

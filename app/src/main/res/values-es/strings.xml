@@ -34,8 +34,8 @@
     <string name="history_active">Cargando ahora</string>
     <string name="history_level">%1$d%% → %2$d%% (+%3$d%%)</string>
     <string name="history_duration">Duración: %1$s</string>
-    <string name="history_avg">Corriente media: %1$d mA</string>
-    <string name="history_peak">Pico: %1$d mA · %2$s</string>
+    <string name="history_avg">Corriente media: %1$s mA</string>
+    <string name="history_peak">Pico: %1$s mA · %2$s</string>
     <string name="history_rate">Media: %1$.1f%% por hora</string>
     <string name="history_temp">Temperatura máxima: %1$.1f °C</string>
 
@@ -45,7 +45,7 @@
     <string name="insights_best_period">Momento del día más rápido: %1$s</string>
     <string name="insights_by_source">Por fuente de energía</string>
     <string name="insights_by_period">Por momento del día</string>
-    <string name="insights_row">%1$s · %2$d mA · %3$d sesiones</string>
+    <string name="insights_row">%1$s · %2$s mA · %3$d sesiones</string>
     <string name="insights_note">Corriente media de tus sesiones registradas. El cargador, el cable, la temperatura y el nivel de la batería afectan la velocidad, así que tómalo como una pista.</string>
     <string name="period_night">Noche (0–6 h)</string>
     <string name="period_morning">Mañana (6–12 h)</string>
@@ -72,7 +72,7 @@
     <string name="link_privacy">Política de privacidad</string>
     <string name="link_terms">Términos</string>
 
-    <string name="tile_label">%1$d mA</string>
+    <string name="tile_label">%1$s mA</string>
     <string name="tile_subtitle">%1$s · %2$d%%</string>
     <string name="widget_detail">%1$s · %2$.1f °C</string>
     <string name="widget_description">Corriente, potencia y nivel de batería en tiempo real</string>
@@ -93,13 +93,13 @@
     <string name="drain_screen_off">En espera (pantalla apagada)</string>
     <string name="drain_not_enough">Aún no hay datos suficientes (se necesitan al menos 30 minutos desenchufado en este estado).</string>
     <string name="drain_rate">%1$.1f%% por hora</string>
-    <string name="drain_mah">Unos %1$d mAh por hora</string>
+    <string name="drain_mah">Unos %1$s mAh por hora</string>
     <string name="drain_life">La batería duraría unas %1$s a este ritmo</string>
     <string name="drain_by_period">Por momento del día</string>
     <string name="drain_highest">Consume más: %1$s</string>
     <string name="drain_lowest">Consume menos: %1$s</string>
     <string name="drain_period_row">%1$s · %2$.1f%% por hora</string>
-    <string name="drain_period_row_mah">%1$s · %2$.1f%% por hora · unos %3$d mAh</string>
+    <string name="drain_period_row_mah">%1$s · %2$.1f%% por hora · unos %3$s mAh</string>
     <string name="drain_tracked">Basado en %1$s con la pantalla encendida y %2$s con la pantalla apagada, desenchufado, en los últimos 14 días.</string>
     <string name="drain_note">Estimaciones a partir del historial de nivel de batería que registra Joule Arc (pasos de 1%), no mediciones exactas. Los mAh usan la capacidad estimada de la batería. El tiempo de carga no se cuenta.</string>
     <string name="home_battery">Batería</string>
@@ -135,7 +135,7 @@
     <string name="capacity_design_missing">Capacidad del dispositivo desconocida: defínela en Ajustes.</string>
     <string name="capacity_unavailable">Este dispositivo no informa el contador de carga, por lo que no se puede medir la capacidad.</string>
     <string name="capacity_note">La carga completa se estima a partir del contador de carga y del nivel, y puede tener un error de unos pocos puntos porcentuales.</string>
-    <string name="value_mah">%1$d mAh</string>
+    <string name="value_mah">%1$s mAh</string>
     <string name="health_chip">Salud %1$d%%</string>
     <string name="health_condition">Revisión de la batería del teléfono</string>
     <string name="tile_status">Estado</string>
@@ -332,7 +332,7 @@
     <string name="usage_app_background">Segundo plano: %1$s — Batería: %2$s</string>
     <string name="usage_app_note">Una estimación: Android no deja que las apps normales lean la batería usada por una sola app. Joule Arc reparte la batería gastada en el período según el tiempo de uso (el segundo plano cuenta la mitad). Activo es el tiempo con la app en pantalla; segundo plano es el tiempo ejecutando un servicio en primer plano.</string>
     <string name="usage_app_none">No hay uso registrado de esta app en este período.</string>
-    <string name="notification_text_short">%1$d mA · %2$d%% · %3$s</string>
+    <string name="notification_text_short">%1$s mA · %2$d%% · %3$s</string>
     <string name="usage_show_system">Mostrar apps del sistema</string>
     <string name="usage_hide_system">Ocultar apps del sistema</string>
     <string name="usage_more_options">Más opciones</string>

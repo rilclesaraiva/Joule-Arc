@@ -1,6 +1,7 @@
 package com.joulearc.app.features.home
 
 import androidx.compose.foundation.layout.Arrangement
+import com.joulearc.app.core.formatInt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -63,7 +64,7 @@ internal fun ReadingSheet(reading: Reading, state: HomeState, s: BatterySnapshot
                 )
                 Reading.CYCLES -> SimpleDetails(
                     R.drawable.ic_cycle, stringResource(R.string.health_cycles),
-                    s.cycleCount?.toString() ?: stringResource(R.string.health_not_reported),
+                    s.cycleCount?.let { formatInt(it) } ?: stringResource(R.string.health_not_reported),
                     stringResource(R.string.meaning_cycles),
                 )
             }
@@ -126,16 +127,16 @@ private fun chargerRow(s: BatterySnapshot): Pair<String, String>? {
 private fun CurrentDetails(state: HomeState, s: BatterySnapshot) {
     val band = powerBand(s)
     Header(R.drawable.ic_bolt, stringResource(R.string.sheet_current), band)
-    BigValue(s.signedCurrentMa?.let { "$it mA" } ?: "—")
+    BigValue(s.signedCurrentMa?.let { "${formatInt(it)} mA" } ?: "—")
     val r = state.recorded
     val draining = s.drawingFromBattery
     InfoRows(
         listOfNotNull(
             stringResource(R.string.hero_recorded_max) to
-                ((if (draining) r.drainMaxMa?.let { -it } else r.chargeMaxMa)?.let { "$it mA" } ?: "—"),
+                ((if (draining) r.drainMaxMa?.let { -it } else r.chargeMaxMa)?.let { "${formatInt(it)} mA" } ?: "—"),
             stringResource(R.string.hero_recorded_min) to
-                ((if (draining) r.drainMinMa?.let { -it } else r.chargeMinMa)?.let { "$it mA" } ?: "—"),
-            state.estimate?.avgCurrentMa?.let { stringResource(R.string.sheet_average) to "$it mA" },
+                ((if (draining) r.drainMinMa?.let { -it } else r.chargeMinMa)?.let { "${formatInt(it)} mA" } ?: "—"),
+            state.estimate?.avgCurrentMa?.let { stringResource(R.string.sheet_average) to "${formatInt(it)} mA" },
             chargerRow(s),
         ),
     )
@@ -187,7 +188,7 @@ private fun LevelDetails(state: HomeState, s: BatterySnapshot) {
     InfoRows(
         listOfNotNull(
             s.chargeCounterUah?.let { stringResource(R.string.capacity_now) to "${formatMah(it / 1000f)} mAh" },
-            state.capacityMah?.let { stringResource(R.string.capacity_full) to stringResource(R.string.value_mah, it) },
+            state.capacityMah?.let { stringResource(R.string.capacity_full) to stringResource(R.string.value_mah, formatInt(it)) },
             if (s.isCharging) e?.minutesToFull?.let { stringResource(R.string.hero_time_to_full) to formatMinutes(it) } else null,
             if (s.drawingFromBattery) e?.minutesLeft?.let { stringResource(R.string.hero_remaining) to formatMinutes(it) } else null,
         ),
@@ -216,7 +217,7 @@ private fun PowerDetails(state: HomeState, s: BatterySnapshot) {
     if (scale != null) ScaleBar(scale, watts, trimUnit("W"))
     InfoRows(
         listOfNotNull(
-            s.signedCurrentMa?.let { stringResource(R.string.sheet_current) to "$it mA" },
+            s.signedCurrentMa?.let { stringResource(R.string.sheet_current) to "${formatInt(it)} mA" },
             stringResource(R.string.stat_voltage) to formatVolts(s.voltageMv, 3),
             chargerRow(s),
             state.extremes.maxChargeMw?.let { stringResource(R.string.sheet_fastest_opened) to formatWatts(it) },
@@ -274,9 +275,9 @@ private fun HealthDetails(state: HomeState, s: BatterySnapshot) {
     InfoRows(
         listOfNotNull(
             stringResource(R.string.health_condition) to stringResource(conditionLabel(s.healthState)),
-            state.capacityMah?.let { stringResource(R.string.capacity_full) to stringResource(R.string.value_mah, it) },
-            state.designCapacityMah?.let { stringResource(R.string.capacity_design) to stringResource(R.string.value_mah, it) },
-            s.cycleCount?.let { stringResource(R.string.health_cycles) to it.toString() },
+            state.capacityMah?.let { stringResource(R.string.capacity_full) to stringResource(R.string.value_mah, formatInt(it)) },
+            state.designCapacityMah?.let { stringResource(R.string.capacity_design) to stringResource(R.string.value_mah, formatInt(it)) },
+            s.cycleCount?.let { stringResource(R.string.health_cycles) to formatInt(it) },
         ),
     )
     if (band != null) {

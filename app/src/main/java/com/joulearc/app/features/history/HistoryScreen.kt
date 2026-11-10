@@ -1,6 +1,7 @@
 package com.joulearc.app.features.history
 
 import androidx.compose.foundation.layout.Arrangement
+import com.joulearc.app.core.formatInt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -86,13 +87,13 @@ private fun SessionCard(session: ChargeSession, onClick: (ChargeSession) -> Unit
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                text = stringResource(R.string.history_avg, session.avgCurrentMa.toInt()),
+                text = stringResource(R.string.history_avg, formatInt(session.avgCurrentMa.toInt())),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = stringResource(
                     R.string.history_peak,
-                    session.peakCurrentMa,
+                    formatInt(session.peakCurrentMa),
                     formatWatts(session.peakPowerMw),
                 ),
                 style = MaterialTheme.typography.bodyMedium,
@@ -195,7 +196,7 @@ private fun InsightsCard(insights: ChargeInsights) {
                     text = stringResource(
                         R.string.insights_row,
                         stringResource(sourceRes(it.key)),
-                        it.avgCurrentMa,
+                        formatInt(it.avgCurrentMa),
                         it.sessions,
                     ),
                     style = MaterialTheme.typography.bodyMedium,
@@ -211,7 +212,7 @@ private fun InsightsCard(insights: ChargeInsights) {
                     text = stringResource(
                         R.string.insights_row,
                         stringResource(periodRes(it.key)),
-                        it.avgCurrentMa,
+                        formatInt(it.avgCurrentMa),
                         it.sessions,
                     ),
                     style = MaterialTheme.typography.bodyMedium,

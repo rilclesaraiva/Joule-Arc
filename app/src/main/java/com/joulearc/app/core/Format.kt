@@ -4,6 +4,7 @@ import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import kotlin.math.roundToInt
 
 /** Signed power in watts, from milliwatts, e.g. "+11.50 W". */
@@ -43,3 +44,8 @@ fun formatVolts(mv: Int, decimals: Int = 2): String =
 
 /** Number without trailing zeros, e.g. 4.25 or 5. */
 fun formatTrim(value: Float): String = DecimalFormat("0.##").format(value)
+
+/** Whole number with the thousands separator of the language, e.g. 1.570 (pt) or 1,570 (en). */
+fun formatInt(value: Int): String = NumberFormat.getIntegerInstance(Locale.getDefault()).format(value.toLong())
+
+fun formatInt(value: Long): String = NumberFormat.getIntegerInstance(Locale.getDefault()).format(value)

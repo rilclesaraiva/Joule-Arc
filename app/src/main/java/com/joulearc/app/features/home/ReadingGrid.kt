@@ -1,6 +1,7 @@
 package com.joulearc.app.features.home
 
 import androidx.compose.foundation.layout.Arrangement
+import com.joulearc.app.core.formatInt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -70,7 +71,7 @@ internal fun ReadingGrid(state: HomeState, s: BatterySnapshot, onOpen: (Reading)
             band = health?.let { Scales.health.rate(it.toFloat()) }, icon = R.drawable.ic_heart,
         ),
         Tile(Reading.TECHNOLOGY, R.string.health_technology, s.technology ?: notReported, icon = R.drawable.ic_chip),
-        Tile(Reading.CYCLES, R.string.health_cycles, s.cycleCount?.toString() ?: notReported, icon = R.drawable.ic_cycle),
+        Tile(Reading.CYCLES, R.string.health_cycles, s.cycleCount?.let { formatInt(it) } ?: notReported, icon = R.drawable.ic_cycle),
     )
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         tiles.chunked(3).forEach { row ->

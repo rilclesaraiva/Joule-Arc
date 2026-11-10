@@ -1,6 +1,8 @@
 package com.joulearc.app.features.updates
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -105,7 +107,12 @@ fun UpdateScreen(
                         OutlinedIconButton(onClick = { menu = true }, modifier = Modifier.size(56.dp)) {
                             Icon(painterResource(R.drawable.ic_notifications_off), stringResource(R.string.update_snooze_menu))
                         }
-                        DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                        DropdownMenu(
+                            expanded = menu,
+                            onDismissRequest = { menu = false },
+                            shape = RoundedCornerShape(20.dp),
+                            offset = DpOffset(0.dp, 8.dp),
+                        ) {
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.update_snooze_week)) },
                                 onClick = { menu = false; onSnoozeWeek() },

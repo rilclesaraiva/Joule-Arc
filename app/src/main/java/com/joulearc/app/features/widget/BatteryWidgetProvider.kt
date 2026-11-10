@@ -1,6 +1,7 @@
 package com.joulearc.app.features.widget
 
 import android.app.PendingIntent
+import com.joulearc.app.core.formatInt
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
@@ -52,7 +53,7 @@ class BatteryWidgetProvider : AppWidgetProvider() {
             )
             views.setTextViewText(
                 R.id.widget_current,
-                s.signedCurrentMa?.let { context.getString(R.string.tile_label, it) } ?: "—",
+                s.signedCurrentMa?.let { context.getString(R.string.tile_label, formatInt(it)) } ?: "—",
             )
             views.setTextViewText(
                 R.id.widget_detail,

@@ -1,6 +1,7 @@
 package com.joulearc.app.features.drain
 
 import androidx.compose.foundation.layout.Arrangement
+import com.joulearc.app.core.formatInt
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -84,7 +85,7 @@ fun DrainScreen(
                         val mah = capacityMah?.let { cap -> (it.percentPerHour * cap / 100f).roundToInt() }
                         Text(
                             text = if (mah != null) {
-                                stringResource(R.string.drain_period_row_mah, stringResource(periodRes(it.key)), it.percentPerHour, mah)
+                                stringResource(R.string.drain_period_row_mah, stringResource(periodRes(it.key)), it.percentPerHour, formatInt(mah))
                             } else {
                                 stringResource(R.string.drain_period_row, stringResource(periodRes(it.key)), it.percentPerHour)
                             },
@@ -135,7 +136,7 @@ private fun RateCard(title: String, pph: Float?, levelPercent: Int?, capacityMah
             )
             if (capacityMah != null) {
                 Text(
-                    text = stringResource(R.string.drain_mah, (pph * capacityMah / 100f).roundToInt()),
+                    text = stringResource(R.string.drain_mah, formatInt((pph * capacityMah / 100f).roundToInt())),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }

@@ -34,8 +34,8 @@
     <string name="history_active">Charging now</string>
     <string name="history_level">%1$d%% → %2$d%% (+%3$d%%)</string>
     <string name="history_duration">Duration: %1$s</string>
-    <string name="history_avg">Average current: %1$d mA</string>
-    <string name="history_peak">Peak: %1$d mA · %2$s</string>
+    <string name="history_avg">Average current: %1$s mA</string>
+    <string name="history_peak">Peak: %1$s mA · %2$s</string>
     <string name="history_rate">Average: %1$.1f%% per hour</string>
     <string name="history_temp">Max temperature: %1$.1f °C</string>
 
@@ -45,7 +45,7 @@
     <string name="insights_best_period">Fastest time of day: %1$s</string>
     <string name="insights_by_source">By power source</string>
     <string name="insights_by_period">By time of day</string>
-    <string name="insights_row">%1$s · %2$d mA · %3$d sessions</string>
+    <string name="insights_row">%1$s · %2$s mA · %3$d sessions</string>
     <string name="insights_note">Average current over your recorded sessions. Charger, cable, temperature and battery level all affect speed, so treat this as a hint.</string>
     <string name="period_night">Night (0–6 h)</string>
     <string name="period_morning">Morning (6–12 h)</string>
@@ -72,7 +72,7 @@
     <string name="link_privacy">Privacy policy</string>
     <string name="link_terms">Terms</string>
 
-    <string name="tile_label">%1$d mA</string>
+    <string name="tile_label">%1$s mA</string>
     <string name="tile_subtitle">%1$s · %2$d%%</string>
     <string name="widget_detail">%1$s · %2$.1f °C</string>
     <string name="widget_description">Live current, power and battery level</string>
@@ -93,13 +93,13 @@
     <string name="drain_screen_off">Standby (screen off)</string>
     <string name="drain_not_enough">Not enough data yet (needs at least 30 minutes unplugged in this state).</string>
     <string name="drain_rate">%1$.1f%% per hour</string>
-    <string name="drain_mah">About %1$d mAh per hour</string>
+    <string name="drain_mah">About %1$s mAh per hour</string>
     <string name="drain_life">Battery would last about %1$s at this rate</string>
     <string name="drain_by_period">By time of day</string>
     <string name="drain_highest">Drains most: %1$s</string>
     <string name="drain_lowest">Drains least: %1$s</string>
     <string name="drain_period_row">%1$s · %2$.1f%% per hour</string>
-    <string name="drain_period_row_mah">%1$s · %2$.1f%% per hour · about %3$d mAh</string>
+    <string name="drain_period_row_mah">%1$s · %2$.1f%% per hour · about %3$s mAh</string>
     <string name="drain_tracked">Based on %1$s with the screen on and %2$s with the screen off, unplugged, in the last 14 days.</string>
     <string name="drain_note">Estimates from the battery level history Joule Arc records (1% steps), not exact measurements. mAh uses the estimated battery capacity. Charging time is not counted.</string>
     <string name="home_battery">Battery</string>
@@ -135,7 +135,7 @@
     <string name="capacity_design_missing">Device capacity unknown: set it in Settings.</string>
     <string name="capacity_unavailable">This device does not report the charge counter, so the capacity cannot be measured.</string>
     <string name="capacity_note">The full charge is estimated from the charge counter and the level, and can be off by a few percent.</string>
-    <string name="value_mah">%1$d mAh</string>
+    <string name="value_mah">%1$s mAh</string>
     <string name="health_chip">Health %1$d%%</string>
     <string name="health_condition">Phone battery check</string>
     <string name="tile_status">Status</string>
@@ -332,7 +332,7 @@
     <string name="usage_app_background">Background: %1$s — Battery: %2$s</string>
     <string name="usage_app_note">An estimate: Android does not let regular apps read the battery used by a single app. Joule Arc splits the battery drained in the period by usage time (background counts half). Active is time with the app on screen; background is time running a foreground service.</string>
     <string name="usage_app_none">No recorded use of this app in this period.</string>
-    <string name="notification_text_short">%1$d mA · %2$d%% · %3$s</string>
+    <string name="notification_text_short">%1$s mA · %2$d%% · %3$s</string>
     <string name="usage_show_system">Show system apps</string>
     <string name="usage_hide_system">Hide system apps</string>
     <string name="usage_more_options">More options</string>

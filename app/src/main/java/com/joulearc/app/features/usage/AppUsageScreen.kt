@@ -1,6 +1,7 @@
 package com.joulearc.app.features.usage
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -105,8 +106,8 @@ private fun Breakdown(app: AppUsage, report: UsageReport) {
         p < 1f -> stringResource(R.string.usage_percent_less)
         else -> stringResource(R.string.apps_share, p.roundToInt())
     }
-    val activeColor = MaterialTheme.colorScheme.onSurfaceVariant
-    val backgroundColor = MaterialTheme.colorScheme.outline
+    val activeColor = Color(0xFF2E7DF6)
+    val backgroundColor = Color(0xFFF59E0B)
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(

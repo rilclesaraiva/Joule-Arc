@@ -1,6 +1,7 @@
 package com.joulearc.app
 
 import android.Manifest
+import androidx.compose.ui.unit.DpOffset
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -359,7 +360,12 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                             description = stringResource(R.string.usage_more_options),
                             onClick = { usageMenu = true },
                         )
-                        DropdownMenu(expanded = usageMenu, onDismissRequest = { usageMenu = false }) {
+                        DropdownMenu(
+                            expanded = usageMenu,
+                            onDismissRequest = { usageMenu = false },
+                            shape = RoundedCornerShape(20.dp),
+                            offset = DpOffset(0.dp, 8.dp),
+                        ) {
                             DropdownMenuItem(
                                 text = {
                                     Text(

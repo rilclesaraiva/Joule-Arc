@@ -1,6 +1,7 @@
 package com.joulearc.app.features.home
 
 import androidx.compose.animation.animateColorAsState
+import com.joulearc.app.core.formatInt
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -126,7 +127,7 @@ internal fun HeroCard(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Bottom,
             ) {
-                Text(signed?.toString() ?: "—", style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Medium)
+                Text(signed?.let { formatInt(it) } ?: "—", style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Medium)
                 Text(
                     text = " " + stringResource(R.string.unit_ma),
                     style = MaterialTheme.typography.titleLarge,
@@ -240,11 +241,11 @@ private fun RecordedRow(s: BatterySnapshot, recorded: RecordedCurrents, onReset:
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
-                text = stringResource(R.string.hero_recorded_max) + "  " + (max?.let { "$it mA" } ?: "—"),
+                text = stringResource(R.string.hero_recorded_max) + "  " + (max?.let { "${formatInt(it)} mA" } ?: "—"),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                text = stringResource(R.string.hero_recorded_min) + "  " + (min?.let { "$it mA" } ?: "—"),
+                text = stringResource(R.string.hero_recorded_min) + "  " + (min?.let { "${formatInt(it)} mA" } ?: "—"),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }

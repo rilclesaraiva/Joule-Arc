@@ -1,6 +1,7 @@
 package com.joulearc.app.features.tile
 
 import android.app.PendingIntent
+import com.joulearc.app.core.formatInt
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Build
@@ -68,7 +69,7 @@ class BatteryTileService : TileService() {
             tile.label = getString(R.string.app_name)
         } else {
             tile.state = if (s.isCharging) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
-            tile.label = s.signedCurrentMa?.let { getString(R.string.tile_label, it) }
+            tile.label = s.signedCurrentMa?.let { getString(R.string.tile_label, formatInt(it)) }
                 ?: getString(R.string.app_name)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val statusRes = when (s.powerState) {
