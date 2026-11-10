@@ -53,6 +53,30 @@ fun SessionDetailScreen(session: ChargeSession, modifier: Modifier = Modifier) {
                 Text(stringResource(R.string.history_temp, session.maxTempC))
             }
         }
+        if (session.pauses.isNotEmpty()) {
+            ElevatedCard(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        stringResource(R.string.session_pauses, session.pauses.size, formatDuration(session.pausedMs)),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    session.pauses.forEach {
+                        Text(
+                            stringResource(
+                                R.string.session_pause_detail,
+                                formatClock(session.startMs + it.offsetSec * 1000L),
+                                formatDuration(it.durationSec * 1000L),
+                            ),
+                        )
+                    }
+                    Text(
+                        stringResource(R.string.session_pauses_note),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
 
         val points = session.points
         if (points.size < 2) {

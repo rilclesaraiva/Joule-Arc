@@ -26,16 +26,49 @@ class ChargeSessionTrackerTest {
         assertEquals(3000.0, s.avgCurrentMa, 0.01)
     }
 
-    @Test fun unplugEndsSessionImmediately() {
+    @Test fun unplugClosesSessionOnceTheResumeWindowPasses() {
         val tracker = ChargeSessionTracker()
         tracker.onSnapshot(snap(0, level = 40))
         tracker.onSnapshot(snap(60_000, level = 45))
-        val closed = tracker.onSnapshot(unplugged(61_000))
+        assertNull(tracker.onSnapshot(unplugged(61_000)))
+        assertNull(tracker.current)
+        assertNotNull(tracker.pending)
+        assertNull(tracker.onSnapshot(unplugged(200_000)))
+        val closed = tracker.onSnapshot(unplugged(60_000 + RESUME_WINDOW_MS + 1_000))
         assertNotNull(closed)
         assertFalse(closed!!.ongoing)
         assertEquals(60_000L, closed.durationMs)
         assertEquals(5, closed.gainPercent)
-        assertNull(tracker.current)
+        assertNull(tracker.pending)
+    }
+
+    @Test fun reconnectingWithinFiveMinutesContinuesTheSessionWithAPause() {
+        val tracker = ChargeSessionTracker()
+        tracker.onSnapshot(snap(0, level = 40, current = 3000))
+        tracker.onSnapshot(snap(60_000, level = 45, current = 3000))
+        assertNull(tracker.onSnapshot(unplugged(70_000)))
+        assertNull(tracker.onSnapshot(snap(180_000, level = 45, current = 3000)))
+        val s = tracker.current!!
+        assertNull(tracker.pending)
+        assertTrue(s.ongoing)
+        assertEquals(40, s.startLevel)
+        assertEquals(listOf(SessionPause(60, 120)), s.pauses)
+        assertEquals(120_000L, s.pausedMs)
+        assertEquals(60_000L, s.chargingMs)
+        // the pause is not averaged in
+        assertEquals(3000.0, s.avgCurrentMa, 0.01)
+    }
+
+    @Test fun reconnectingAfterTheWindowStartsANewSession() {
+        val tracker = ChargeSessionTracker()
+        tracker.onSnapshot(snap(0, level = 40))
+        tracker.onSnapshot(snap(60_000, level = 45))
+        tracker.onSnapshot(unplugged(70_000))
+        val closed = tracker.onSnapshot(snap(60_000 + RESUME_WINDOW_MS + 5_000, level = 50))
+        assertNotNull(closed)
+        assertEquals(45, closed!!.endLevel)
+        assertEquals(50, tracker.current!!.startLevel)
+        assertTrue(tracker.current!!.pauses.isEmpty())
     }
 
     @Test fun briefStatusFlickerKeepsSessionOpen() {

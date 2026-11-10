@@ -20,16 +20,27 @@ data class ChargeSession(
     val ongoing: Boolean,
     /** Sparse curve (every 30 s or when the level changes), oldest first. */
     val points: List<SessionPoint> = emptyList(),
+    /** Times the charger was unplugged and plugged back within [RESUME_WINDOW_MS]; the session carried on. */
+    val pauses: List<SessionPause> = emptyList(),
 ) {
     val durationMs: Long get() = lastMs - startMs
+    val pausedMs: Long get() = pauses.sumOf { it.durationSec * 1000L }
+    /** Time actually charging: the duration without the pauses. */
+    val chargingMs: Long get() = durationMs - pausedMs
     val gainPercent: Int get() = endLevel - startLevel
 
     /** Average % per hour, only for sessions long enough to be meaningful. */
     val percentPerHour: Float?
-        get() = if (durationMs >= 300_000L && gainPercent > 0) {
-            gainPercent * 3_600_000f / durationMs
+        get() = if (chargingMs >= 300_000L && gainPercent > 0) {
+            gainPercent * 3_600_000f / chargingMs
         } else null
 }
+
+/** Charging stopped at [offsetSec] after the start of the session and came back [durationSec] later. */
+data class SessionPause(val offsetSec: Int, val durationSec: Int)
+
+/** Unplugged for no longer than this, the next charge continues the same session. */
+const val RESUME_WINDOW_MS = 5 * 60_000L
 
 private const val POINT_INTERVAL_MS = 30_000L
 private const val MAX_POINTS = 360
@@ -45,20 +56,43 @@ class ChargeSessionTracker(
     var current: ChargeSession? = initial
         private set
 
+    /** A session whose charger was unplugged less than [RESUME_WINDOW_MS] ago and may still resume. */
+    var pending: ChargeSession? = null
+        private set
+
     /** Returns the session that just ended, if any. */
     fun onSnapshot(s: BatterySnapshot): ChargeSession? {
         val cur = current
+        val waiting = pending
         if (s.isCharging) {
             if (cur != null && s.timestampMs - cur.lastMs <= gapMs) {
                 current = cur.plus(s)
                 return null
             }
+            if (cur == null && waiting != null && s.timestampMs - waiting.lastMs <= RESUME_WINDOW_MS) {
+                current = waiting.resume(s)
+                pending = null
+                return null
+            }
             current = start(s)
-            return cur?.copy(ongoing = false)
+            pending = null
+            return (cur ?: waiting)?.copy(ongoing = false)
         }
-        if (cur != null && (s.source == PowerSource.BATTERY || s.timestampMs - cur.lastMs > gapMs)) {
-            current = null
-            return cur.copy(ongoing = false)
+        if (cur != null) {
+            if (s.source == PowerSource.BATTERY && s.timestampMs - cur.lastMs <= RESUME_WINDOW_MS) {
+                // Unplugged: wait a few minutes in case it was only a reconnection.
+                current = null
+                pending = cur
+                return null
+            }
+            if (s.source == PowerSource.BATTERY || s.timestampMs - cur.lastMs > gapMs) {
+                current = null
+                return cur.copy(ongoing = false)
+            }
+        }
+        if (waiting != null && s.timestampMs - waiting.lastMs > RESUME_WINDOW_MS) {
+            pending = null
+            return waiting.copy(ongoing = false)
         }
         return null
     }
@@ -77,9 +111,26 @@ class ChargeSessionTracker(
         points = listOf(SessionPoint(0, s.levelPercent, s.currentMa ?: 0)),
     )
 
+    /** Continues the session after a short unplug: the gap is recorded as a pause and not averaged in. */
+    private fun ChargeSession.resume(s: BatterySnapshot): ChargeSession {
+        val c = s.currentMa ?: 0
+        val pause = SessionPause(((lastMs - startMs) / 1000L).toInt(), ((s.timestampMs - lastMs) / 1000L).toInt())
+        val offsetSec = ((s.timestampMs - startMs) / 1000L).toInt()
+        return copy(
+            lastMs = s.timestampMs,
+            endLevel = s.levelPercent,
+            peakCurrentMa = max(peakCurrentMa, c),
+            peakPowerMw = max(peakPowerMw, s.powerMw ?: 0),
+            maxTempC = max(maxTempC, s.temperatureC),
+            points = points + SessionPoint(offsetSec, s.levelPercent, c),
+            pauses = pauses + pause,
+            ongoing = true,
+        )
+    }
+
     private fun ChargeSession.plus(s: BatterySnapshot): ChargeSession {
         val c = s.currentMa
-        val elapsed = (lastMs - startMs).toDouble()
+        val elapsed = (lastMs - startMs - pausedMs).toDouble()
         val dt = (s.timestampMs - lastMs).toDouble()
         val avg = if (c != null && elapsed + dt > 0.0) (avgCurrentMa * elapsed + c * dt) / (elapsed + dt)
         else avgCurrentMa

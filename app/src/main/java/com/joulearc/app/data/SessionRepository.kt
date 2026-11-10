@@ -43,8 +43,9 @@ object SessionRepository {
     suspend fun onSnapshot(snapshot: BatterySnapshot) {
         mutex.withLock {
             val s = store ?: return
+            val wasPending = tracker.pending != null
             val closed = tracker.onSnapshot(snapshot)
-            var mustSave = false
+            var mustSave = (tracker.pending != null) != wasPending
             if (closed != null) {
                 if (closed.durationMs >= MIN_DURATION_MS) {
                     _sessions.value = (listOf(closed) + _sessions.value)
@@ -59,8 +60,10 @@ object SessionRepository {
             }
             val activeNow = tracker.current
             _active.value = activeNow
-            if (mustSave || (activeNow != null && snapshot.timestampMs - lastSavedMs >= SAVE_INTERVAL_MS)) {
-                val state = SessionStore.State(_sessions.value, activeNow)
+            // A session waiting for a possible reconnection is saved too, so it survives the app dying.
+            val toSave = activeNow ?: tracker.pending
+            if (mustSave || (toSave != null && snapshot.timestampMs - lastSavedMs >= SAVE_INTERVAL_MS)) {
+                val state = SessionStore.State(_sessions.value, toSave)
                 withContext(Dispatchers.IO) { s.save(state) }
                 lastSavedMs = snapshot.timestampMs
             }

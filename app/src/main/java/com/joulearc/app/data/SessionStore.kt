@@ -45,6 +45,7 @@ internal class SessionStore(private val file: File) {
         .put("maxTemp", s.maxTempC.toDouble())
         .put("source", s.source.name)
         .put("ongoing", s.ongoing)
+        .put("pauses", JSONArray().also { arr -> s.pauses.forEach { arr.put(JSONArray().put(it.offsetSec).put(it.durationSec)) } })
         .put(
             "points",
             JSONArray().also { arr ->
@@ -67,6 +68,12 @@ internal class SessionStore(private val file: File) {
             (0 until a.length()).map {
                 val r = a.getJSONArray(it)
                 SessionPoint(r.getInt(0), r.getInt(1), r.getInt(2))
+            }
+        } ?: emptyList(),
+        pauses = o.optJSONArray("pauses")?.let { a ->
+            (0 until a.length()).map {
+                val r = a.getJSONArray(it)
+                SessionPause(r.getInt(0), r.getInt(1))
             }
         } ?: emptyList(),
     )

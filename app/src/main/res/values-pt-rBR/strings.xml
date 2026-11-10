@@ -337,4 +337,7 @@
     <string name="settings_cat_data">Dados</string>
     <string name="settings_cat_updates">Atualizações</string>
     <string name="capacity_manufacturer">Capacidade do fabricante (teórica)</string>
+    <string name="session_pauses">Carregamento pausado %1$d× (%2$s no total)</string>
+    <string name="session_pause_detail">Pausa às %1$s por %2$s</string>
+    <string name="session_pauses_note">Reconectou em até 5 minutos, por isso conta como uma sessão só. As pausas não entram no tempo de carga nem na média.</string>
 </resources>

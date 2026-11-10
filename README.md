@@ -9,7 +9,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Amber warning when a charger is connected but the battery is not charging or is losing charge.
 - Voltage, temperature, level, power, status, power source, health, technology and cycle count, each with a plain-language rating and a detail sheet that explains it.
 - Battery capacity: charge now, full charge today (estimated), lost to wear, the capacity the system reports and the one the manufacturer advertises, with estimated health (measured against the system value).
-- Charging session history with current and level curves, and which power source and time of day charge fastest and slowest.
+- Charging session history with current and level curves (a reconnection within 5 minutes continues the same session and shows the pause), and which power source and time of day charge fastest and slowest.
 - Consumption with the screen on and off, estimated battery life, and which time of day drains the most.
 - Usage by app: 24-hour level chart and 14-day usage chart (tap a bar to see only that hour or day), a per-app list with an estimated percentage and a page for each app, with system apps hidden unless you ask (Android does not expose per-app mAh to regular apps).
 - Charge and low battery reminders.

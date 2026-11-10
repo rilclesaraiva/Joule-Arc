@@ -225,6 +225,15 @@ object DataExport {
             w.name("maxTempC").value(c.maxTempC.toDouble())
             w.name("source").value(c.source.name)
             w.name("ongoing").value(c.ongoing)
+            w.name("chargingMs").value(c.chargingMs)
+            w.name("pauses").beginArray()
+            c.pauses.forEach { p ->
+                w.beginObject()
+                w.name("offsetSec").value(p.offsetSec)
+                w.name("durationSec").value(p.durationSec)
+                w.endObject()
+            }
+            w.endArray()
             w.name("pointFields").beginArray().value("offsetSec").value("level").value("currentMa").endArray()
             w.name("points").beginArray()
             c.points.forEach { p -> w.beginArray().value(p.offsetSec).value(p.level).value(p.currentMa).endArray() }
