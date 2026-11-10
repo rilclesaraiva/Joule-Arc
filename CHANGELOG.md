@@ -14,6 +14,7 @@
 - The active and background colors in an app's usage breakdown are now fixed (blue and amber) instead of following the system color, so they are easy to tell apart.
 
 ### Fixed
+- The health details and the device sheet still told the user to set the device capacity in Settings, a field that no longer exists. The texts now describe the system-reported reference. The manufacturer capacity is labeled "theoretical" instead of "assumed".
 - Notification, widget and tile were slow with the screen on and another app in front (every 30 s and 60 s). They now refresh every second and every 2 seconds while the screen is on.
 - Export: hours or days without level samples now say `noLevelData` with a null drain instead of 0, and a drop across a gap is no longer lumped into one hour. The export also lists the gaps in the level history and whether the app is exempt from battery restrictions.
 - Some phones (reported in microamps) showed a standby current such as 15 mA as 15 000 mA, which inflated the recorded highest current and could skew the averages and the time-left estimate. The app now learns the unit of the current reading per device. The recorded highest and lowest currents were reset once because of that.

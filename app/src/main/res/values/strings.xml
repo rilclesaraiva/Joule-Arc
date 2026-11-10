@@ -222,13 +222,13 @@
     <string name="meaning_health_fair">Some normal wear. The battery holds a bit less than when it was new.</string>
     <string name="meaning_health_worn">Noticeable wear. The battery holds clearly less than when it was new and empties faster.</string>
     <string name="meaning_health_poor">Heavy wear. Consider replacing the battery if it runs out too quickly.</string>
-    <string name="meaning_health_unknown">Set the device capacity in Settings to estimate the battery health.</string>
+    <string name="meaning_health_unknown">Not estimated yet: the app needs to measure the full charge while the battery is above 10%.</string>
     <string name="meaning_technology" formatted="false">Lithium batteries last longer when kept cool and charged between 20% and 80%. A full charge now and then is fine.</string>
     <string name="meaning_cycles" formatted="false">One cycle is using 100% of the battery charge, even if spread over several days. Many phone batteries keep around 80% of their capacity after 500 to 800 cycles.</string>
     <string name="note_voltage">This is the battery voltage. Fast chargers use a higher voltage on the cable, and the phone lowers it for the battery. The voltage jumps a little when you plug or unplug the charger.</string>
     <string name="note_temperature">Android reports the battery temperature, which follows how warm the whole phone is.</string>
     <string name="note_power">Power is voltage times current: how fast energy goes into or out of the battery. While charging it is lower than the charger power: part runs the phone, part is lost as heat, and it drops as the battery fills.</string>
-    <string name="note_health">Health is the estimated full charge today compared with the device capacity. The phone battery check only flags failures such as overheating.</string>
+    <string name="note_health">Health is the estimated full charge today compared with the capacity the system reports. The phone battery check only flags failures such as overheating.</string>
     <string name="settings_charge_alert">Charge reminder</string>
     <string name="settings_charge_alert_sub">Reminds you to unplug at %1$d%%</string>
     <string name="settings_low_alert">Low battery reminder</string>
@@ -320,7 +320,7 @@
     <string name="device_api">API level</string>
     <string name="device_patch">Security update</string>
     <string name="device_code">Device code</string>
-    <string name="device_note">These details stay on your phone. The device capacity is what the battery was built to hold; Joule Arc compares it with the current estimate of the full charge to estimate health. If it is wrong, type the right value in Settings.</string>
+    <string name="device_note">These details stay on your phone. The capacity reported by the system is the reference Joule Arc compares with the current estimate of the full charge to estimate health. The manufacturer capacity is the advertised one, shown for comparison.</string>
     <string name="usage_app_total">Total time: %1$s — Battery: %2$s</string>
     <string name="usage_app_active">Active: %1$s — Battery: %2$s</string>
     <string name="usage_app_background">Background: %1$s — Battery: %2$s</string>
@@ -336,5 +336,5 @@
     <string name="settings_cat_alerts">Notifications and reminders</string>
     <string name="settings_cat_data">Data</string>
     <string name="settings_cat_updates">Updates</string>
-    <string name="capacity_manufacturer">Manufacturer capacity (assumed)</string>
+    <string name="capacity_manufacturer">Manufacturer capacity (theoretical)</string>
 </resources>

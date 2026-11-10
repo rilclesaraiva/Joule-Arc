@@ -222,13 +222,13 @@
     <string name="meaning_health_fair">Algo de desgaste normal. La batería retiene un poco menos que cuando era nueva.</string>
     <string name="meaning_health_worn">Desgaste notable. La batería retiene claramente menos que cuando era nueva y se vacía más rápido.</string>
     <string name="meaning_health_poor">Desgaste importante. Considera cambiar la batería si se agota demasiado rápido.</string>
-    <string name="meaning_health_unknown">Define la capacidad del dispositivo en Ajustes para estimar la salud de la batería.</string>
+    <string name="meaning_health_unknown">Aún sin estimar: la app necesita medir la carga total con la batería por encima del 10%.</string>
     <string name="meaning_technology" formatted="false">Las baterías de litio duran más si se mantienen frescas y se cargan entre el 20% y el 80%. Una carga completa de vez en cuando no pasa nada.</string>
     <string name="meaning_cycles" formatted="false">Un ciclo es usar el 100% de la carga de la batería, aunque se reparta en varios días. Muchas baterías de teléfono conservan alrededor del 80% de su capacidad después de 500 a 800 ciclos.</string>
     <string name="note_voltage">Esta es la tensión de la batería. Los cargadores rápidos usan una tensión más alta en el cable y el teléfono la reduce para la batería. La tensión salta un poco al conectar o desconectar el cargador.</string>
     <string name="note_temperature">Android informa la temperatura de la batería, que sigue lo caliente que está todo el teléfono.</string>
     <string name="note_power">La potencia es la tensión por la corriente: la rapidez con que la energía entra o sale de la batería. Al cargar es menor que la potencia del cargador: una parte alimenta el teléfono, otra se pierde en forma de calor, y baja a medida que se llena la batería.</string>
-    <string name="note_health">La salud es la carga completa estimada hoy comparada con la capacidad del dispositivo. La revisión de la batería del teléfono solo señala fallos como el sobrecalentamiento.</string>
+    <string name="note_health">La salud es la carga total estimada de hoy comparada con la capacidad que informa el sistema. La verificación del teléfono solo avisa de fallos como el sobrecalentamiento.</string>
     <string name="settings_charge_alert">Recordatorio de carga</string>
     <string name="settings_charge_alert_sub">Te recuerda desconectar al %1$d%%</string>
     <string name="settings_low_alert">Recordatorio de batería baja</string>
@@ -320,7 +320,7 @@
     <string name="device_api">Nivel de API</string>
     <string name="device_patch">Actualización de seguridad</string>
     <string name="device_code">Código del dispositivo</string>
-    <string name="device_note">Estos datos se quedan en tu teléfono. La capacidad del dispositivo es lo que la batería fue fabricada para retener; Joule Arc la compara con la estimación actual de la carga completa para estimar la salud. Si es incorrecta, escribe el valor correcto en Ajustes.</string>
+    <string name="device_note">Estos datos se quedan en tu teléfono. La capacidad informada por el sistema es la referencia con la que Joule Arc compara la estimación actual de la carga total para estimar la salud. La capacidad del fabricante es la anunciada, mostrada para comparar.</string>
     <string name="usage_app_total">Tiempo total: %1$s — Batería: %2$s</string>
     <string name="usage_app_active">Activo: %1$s — Batería: %2$s</string>
     <string name="usage_app_background">Segundo plano: %1$s — Batería: %2$s</string>
@@ -336,5 +336,5 @@
     <string name="settings_cat_alerts">Notificaciones y recordatorios</string>
     <string name="settings_cat_data">Datos</string>
     <string name="settings_cat_updates">Actualizaciones</string>
-    <string name="capacity_manufacturer">Capacidad del fabricante (supuesta)</string>
+    <string name="capacity_manufacturer">Capacidad del fabricante (teórica)</string>
 </resources>
