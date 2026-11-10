@@ -29,6 +29,7 @@ object SettingsRepository {
     private const val KEY_PERSISTENT_NOTIFICATION = "persistent_notification"
     private const val KEY_CURRENT_MICRO = "current_unit_micro"
     private const val KEY_REC_UNIT_FIX = "recorded_unit_fix"
+    private const val KEY_SYSTEM_CAPACITY_LOG = "system_capacity_log"
     private const val KEY_REC_CHARGE_MAX = "rec_charge_max"
     private const val KEY_REC_CHARGE_MIN = "rec_charge_min"
     private const val KEY_REC_DRAIN_MAX = "rec_drain_max"
@@ -106,6 +107,23 @@ object SettingsRepository {
 
     fun setCurrentUnitMicro(value: Boolean) {
         edit { putBoolean(KEY_CURRENT_MICRO, value) }
+    }
+
+    /** Every distinct value of the system's adjusted capacity with the time it was first seen (oldest first, last 20). */
+    fun systemCapacityLog(): List<Pair<Long, Int>> =
+        prefs?.getString(KEY_SYSTEM_CAPACITY_LOG, null).orEmpty().split(',').mapNotNull { entry ->
+            val parts = entry.split(':')
+            val t = parts.getOrNull(0)?.toLongOrNull()
+            val v = parts.getOrNull(1)?.toIntOrNull()
+            if (t != null && v != null) t to v else null
+        }
+
+    /** Adds [mah] to the log when it differs from the last logged value. */
+    fun logSystemCapacity(mah: Int, nowMs: Long) {
+        val log = systemCapacityLog()
+        if (log.lastOrNull()?.second == mah) return
+        val updated = (log + (nowMs to mah)).takeLast(20)
+        edit { putString(KEY_SYSTEM_CAPACITY_LOG, updated.joinToString(",") { "${it.first}:${it.second}" }) }
     }
 
     private inline fun edit(block: SharedPreferences.Editor.() -> Unit) {

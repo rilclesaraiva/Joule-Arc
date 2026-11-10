@@ -346,4 +346,5 @@
     <string name="settings_cat_alerts">Notificaciones y recordatorios</string>
     <string name="settings_cat_data">Datos</string>
     <string name="settings_cat_updates">Actualizaciones</string>
+    <string name="capacity_system">Capacidad informada por el sistema</string>
 </resources>

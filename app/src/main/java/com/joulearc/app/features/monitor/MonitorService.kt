@@ -25,6 +25,7 @@ import com.joulearc.app.data.BatteryReader
 import com.joulearc.app.data.BatteryRepository
 import com.joulearc.app.data.BatterySnapshot
 import com.joulearc.app.data.ChargeEstimator
+import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.LevelHistoryRepository
 import com.joulearc.app.data.PowerSource
 import com.joulearc.app.data.PowerState
@@ -72,6 +73,7 @@ class MonitorService : Service() {
         SettingsRepository.init(this)
         SessionRepository.init(this)
         LevelHistoryRepository.init(this)
+        DeviceInfo.readSystemAdjustedCapacity(this)?.let { SettingsRepository.logSystemCapacity(it, System.currentTimeMillis()) }
         val reader = BatteryReader(this)
         val first = reader.read()
         // Started as a foreground service, so it must call startForeground again on every start.

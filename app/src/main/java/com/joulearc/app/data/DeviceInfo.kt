@@ -44,6 +44,20 @@ object DeviceInfo {
     fun readCapacitySources(context: Context): List<SourceReading> =
         listOf(readPowerProfile(context), readPowerProfileXml(), readKernelNode())
 
+    /**
+     * The figure the system itself reports through getBatteryCapacity (4079 on a phone rated 5000 mAh).
+     * Whether it is a fixed setting or follows the battery's wear is not documented, so the app keeps
+     * a log of it (see [SettingsRepository.systemCapacityLog]) to show whether it ever changes.
+     */
+    fun readSystemAdjustedCapacity(context: Context): Int? =
+        try {
+            val cls = Class.forName("com.android.internal.os.PowerProfile")
+            val profile = cls.getConstructor(Context::class.java).newInstance(context.applicationContext)
+            (cls.getMethod("getBatteryCapacity").invoke(profile) as Double).toInt().takeIf { it in PLAUSIBLE_MAH }
+        } catch (t: Throwable) {
+            null
+        }
+
     private fun readPowerProfile(context: Context): SourceReading =
         try {
             val cls = Class.forName("com.android.internal.os.PowerProfile")
