@@ -45,7 +45,10 @@ object LevelHistoryRepository {
             if (!changed) return
 
             val cutoff = snapshot.timestampMs - RETENTION_MS
-            val updated = (list + LevelSample(snapshot.timestampMs, snapshot.levelPercent, plugged, snapshot.screenOn))
+            val updated = (list + LevelSample(
+                snapshot.timestampMs, snapshot.levelPercent, plugged, snapshot.screenOn,
+                currentMa = snapshot.signedCurrentMa, voltageMv = snapshot.voltageMv, tempC = snapshot.temperatureC,
+            ))
                 .dropWhile { it.timeMs < cutoff }
             _samples.value = updated
 

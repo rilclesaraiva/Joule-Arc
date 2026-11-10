@@ -53,7 +53,7 @@ class BatteryReader(context: Context) {
         // Dual-cell phones report half the real current and charge; the user can turn on doubling.
         val multiplier = if (SettingsRepository.dualCellBattery.value) 2 else 1
         val rawCurrent = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
-        val baseMa = normalizeCurrentMa(rawCurrent)
+        val baseMa = unitLearner.normalize(rawCurrent)
         val counter = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
             .takeIf { it != Long.MIN_VALUE && it > 0L }
             ?.let { it * multiplier }
@@ -108,9 +108,13 @@ class BatteryReader(context: Context) {
         )
     }
 
-    private companion object {
+    companion object {
         /** Shared by every reader in the process, so the service, tile and widget learn together. */
-        val signLearner = CurrentSignLearner()
-        val amberGate = AmberGate()
+        private val signLearner = CurrentSignLearner()
+        /** Read the saved unit only on first use, after the settings were loaded. */
+        val unitLearner: CurrentUnitLearner by lazy {
+            CurrentUnitLearner(SettingsRepository.currentUnitMicro()) { SettingsRepository.setCurrentUnitMicro(it) }
+        }
+        private val amberGate = AmberGate()
     }
 }

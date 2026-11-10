@@ -27,6 +27,8 @@ object SettingsRepository {
     private const val KEY_FAHRENHEIT = "fahrenheit"
     private const val KEY_PREDICTIVE_BACK = "predictive_back"
     private const val KEY_PERSISTENT_NOTIFICATION = "persistent_notification"
+    private const val KEY_CURRENT_MICRO = "current_unit_micro"
+    private const val KEY_REC_UNIT_FIX = "recorded_unit_fix"
     private const val KEY_REC_CHARGE_MAX = "rec_charge_max"
     private const val KEY_REC_CHARGE_MIN = "rec_charge_min"
     private const val KEY_REC_DRAIN_MAX = "rec_drain_max"
@@ -88,7 +90,22 @@ object SettingsRepository {
             drainMaxMa = p.getInt(KEY_REC_DRAIN_MAX, -1).takeIf { it >= 0 },
             drainMinMa = p.getInt(KEY_REC_DRAIN_MIN, -1).takeIf { it >= 0 },
         )
+        // Earlier versions could record a standby reading in µA as thousands of mA: start the records over once.
+        if (!p.getBoolean(KEY_REC_UNIT_FIX, false)) {
+            p.edit()
+                .putInt(KEY_REC_CHARGE_MAX, -1).putInt(KEY_REC_CHARGE_MIN, -1)
+                .putInt(KEY_REC_DRAIN_MAX, -1).putInt(KEY_REC_DRAIN_MIN, -1)
+                .putBoolean(KEY_REC_UNIT_FIX, true).apply()
+            _recorded.value = RecordedCurrents()
+        }
         prefs = p
+    }
+
+    /** True once the device is known to report CURRENT_NOW in microamps (see [CurrentUnitLearner]). */
+    fun currentUnitMicro(): Boolean? = prefs?.let { if (it.contains(KEY_CURRENT_MICRO)) it.getBoolean(KEY_CURRENT_MICRO, false) else null }
+
+    fun setCurrentUnitMicro(value: Boolean) {
+        edit { putBoolean(KEY_CURRENT_MICRO, value) }
     }
 
     private inline fun edit(block: SharedPreferences.Editor.() -> Unit) {

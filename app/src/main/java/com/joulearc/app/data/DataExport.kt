@@ -25,9 +25,10 @@ data class ExportInput(
  * day). It is only written when the user asks, to a place the user picks; nothing is sent anywhere.
  */
 object DataExport {
-    private const val SCHEMA = 1
+    private const val SCHEMA = 2
     private const val HOUR_MS = 3_600_000L
     private const val DAY_MS = 24 * HOUR_MS
+    private const val MAX_GAP_MS = 2 * HOUR_MS
 
     fun fileName(nowMs: Long): String =
         "joule-arc-export_" + SimpleDateFormat("yyyyMMdd-HHmm", Locale.US).format(Date(nowMs)) + ".json"
@@ -43,7 +44,7 @@ object DataExport {
         levelHistory(w, samples)
         sessions(w)
         drain(w, samples, nowMs)
-        apps(w, context, input.usageGranted, samples, nowMs)
+        apps(w, context, input, samples, nowMs)
         w.endObject()
         w.flush()
     }
@@ -64,7 +65,9 @@ object DataExport {
             "Currents are in mA: positive into the battery, negative out of it, where signed. Sessions and sample-free fields use positive magnitudes.",
             "Per-app battery percentages are estimates: the drained percentage of the period (from the level history) shared between apps by usage time, with background (foreground service) time weighing half. Android does not give regular apps per-app mAh.",
             "Usage times for short windows can be lower than real for apps already open when the window began.",
-            "Level history is kept for 14 days; only the 30 newest charging sessions keep their curve.",
+            "Level history is kept for 14 days (from the first sample, see levelHistory.firstSampleMs); only the 30 newest charging sessions keep their curve. Samples saved by older versions have no current, voltage or temperature.",
+            "Each app window has requested bounds (fromMs/toMs). Usage times cover the whole window when Android still has the events (it keeps them for a few days). The drained percentage, drainedMah, screen times and the estimated shares cover only the part with level history (historyFromMs); partialHistory says when that is less than the window.",
+            "currentUnit is the unit the device reports CURRENT_NOW in; the app converts everything to mA.",
         ).forEach { w.value(it) }
         w.endArray()
         w.endObject()
@@ -99,6 +102,7 @@ object DataExport {
             w.name("powerState").value(s.powerState.name)
             w.name("source").value(s.source.name)
             w.field("currentMa", s.signedCurrentMa)
+            w.name("currentUnit").value(BatteryReader.unitLearner.label)
             w.field("powerMw", s.signedPowerMw)
             w.name("voltageMv").value(s.voltageMv)
             w.name("temperatureC").value(s.temperatureC.toDouble())
@@ -113,7 +117,8 @@ object DataExport {
         }
         val e = input.estimate
         w.name("estimate").beginObject()
-        w.field("percentPerHour", e?.percentPerHour?.toDouble())
+        w.field("direction", when { s == null -> null; s.drawingFromBattery -> "LOSING_CHARGE"; s.powerState == PowerState.CHARGING -> "GAINING_CHARGE"; else -> "NONE" })
+        w.field("percentPerHourMagnitude", e?.percentPerHour?.toDouble())
         w.field("minutesToFull", e?.minutesToFull)
         w.field("avgCurrentMa", e?.avgCurrentMa)
         w.endObject()
@@ -163,6 +168,7 @@ object DataExport {
     private fun levelHistory(w: JsonWriter, samples: List<LevelSample>) {
         w.name("levelHistory").beginObject()
         w.name("count").value(samples.size)
+        w.field("firstSampleMs", samples.firstOrNull()?.timeMs)
         w.name("samples").beginArray()
         samples.forEach {
             w.beginObject()
@@ -170,6 +176,9 @@ object DataExport {
             w.name("level").value(it.level)
             w.name("plugged").value(it.plugged)
             w.name("screenOn").value(it.screenOn)
+            if (it.currentMa != null) w.name("currentMa").value(it.currentMa.toLong())
+            if (it.voltageMv != null) w.name("voltageMv").value(it.voltageMv.toLong())
+            if (it.tempC != null) w.name("tempC").value(it.tempC.toDouble())
             w.endObject()
         }
         w.endArray()
@@ -221,28 +230,37 @@ object DataExport {
         w.endObject()
     }
 
-    private fun apps(w: JsonWriter, context: Context, granted: Boolean, samples: List<LevelSample>, nowMs: Long) {
+    private fun apps(w: JsonWriter, context: Context, input: ExportInput, samples: List<LevelSample>, nowMs: Long) {
         w.name("apps").beginObject()
-        w.name("usageAccessGranted").value(granted)
-        if (!granted) {
+        w.name("usageAccessGranted").value(input.usageGranted)
+        if (!input.usageGranted) {
             w.endObject()
             return
         }
         val reader = AppUsageReader(context)
         val first = samples.firstOrNull()?.timeMs
+        val capacityMah = input.capacityMah ?: input.designCapacityMah
         fun window(name: String, fromMs: Long, toMs: Long) {
-            val from = if (first != null) maxOf(fromMs, first) else fromMs
+            val histFrom = if (first != null) maxOf(fromMs, first) else null
+            val hasHistory = histFrom != null && histFrom < toMs
+            val partial = hasHistory && histFrom!! > fromMs
+            val drained = if (hasHistory) drainedPercent(samples, histFrom!!, toMs) else null
+            val screen = if (hasHistory) screenTimes(samples, histFrom!!, toMs) else null
+            val usage = if (fromMs < toMs) reader.read(fromMs, toMs) else emptyList()
+            // The estimated shares only make sense over the range that has level history.
+            val inHistory = if (partial) reader.read(histFrom!!, toMs) else usage
             w.beginObject()
             w.name("name").value(name)
-            w.name("fromMs").value(from)
+            w.name("fromMs").value(fromMs)
             w.name("toMs").value(toMs)
-            if (from >= toMs) {
-                w.field("drainedPercent", null as Float?)
-                w.name("apps").beginArray().endArray()
-            } else {
-                w.field("drainedPercent", if (samples.isEmpty()) null else drainedPercent(samples, from, toMs))
-                appList(w, reader.read(from, toMs), if (samples.isEmpty()) null else drainedPercent(samples, from, toMs))
-            }
+            w.field("historyFromMs", if (hasHistory) histFrom else null)
+            w.name("partialHistory").value(partial)
+            w.field("drainedPercent", drained)
+            w.field("drainedMah", if (drained != null && capacityMah != null) drained / 100f * capacityMah else null)
+            w.field("screenOnMs", screen?.onMs)
+            w.field("screenOffMs", screen?.offMs)
+            w.field("historyCoveredMs", screen?.coveredMs)
+            appList(w, usage, if (hasHistory) inHistory else null, drained, capacityMah, partial)
             w.endObject()
         }
         w.name("windows").beginArray()
@@ -265,24 +283,60 @@ object DataExport {
         w.endObject()
     }
 
-    private fun appList(w: JsonWriter, raw: List<RawAppUsage>, drained: Float?) {
+    private fun appList(
+        w: JsonWriter,
+        raw: List<RawAppUsage>,
+        inHistory: List<RawAppUsage>?,
+        drained: Float?,
+        capacityMah: Int?,
+        partial: Boolean,
+    ) {
         fun weight(r: RawAppUsage) = r.foregroundMs + r.backgroundMs * BACKGROUND_WEIGHT
-        val counted = raw.filter { it.foregroundMs + it.backgroundMs >= 30_000L }
+        val counted = inHistory?.filter { it.foregroundMs + it.backgroundMs >= 30_000L }.orEmpty()
         val total = counted.sumOf { weight(it) }
+        val countedByPkg = counted.associateBy { it.packageName }
+        val historyByPkg = inHistory.orEmpty().associateBy { it.packageName }
+        // Apps seen only inside the history range still appear (their usage is at least what the range holds).
+        val rawPkgs = raw.map { it.packageName }.toSet()
+        val all = raw + inHistory.orEmpty().filter { it.packageName !in rawPkgs }
         w.name("apps").beginArray()
-        raw.sortedByDescending { weight(it) }.forEach { r ->
-            val share = if (total > 0.0 && r in counted) weight(r) / total else null
+        all.sortedByDescending { weight(it) }.forEach { r ->
+            val c = countedByPkg[r.packageName]
+            val share = if (total > 0.0 && c != null) weight(c) / total else null
             w.beginObject()
             w.name("package").value(r.packageName)
             w.name("label").value(r.label)
             w.name("system").value(r.isSystem)
             w.name("foregroundMs").value(r.foregroundMs)
             w.name("foregroundServiceMs").value(r.backgroundMs)
+            if (partial) {
+                val h = historyByPkg[r.packageName]
+                w.field("foregroundMsInHistory", h?.foregroundMs ?: 0L)
+                w.field("foregroundServiceMsInHistory", h?.backgroundMs ?: 0L)
+            }
             w.field("estimatedShare", share)
             w.field("estimatedDrainPercent", if (share != null && drained != null) share * drained else null)
+            w.field("estimatedDrainMah", if (share != null && drained != null && capacityMah != null) share * drained / 100f * capacityMah else null)
             w.endObject()
         }
         w.endArray()
+    }
+
+    /** Time with the screen on and off between [fromMs] and [toMs], from consecutive level samples (gaps over 2 h are skipped). */
+    internal data class ScreenTimes(val onMs: Long, val offMs: Long) {
+        val coveredMs: Long get() = onMs + offMs
+    }
+
+    internal fun screenTimes(samples: List<LevelSample>, fromMs: Long, toMs: Long): ScreenTimes {
+        var on = 0L
+        var off = 0L
+        samples.zipWithNext().forEach { (a, b) ->
+            val start = maxOf(a.timeMs, fromMs)
+            val end = minOf(b.timeMs, toMs)
+            if (end <= start || b.timeMs - a.timeMs > MAX_GAP_MS) return@forEach
+            if (a.screenOn) on += end - start else off += end - start
+        }
+        return ScreenTimes(on, off)
     }
 
     private fun JsonWriter.field(key: String, v: Int?) {
