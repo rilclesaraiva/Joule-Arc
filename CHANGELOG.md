@@ -6,6 +6,7 @@
 - Export data (Settings): saves one JSON file with the device details (manufacturer, model, build, Android and security patch), the battery now, estimated and device capacity with every detection source, the 14-day level history, every charging session with its curve, consumption rates and the time each app was used (the whole period, each day and each hour of the last day, with the estimated drain share). Days and hours before the level history started still list the usage times Android has; the drained percentage, mAh, screen-on and screen-off time and the estimated shares cover the part with history and say so. The file goes to the place chosen in Android's file picker and is not sent anywhere.
 
 ### Changed
+- Settings are now grouped by category with a heading each: Appearance, Battery, Notifications and reminders, Data, Updates and About.
 - Large numbers now use the thousands separator of the language (1.570 mA in Portuguese, 1,570 mA in English) everywhere: current, capacity, consumption, history, notification, tile and widget.
 - The "Show system apps" menu has rounded corners and sits slightly away from the three-dot button. The snooze menu of the update screen got the same shape.
 - The active and background colors in an app's usage breakdown are now fixed (blue and amber) instead of following the system color, so they are easy to tell apart.

@@ -341,4 +341,9 @@
     <string name="capacity_source_kernel">kernel file</string>
     <string name="device_capacity_from">Device capacity (%1$s)</string>
     <string name="usage_showing">Showing: %1$s</string>
+    <string name="settings_cat_appearance">Appearance</string>
+    <string name="settings_cat_battery">Battery</string>
+    <string name="settings_cat_alerts">Notifications and reminders</string>
+    <string name="settings_cat_data">Data</string>
+    <string name="settings_cat_updates">Updates</string>
 </resources>

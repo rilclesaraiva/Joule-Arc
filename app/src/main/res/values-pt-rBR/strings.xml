@@ -341,4 +341,9 @@
     <string name="capacity_source_kernel">arquivo do kernel</string>
     <string name="device_capacity_from">Capacidade do dispositivo (%1$s)</string>
     <string name="usage_showing">Mostrando: %1$s</string>
+    <string name="settings_cat_appearance">Aparência</string>
+    <string name="settings_cat_battery">Bateria</string>
+    <string name="settings_cat_alerts">Notificações e lembretes</string>
+    <string name="settings_cat_data">Dados</string>
+    <string name="settings_cat_updates">Atualizações</string>
 </resources>

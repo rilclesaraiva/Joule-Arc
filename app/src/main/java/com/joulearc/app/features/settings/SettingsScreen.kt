@@ -61,7 +61,10 @@ import com.joulearc.app.data.SettingsRepository
 import kotlin.math.roundToInt
 
 
-/** Settings as plain lists, most used first. The only heading is About, at the end. */
+/**
+ * Settings grouped by category, each with a heading. A new setting goes into the category it belongs to
+ * (or a new category if none fits), never loose at the top or the end.
+ */
 @Composable
 fun SettingsScreen(
     systemDesign: DetectedCapacity?,
@@ -106,6 +109,7 @@ fun SettingsScreen(
     ) {
         PageTitle(stringResource(R.string.settings_title))
 
+        GroupLabel(stringResource(R.string.settings_cat_appearance))
         RowGroup(
             buildList<@Composable () -> Unit> {
                 add {
@@ -143,6 +147,7 @@ fun SettingsScreen(
             },
         )
 
+        GroupLabel(stringResource(R.string.settings_cat_battery))
         RowGroup(
             listOf(
                 {
@@ -184,6 +189,7 @@ fun SettingsScreen(
             ),
         )
 
+        GroupLabel(stringResource(R.string.settings_cat_alerts))
         RowGroup(
             listOf(
                 {
@@ -246,6 +252,7 @@ fun SettingsScreen(
             ),
         )
 
+        GroupLabel(stringResource(R.string.settings_cat_data))
         RowGroup(
             listOf(
                 {
@@ -269,6 +276,7 @@ fun SettingsScreen(
             ),
         )
 
+        GroupLabel(stringResource(R.string.settings_cat_updates))
         RowGroup(
             listOf(
                 {
