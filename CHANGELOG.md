@@ -12,6 +12,8 @@
 - The active and background colors in an app's usage breakdown are now fixed (blue and amber) instead of following the system color, so they are easy to tell apart.
 
 ### Fixed
+- Notification, widget and tile were slow with the screen on and another app in front (every 30 s and 60 s). They now refresh every second and every 2 seconds while the screen is on.
+- Export: hours or days without level samples now say `noLevelData` with a null drain instead of 0, and a drop across a gap is no longer lumped into one hour. The export also lists the gaps in the level history and whether the app is exempt from battery restrictions.
 - Some phones (reported in microamps) showed a standby current such as 15 mA as 15 000 mA, which inflated the recorded highest current and could skew the averages and the time-left estimate. The app now learns the unit of the current reading per device. The recorded highest and lowest currents were reset once because of that.
 - A phone that was still charging (for example at 90%, with 1 A going in) could be shown as "Losing charge" with the amber warning. The learned current direction now uses votes (a discharge on battery and a steady charge both count) instead of the last single reading, and once it is known the current decides, even when the system status says discharging.
 

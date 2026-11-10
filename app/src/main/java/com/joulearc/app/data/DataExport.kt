@@ -39,7 +39,7 @@ object DataExport {
         meta(w, context, nowMs)
         device(w)
         battery(w, context, input)
-        settings(w)
+        settings(w, context)
         val samples = LevelHistoryRepository.samples.value
         levelHistory(w, samples)
         sessions(w)
@@ -67,6 +67,7 @@ object DataExport {
             "Usage times for short windows can be lower than real for apps already open when the window began.",
             "Level history is kept for 14 days (from the first sample, see levelHistory.firstSampleMs); only the 30 newest charging sessions keep their curve. Samples saved by older versions have no current, voltage or temperature.",
             "Each app window has requested bounds (fromMs/toMs). Usage times cover the whole window when Android still has the events (it keeps them for a few days). The drained percentage, drainedMah, screen times and the estimated shares cover only the part with level history (historyFromMs); partialHistory says when that is less than the window.",
+            "levelHistory.gaps lists the stretches over 30 minutes without level samples (the monitor was not running, for example stopped by the system); settings.batteryOptimizationIgnored says whether the app is exempt from battery restrictions. A window with noLevelData true has no drain data (not zero drain); a drop that happened across a gap is counted in the window where it was seen.",
             "currentUnit is the unit the device reports CURRENT_NOW in; the app converts everything to mA.",
         ).forEach { w.value(it) }
         w.endArray()
@@ -147,12 +148,13 @@ object DataExport {
         w.endObject()
     }
 
-    private fun settings(w: JsonWriter) {
+    private fun settings(w: JsonWriter, context: Context) {
         w.name("settings").beginObject()
         w.name("dualCellBattery").value(SettingsRepository.dualCellBattery.value)
         w.name("fahrenheit").value(SettingsRepository.useFahrenheit.value)
         w.name("themeMode").value(SettingsRepository.themeMode.value)
         w.name("persistentNotification").value(SettingsRepository.persistentNotification.value)
+        w.name("batteryOptimizationIgnored").value(DeviceInfo.isIgnoringBatteryOptimizations(context))
         w.name("predictiveBack").value(SettingsRepository.predictiveBack.value)
         w.name("chargeAlert").beginObject()
         w.name("enabled").value(SettingsRepository.chargeAlertEnabled.value)
@@ -169,6 +171,15 @@ object DataExport {
         w.name("levelHistory").beginObject()
         w.name("count").value(samples.size)
         w.field("firstSampleMs", samples.firstOrNull()?.timeMs)
+        w.name("gaps").beginArray()
+        sampleGaps(samples).forEach { (from, to) ->
+            w.beginObject()
+            w.name("fromMs").value(from)
+            w.name("toMs").value(to)
+            w.name("minutes").value((to - from) / 60_000)
+            w.endObject()
+        }
+        w.endArray()
         w.name("samples").beginArray()
         samples.forEach {
             w.beginObject()
@@ -246,6 +257,8 @@ object DataExport {
             val partial = hasHistory && histFrom!! > fromMs
             val drained = if (hasHistory) drainedPercent(samples, histFrom!!, toMs) else null
             val screen = if (hasHistory) screenTimes(samples, histFrom!!, toMs) else null
+            // A window with no level samples (the monitor was not running) has no drain data, not zero drain.
+            val noData = hasHistory && screen!!.coveredMs == 0L
             val usage = if (fromMs < toMs) reader.read(fromMs, toMs) else emptyList()
             // The estimated shares only make sense over the range that has level history.
             val inHistory = if (partial) reader.read(histFrom!!, toMs) else usage
@@ -255,12 +268,14 @@ object DataExport {
             w.name("toMs").value(toMs)
             w.field("historyFromMs", if (hasHistory) histFrom else null)
             w.name("partialHistory").value(partial)
-            w.field("drainedPercent", drained)
-            w.field("drainedMah", if (drained != null && capacityMah != null) drained / 100f * capacityMah else null)
+            w.name("noLevelData").value(noData)
+            val shownDrain = if (noData) null else drained
+            w.field("drainedPercent", shownDrain)
+            w.field("drainedMah", if (shownDrain != null && capacityMah != null) shownDrain / 100f * capacityMah else null)
             w.field("screenOnMs", screen?.onMs)
             w.field("screenOffMs", screen?.offMs)
             w.field("historyCoveredMs", screen?.coveredMs)
-            appList(w, usage, if (hasHistory) inHistory else null, drained, capacityMah, partial)
+            appList(w, usage, if (hasHistory && !noData) inHistory else null, shownDrain, capacityMah, partial)
             w.endObject()
         }
         w.name("windows").beginArray()

@@ -83,4 +83,11 @@ class LevelChartsTest {
         assertEquals(70, bars[10].level)      // the current hour
         assertNull(bars[11].level)            // still in the future
     }
+
+    @Test fun sampleGapsListOnlyLongSilences() {
+        fun at(t: Long) = LevelSample(t, 50, plugged = false)
+        val min = 60_000L
+        val gaps = sampleGaps(listOf(at(0), at(10 * min), at(20 * min), at(200 * min), at(210 * min)))
+        assertEquals(listOf(20 * min to 200 * min), gaps)
+    }
 }

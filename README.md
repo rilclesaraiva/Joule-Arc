@@ -13,7 +13,7 @@ Smart battery and charging monitor for Android. It keeps watching the charging s
 - Consumption with the screen on and off, estimated battery life, and which time of day drains the most.
 - Usage by app: 24-hour level chart and 14-day usage chart (tap a bar to see only that hour or day), a per-app list with an estimated percentage and a page for each app, with system apps hidden unless you ask (Android does not expose per-app mAh to regular apps).
 - Charge and low battery reminders.
-- Export all the data to a JSON file (device details, readings, level history, charging sessions, consumption and per-app usage by period, day and hour) to analyze a drain in depth. The file goes where you choose and is never sent anywhere.
+- Export all the data to a JSON file (device details, readings, level history, charging sessions, consumption, per-app usage by period, day and hour, and the stretches when the monitor was not running) to analyze a drain in depth. The file goes where you choose and is never sent anywhere.
 - The persistent notification can be turned off in Settings; then monitoring (history, reminders, tile and widget) only runs while the app is open.
 - New version notice (checks GitHub releases, with snooze, skip and a manual check in Settings) and the developer's picture in About.
 - Quick Settings tile, home screen widget and a persistent notification.

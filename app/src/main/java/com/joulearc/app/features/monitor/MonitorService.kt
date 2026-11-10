@@ -174,9 +174,11 @@ class MonitorService : Service() {
             manager.notify(NOTIFICATION_ID, buildNotification(title, text))
         }
 
-        val widgetInterval = if (snapshot.isCharging || BatteryRepository.uiVisible.value) {
-            WIDGET_FAST_INTERVAL_MS
-        } else WIDGET_SLOW_INTERVAL_MS
+        val widgetInterval = when {
+            snapshot.screenOn -> WIDGET_SCREEN_ON_INTERVAL_MS
+            snapshot.isCharging -> WIDGET_FAST_INTERVAL_MS
+            else -> WIDGET_SLOW_INTERVAL_MS
+        }
         if (now - lastWidgetMs >= widgetInterval) {
             lastWidgetMs = now
             sendBroadcast(Intent(ACTION_REFRESH_WIDGETS).setPackage(packageName))
@@ -212,6 +214,8 @@ class MonitorService : Service() {
 
     private fun nextIntervalMs(): Long = when {
         BatteryRepository.uiVisible.value -> VISIBLE_INTERVAL_MS
+        // Screen on with another app in front: the notification and the widget are being looked at.
+        lastSnapshot?.screenOn == true -> SCREEN_ON_INTERVAL_MS
         lastSnapshot?.let { it.isCharging || it.settling } == true -> CHARGING_INTERVAL_MS
         else -> IDLE_INTERVAL_MS
     }
@@ -276,10 +280,12 @@ class MonitorService : Service() {
         private const val ALERT_CHARGE_ID = 2
         private const val ALERT_LOW_ID = 3
         private const val VISIBLE_INTERVAL_MS = 500L
+        private const val SCREEN_ON_INTERVAL_MS = 1_000L
         private const val CHARGING_INTERVAL_MS = 2_000L
         private const val IDLE_INTERVAL_MS = 30_000L
         private const val NOTIFY_MIN_INTERVAL_MS = 1_000L
         private const val QUIET_START_GRACE_MS = 10_000L
+        private const val WIDGET_SCREEN_ON_INTERVAL_MS = 2_000L
         private const val WIDGET_FAST_INTERVAL_MS = 10_000L
         private const val WIDGET_SLOW_INTERVAL_MS = 60_000L
 

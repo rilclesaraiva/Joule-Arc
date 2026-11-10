@@ -92,3 +92,10 @@ fun lastFullCharge(samples: List<LevelSample>): Long? {
     while (i > 0 && samples[i - 1].level >= 100) i--
     return samples[i].timeMs
 }
+
+/** The service samples at least every 10 minutes, so a longer silence means it was not running. */
+const val SAMPLE_GAP_MS = 30 * 60_000L
+
+/** Stretches without level samples longer than [SAMPLE_GAP_MS], as (from, to) pairs. */
+fun sampleGaps(samples: List<LevelSample>, minMs: Long = SAMPLE_GAP_MS): List<Pair<Long, Long>> =
+    samples.zipWithNext().filter { (a, b) -> b.timeMs - a.timeMs > minMs }.map { (a, b) -> a.timeMs to b.timeMs }
