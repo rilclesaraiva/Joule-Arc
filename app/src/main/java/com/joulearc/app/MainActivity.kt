@@ -7,6 +7,7 @@ import android.net.Uri
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
+import android.widget.Toast
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -74,6 +75,8 @@ import com.joulearc.app.core.JouleArcTheme
 import com.joulearc.app.core.appRecomposer
 import com.joulearc.app.core.isAppInDarkTheme
 import com.joulearc.app.data.AppUsageReader
+import com.joulearc.app.data.DataExport
+import com.joulearc.app.data.ExportInput
 import com.joulearc.app.data.BatteryRepository
 import com.joulearc.app.data.DetectedCapacity
 import com.joulearc.app.data.DeviceInfo
@@ -265,6 +268,24 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
         value = withContext(Dispatchers.IO) { buildUsageReport(context, windowDays, selectedDay, selectedHour) }
     }
 
+    // Export: the user picks where the file goes (no storage permission needed); it is built on a background thread.
+    val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        if (uri != null) {
+            val input = ExportInput(snapshot, estimate, capacityMah, designUser ?: systemDesign?.mah, usageGranted)
+            Toast.makeText(context, R.string.export_started, Toast.LENGTH_SHORT).show()
+            scope.launch {
+                val ok = withContext(Dispatchers.IO) {
+                    try {
+                        context.contentResolver.openOutputStream(uri, "wt")?.use { DataExport.write(context, it, input) } != null
+                    } catch (e: Exception) {
+                        false
+                    }
+                }
+                Toast.makeText(context, if (ok) R.string.export_done else R.string.export_failed, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     val prompt by GitHubUpdatesRepository.prompt.collectAsStateWithLifecycle()
     val renderPage: @Composable (String) -> Unit = { target ->
         val page = target.substringAfterLast('|')
@@ -397,7 +418,12 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
             }
 
             page == SETTINGS -> Page(goBack) { modifier ->
-                SettingsScreen(systemDesign = systemDesign, onOpenAbout = { open(ABOUT) }, modifier = modifier)
+                SettingsScreen(
+                    systemDesign = systemDesign,
+                    onOpenAbout = { open(ABOUT) },
+                    onExport = { exportLauncher.launch(DataExport.fileName(System.currentTimeMillis())) },
+                    modifier = modifier,
+                )
             }
 
             page == ABOUT -> Page(goBack) { modifier -> AboutScreen(modifier) }

@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Export data (Settings): saves one JSON file with the device details (manufacturer, model, build, Android and security patch), the battery now, estimated and device capacity with every detection source, the 14-day level history, every charging session with its curve, consumption rates and the time each app was used (the whole period, each day and each hour of the last day, with the estimated drain share). The file goes to the place chosen in Android's file picker and is not sent anywhere.
+
 ### Fixed
 - A phone that was still charging (for example at 90%, with 1 A going in) could be shown as "Losing charge" with the amber warning. The learned current direction now uses votes (a discharge on battery and a steady charge both count) instead of the last single reading, and once it is known the current decides, even when the system status says discharging.
 

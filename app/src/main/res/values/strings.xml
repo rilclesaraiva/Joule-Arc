@@ -304,6 +304,11 @@
     <string name="update_dialog_cancel">Cancel</string>
     <string name="settings_persistent">Persistent notification</string>
     <string name="settings_persistent_sub">Shows the monitor in the notification shade and keeps it running in the background. If you turn it off, the notification disappears and monitoring, history, reminders, tile and widget only work while the app is open.</string>
+    <string name="settings_export">Export data</string>
+    <string name="settings_export_sub">Saves a file with your device details, battery readings, charging sessions and the time each app was used, to analyze a drain. It lists the apps you used. The file goes where you choose and is not sent anywhere.</string>
+    <string name="export_started">Exporting…</string>
+    <string name="export_done">Data exported</string>
+    <string name="export_failed">Could not export</string>
     <string name="settings_predictive">Predictive back gesture</string>
     <string name="settings_predictive_sub">Shows a preview of the page while you swipe to go back</string>
     <string name="meaning_voltage_high_unplugged">High voltage for a battery with no charger. Normal right after unplugging from a full charge, and it drops with use.</string>

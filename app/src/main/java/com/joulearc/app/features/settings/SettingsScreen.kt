@@ -62,7 +62,12 @@ import kotlin.math.roundToInt
 
 /** Settings as plain lists, most used first. The only heading is About, at the end. */
 @Composable
-fun SettingsScreen(systemDesign: DetectedCapacity?, onOpenAbout: () -> Unit, modifier: Modifier = Modifier) {
+fun SettingsScreen(
+    systemDesign: DetectedCapacity?,
+    onOpenAbout: () -> Unit,
+    onExport: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val context = LocalContext.current
     val chargeOn by SettingsRepository.chargeAlertEnabled.collectAsStateWithLifecycle()
     val chargeLevel by SettingsRepository.chargeAlertLevel.collectAsStateWithLifecycle()
@@ -241,15 +246,26 @@ fun SettingsScreen(systemDesign: DetectedCapacity?, onOpenAbout: () -> Unit, mod
         )
 
         RowGroup(
-            listOf {
-                ClickRow(
-                    icon = R.drawable.ic_refresh,
-                    title = stringResource(R.string.settings_reset_recorded),
-                    subtitle = stringResource(R.string.settings_reset_recorded_sub),
-                    onClick = confirmReset,
-                    chevron = false,
-                )
-            },
+            listOf(
+                {
+                    ClickRow(
+                        icon = R.drawable.ic_export,
+                        title = stringResource(R.string.settings_export),
+                        subtitle = stringResource(R.string.settings_export_sub),
+                        onClick = onExport,
+                        chevron = false,
+                    )
+                },
+                {
+                    ClickRow(
+                        icon = R.drawable.ic_refresh,
+                        title = stringResource(R.string.settings_reset_recorded),
+                        subtitle = stringResource(R.string.settings_reset_recorded_sub),
+                        onClick = confirmReset,
+                        chevron = false,
+                    )
+                },
+            ),
         )
 
         RowGroup(

@@ -304,6 +304,11 @@
     <string name="update_dialog_cancel">Cancelar</string>
     <string name="settings_persistent">Notificação persistente</string>
     <string name="settings_persistent_sub">Mostra o monitor na barra de notificações e o mantém rodando em segundo plano. Se você desligar, a notificação some e o monitoramento, o histórico, os lembretes, o bloco e o widget só funcionam com o app aberto.</string>
+    <string name="settings_export">Exportar dados</string>
+    <string name="settings_export_sub">Salva um arquivo com os dados do aparelho, as leituras da bateria, as sessões de carga e o tempo de uso de cada app, para analisar um consumo. Ele lista os apps que você usou. O arquivo vai para onde você escolher e não é enviado a lugar nenhum.</string>
+    <string name="export_started">Exportando…</string>
+    <string name="export_done">Dados exportados</string>
+    <string name="export_failed">Não foi possível exportar</string>
     <string name="settings_predictive">Gesto de voltar preditivo</string>
     <string name="settings_predictive_sub">Mostra uma prévia da página enquanto você desliza para voltar</string>
     <string name="meaning_voltage_high_unplugged">Tensão alta para uma bateria sem carregador. É normal logo depois de desconectar de uma carga cheia e cai com o uso.</string>

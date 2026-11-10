@@ -23,6 +23,11 @@ object DeviceInfo {
     val apiLevel: Int get() = Build.VERSION.SDK_INT
     val securityPatch: String get() = Build.VERSION.SECURITY_PATCH ?: ""
     val deviceCode: String get() = Build.DEVICE ?: ""
+    val brand: String get() = Build.BRAND ?: ""
+    val product: String get() = Build.PRODUCT ?: ""
+    val hardware: String get() = Build.HARDWARE ?: ""
+    val board: String get() = Build.BOARD ?: ""
+    val fingerprint: String get() = Build.FINGERPRINT ?: ""
 
     /**
      * Device capacity detected by the app itself: the first plausible value among the system power
@@ -36,7 +41,7 @@ object DeviceInfo {
             ?.let { DetectedCapacity(it.rawMah!!, it.source) }
 
     /** Every source with its raw result or the reason it failed. */
-    private fun readCapacitySources(context: Context): List<SourceReading> =
+    fun readCapacitySources(context: Context): List<SourceReading> =
         listOf(readPowerProfile(context), readPowerProfileXml(), readKernelNode())
 
     private fun readPowerProfile(context: Context): SourceReading =
