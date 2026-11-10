@@ -12,6 +12,15 @@ enum class CapacitySource { POWER_PROFILE, POWER_PROFILE_XML, KERNEL }
 
 data class DetectedCapacity(val mah: Int, val source: CapacitySource)
 
+/**
+ * The two capacities the system gives. The one the system itself reports ([systemMah], through
+ * getBatteryCapacity) is the reference for health; the rated one ([manufacturerMah], the figure the
+ * manufacturer advertises, read from the power profile) is shown beside it.
+ */
+data class DeviceCapacities(val systemMah: Int?, val manufacturerMah: Int?) {
+    val referenceMah: Int? get() = systemMah ?: manufacturerMah
+}
+
 /** Raw result of one capacity source (null when it failed) and a short technical note. */
 data class SourceReading(val source: CapacitySource, val rawMah: Int?, val note: String?)
 
@@ -39,6 +48,9 @@ object DeviceInfo {
         readCapacitySources(context)
             .firstOrNull { r -> r.rawMah?.let { it in PLAUSIBLE_MAH } == true }
             ?.let { DetectedCapacity(it.rawMah!!, it.source) }
+
+    fun readCapacities(context: Context): DeviceCapacities =
+        DeviceCapacities(readSystemAdjustedCapacity(context), detectDesignCapacity(context)?.mah)
 
     /** Every source with its raw result or the reason it failed. */
     fun readCapacitySources(context: Context): List<SourceReading> =

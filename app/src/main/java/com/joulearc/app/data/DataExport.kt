@@ -68,7 +68,7 @@ object DataExport {
             "Level history is kept for 14 days (from the first sample, see levelHistory.firstSampleMs); only the 30 newest charging sessions keep their curve. Samples saved by older versions have no current, voltage or temperature.",
             "Each app window has requested bounds (fromMs/toMs). Usage times cover the whole window when Android still has the events (it keeps them for a few days). The drained percentage, drainedMah, screen times and the estimated shares cover only the part with level history (historyFromMs); partialHistory says when that is less than the window.",
             "levelHistory.gaps lists the stretches over 30 minutes without level samples (the monitor was not running, for example stopped by the system); settings.batteryOptimizationIgnored says whether the app is exempt from battery restrictions. A window with noLevelData true has no drain data (not zero drain); a drop that happened across a gap is counted in the window where it was seen.",
-            "capacity.systemAdjustedMah is what the system reports through getBatteryCapacity, and systemAdjustedLog lists each distinct value with the time it was first seen: one entry means the value never changed (a fixed setting), several mean it follows the battery.",
+            "capacity.referenceCapacityMah (the system value, used for healthPercent) is what the system reports through getBatteryCapacity; manufacturerMah is the rated figure the manufacturer advertises; systemAdjustedLog lists each distinct value with the time it was first seen: one entry means the value never changed (a fixed setting), several mean it follows the battery.",
             "currentUnit is the unit the device reports CURRENT_NOW in; the app converts everything to mA.",
         ).forEach { w.value(it) }
         w.endArray()
@@ -126,12 +126,12 @@ object DataExport {
         w.endObject()
         w.name("capacity").beginObject()
         w.field("estimatedFullMah", input.capacityMah)
-        w.field("deviceCapacityMahUsed", input.designCapacityMah)
-        w.field("deviceCapacityMahTyped", SettingsRepository.designCapacityMah.value)
+        w.field("referenceCapacityMah", input.designCapacityMah)
         w.field("healthPercent", estimateHealthPercent(input.capacityMah, input.designCapacityMah))
-        val adjusted = DeviceInfo.readSystemAdjustedCapacity(context)
-        w.field("systemAdjustedMah", adjusted)
-        w.field("healthPercentVsSystemAdjusted", estimateHealthPercent(input.capacityMah, adjusted))
+        val capacities = DeviceInfo.readCapacities(context)
+        w.field("systemMah", capacities.systemMah)
+        w.field("manufacturerMah", capacities.manufacturerMah)
+        w.field("healthPercentVsManufacturer", estimateHealthPercent(input.capacityMah, capacities.manufacturerMah))
         w.name("systemAdjustedLog").beginArray()
         SettingsRepository.systemCapacityLog().forEach { (t, v) ->
             w.beginObject()

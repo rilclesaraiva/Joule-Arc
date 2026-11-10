@@ -129,10 +129,9 @@
     <string name="capacity_now_value">%1$s mAh · %2$d%%</string>
     <string name="capacity_full">Full charge today (estimated)</string>
     <string name="capacity_lost">Lost to wear</string>
-    <string name="capacity_design">Device capacity</string>
-    <string name="capacity_design_system">Device capacity detected by the app. If it looks wrong, type the right value in Settings.</string>
-    <string name="capacity_design_user">Device capacity set by you.</string>
-    <string name="capacity_design_missing">Device capacity unknown: set it in Settings.</string>
+    <string name="capacity_design">Capacity reported by the system</string>
+    <string name="capacity_design_system">Health is measured against the capacity the system reports. The manufacturer figure is the advertised one, shown for comparison.</string>
+    <string name="capacity_design_missing">Capacity unknown: this device does not report it.</string>
     <string name="capacity_unavailable">This device does not report the charge counter, so the capacity cannot be measured.</string>
     <string name="capacity_note">The full charge is estimated from the charge counter and the level, and can be off by a few percent.</string>
     <string name="value_mah">%1$s mAh</string>
@@ -237,9 +236,6 @@
     <string name="settings_protection">App protection</string>
     <string name="settings_protection_sub">Allow Joule Arc to run without battery restrictions so monitoring and reminders keep working</string>
     <string name="settings_protection_on">Already running without battery restrictions</string>
-    <string name="settings_design">Device capacity (mAh)</string>
-    <string name="settings_design_hint">Leave empty to use the value detected by the app: %1$s</string>
-    <string name="settings_design_none">could not be detected on this device</string>
     <string name="settings_dual_cell">Dual-cell battery</string>
     <string name="settings_dual_cell_sub">For phones with two battery cells (usually 65 W or more). Doubles the current, the charge and the capacity to match the rated values.</string>
     <string name="settings_temp_unit">Temperature unit</string>
@@ -324,8 +320,6 @@
     <string name="device_api">API level</string>
     <string name="device_patch">Security update</string>
     <string name="device_code">Device code</string>
-    <string name="device_capacity_detected">Device capacity (detected)</string>
-    <string name="device_capacity_user">Device capacity (set by you)</string>
     <string name="device_note">These details stay on your phone. The device capacity is what the battery was built to hold; Joule Arc compares it with the current estimate of the full charge to estimate health. If it is wrong, type the right value in Settings.</string>
     <string name="usage_app_total">Total time: %1$s — Battery: %2$s</string>
     <string name="usage_app_active">Active: %1$s — Battery: %2$s</string>
@@ -336,15 +330,11 @@
     <string name="usage_show_system">Show system apps</string>
     <string name="usage_hide_system">Hide system apps</string>
     <string name="usage_more_options">More options</string>
-    <string name="capacity_source_profile">system power profile</string>
-    <string name="capacity_source_xml">system resources</string>
-    <string name="capacity_source_kernel">kernel file</string>
-    <string name="device_capacity_from">Device capacity (%1$s)</string>
     <string name="usage_showing">Showing: %1$s</string>
     <string name="settings_cat_appearance">Appearance</string>
     <string name="settings_cat_battery">Battery</string>
     <string name="settings_cat_alerts">Notifications and reminders</string>
     <string name="settings_cat_data">Data</string>
     <string name="settings_cat_updates">Updates</string>
-    <string name="capacity_system">Capacity reported by the system</string>
+    <string name="capacity_manufacturer">Manufacturer capacity (assumed)</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.joulearc.app.features.home
 
 import com.joulearc.app.data.BatterySnapshot
-import com.joulearc.app.data.CapacitySource
 import com.joulearc.app.data.ChargeEstimate
 import com.joulearc.app.data.ChargeInsights
 import com.joulearc.app.data.DrainStats
@@ -13,11 +12,10 @@ data class HomeState(
     val snapshot: BatterySnapshot?,
     val estimate: ChargeEstimate?,
     val capacityMah: Int?,
-    /** Device capacity in use: typed by the user, or the system value. */
+    /** Capacity reported by the system: the reference for health. */
     val designCapacityMah: Int?,
-    val designFromSystem: Boolean,
-    /** Where the system value came from, when it is the one in use. */
-    val designSource: CapacitySource? = null,
+    /** Capacity the manufacturer advertises (assumed), shown beside it. */
+    val manufacturerCapacityMah: Int?,
     val recorded: RecordedCurrents,
     val extremes: ReadingExtremes,
     val fahrenheit: Boolean,

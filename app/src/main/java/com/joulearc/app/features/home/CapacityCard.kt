@@ -26,8 +26,6 @@ import com.joulearc.app.core.statusPalette
 import com.joulearc.app.data.BatterySnapshot
 import com.joulearc.app.data.Scales
 import com.joulearc.app.data.estimateHealthPercent
-import com.joulearc.app.data.DeviceInfo
-import androidx.compose.runtime.remember
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -37,15 +35,12 @@ internal fun CapacityCard(
     s: BatterySnapshot,
     capacityMah: Int?,
     designMah: Int?,
-    designFromSystem: Boolean,
+    manufacturerMah: Int?,
     onClick: () -> Unit,
 ) {
     val palette = statusPalette()
     val nowMah = s.chargeCounterUah?.let { it / 1000f }
     val health = estimateHealthPercent(capacityMah, designMah)
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val adjustedMah = remember { DeviceInfo.readSystemAdjustedCapacity(context) }
-    val adjustedHealth = estimateHealthPercent(capacityMah, adjustedMah)
     ElevatedCard(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -94,17 +89,13 @@ internal fun CapacityCard(
                             stringResource(R.string.value_mah, formatInt((designMah - capacityMah).coerceAtLeast(0))),
                     )
                 }
-                if (adjustedMah != null && adjustedMah != designMah) {
-                    add(
-                        stringResource(R.string.capacity_system) to
-                            (stringResource(R.string.value_mah, formatInt(adjustedMah)) +
-                                (adjustedHealth?.let { " · " + stringResource(R.string.health_chip, it) } ?: "")),
-                    )
-                }
                 add(
                     stringResource(R.string.capacity_design) to
                         (designMah?.let { stringResource(R.string.value_mah, formatInt(it)) } ?: "—"),
                 )
+                manufacturerMah?.let {
+                    add(stringResource(R.string.capacity_manufacturer) to stringResource(R.string.value_mah, formatInt(it)))
+                }
             }
             rows.forEach { (label, value) ->
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -121,8 +112,7 @@ internal fun CapacityCard(
             Text(
                 text = when {
                     designMah == null -> stringResource(R.string.capacity_design_missing)
-                    designFromSystem -> stringResource(R.string.capacity_design_system)
-                    else -> stringResource(R.string.capacity_design_user)
+                    else -> stringResource(R.string.capacity_design_system)
                 } + " " + stringResource(R.string.capacity_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

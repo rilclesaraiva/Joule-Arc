@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.joulearc.app.R
-import com.joulearc.app.core.labelRes
 import com.joulearc.app.data.DeviceInfo
 import java.util.Locale
 
@@ -48,19 +47,14 @@ internal fun DeviceSheet(state: HomeState, onDismiss: () -> Unit) {
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            val capacityLabel = if (state.designFromSystem) {
-                state.designSource?.let { stringResource(R.string.device_capacity_from, stringResource(it.labelRes())) }
-                    ?: stringResource(R.string.device_capacity_detected)
-            } else {
-                stringResource(R.string.device_capacity_user)
-            }
             InfoRows(
                 listOfNotNull(
                     stringResource(R.string.device_android) to DeviceInfo.androidVersion,
                     stringResource(R.string.device_api) to DeviceInfo.apiLevel.toString(),
                     DeviceInfo.securityPatch.takeIf { it.isNotBlank() }?.let { stringResource(R.string.device_patch) to it },
                     DeviceInfo.deviceCode.takeIf { it.isNotBlank() }?.let { stringResource(R.string.device_code) to it },
-                    state.designCapacityMah?.let { capacityLabel to stringResource(R.string.value_mah, formatInt(it)) },
+                    state.designCapacityMah?.let { stringResource(R.string.capacity_design) to stringResource(R.string.value_mah, formatInt(it)) },
+                    state.manufacturerCapacityMah?.let { stringResource(R.string.capacity_manufacturer) to stringResource(R.string.value_mah, formatInt(it)) },
                 ),
             )
             MeaningBox(stringResource(R.string.sheet_meaning), stringResource(R.string.device_note), null)

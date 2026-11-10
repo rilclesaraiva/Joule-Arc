@@ -129,10 +129,9 @@
     <string name="capacity_now_value">%1$s mAh · %2$d%%</string>
     <string name="capacity_full">Carga completa hoy (estimada)</string>
     <string name="capacity_lost">Perdida por desgaste</string>
-    <string name="capacity_design">Capacidad del dispositivo</string>
-    <string name="capacity_design_system">Capacidad del dispositivo detectada por la app. Si parece incorrecta, escribe el valor correcto en Ajustes.</string>
-    <string name="capacity_design_user">Capacidad del dispositivo definida por ti.</string>
-    <string name="capacity_design_missing">Capacidad del dispositivo desconocida: defínela en Ajustes.</string>
+    <string name="capacity_design">Capacidad informada por el sistema</string>
+    <string name="capacity_design_system">La salud se mide contra la capacidad que informa el sistema. La cifra del fabricante es la anunciada, mostrada para comparar.</string>
+    <string name="capacity_design_missing">Capacidad desconocida: este dispositivo no la informa.</string>
     <string name="capacity_unavailable">Este dispositivo no informa el contador de carga, por lo que no se puede medir la capacidad.</string>
     <string name="capacity_note">La carga completa se estima a partir del contador de carga y del nivel, y puede tener un error de unos pocos puntos porcentuales.</string>
     <string name="value_mah">%1$s mAh</string>
@@ -237,9 +236,6 @@
     <string name="settings_protection">Protección de la app</string>
     <string name="settings_protection_sub">Permite que Joule Arc funcione sin restricciones de batería para que el monitoreo y los recordatorios sigan funcionando</string>
     <string name="settings_protection_on">Ya funciona sin restricciones de batería</string>
-    <string name="settings_design">Capacidad del dispositivo (mAh)</string>
-    <string name="settings_design_hint">Déjalo vacío para usar el valor detectado por la app: %1$s</string>
-    <string name="settings_design_none">no se pudo detectar en este dispositivo</string>
     <string name="settings_dual_cell">Batería de doble celda</string>
     <string name="settings_dual_cell_sub">Para teléfonos con dos celdas de batería (normalmente de 65 W o más). Duplica la corriente, la carga y la capacidad para coincidir con los valores nominales.</string>
     <string name="settings_temp_unit">Unidad de temperatura</string>
@@ -324,8 +320,6 @@
     <string name="device_api">Nivel de API</string>
     <string name="device_patch">Actualización de seguridad</string>
     <string name="device_code">Código del dispositivo</string>
-    <string name="device_capacity_detected">Capacidad del dispositivo (detectada)</string>
-    <string name="device_capacity_user">Capacidad del dispositivo (definida por ti)</string>
     <string name="device_note">Estos datos se quedan en tu teléfono. La capacidad del dispositivo es lo que la batería fue fabricada para retener; Joule Arc la compara con la estimación actual de la carga completa para estimar la salud. Si es incorrecta, escribe el valor correcto en Ajustes.</string>
     <string name="usage_app_total">Tiempo total: %1$s — Batería: %2$s</string>
     <string name="usage_app_active">Activo: %1$s — Batería: %2$s</string>
@@ -336,15 +330,11 @@
     <string name="usage_show_system">Mostrar apps del sistema</string>
     <string name="usage_hide_system">Ocultar apps del sistema</string>
     <string name="usage_more_options">Más opciones</string>
-    <string name="capacity_source_profile">perfil de energía del sistema</string>
-    <string name="capacity_source_xml">recursos del sistema</string>
-    <string name="capacity_source_kernel">archivo del kernel</string>
-    <string name="device_capacity_from">Capacidad del dispositivo (%1$s)</string>
     <string name="usage_showing">Mostrando: %1$s</string>
     <string name="settings_cat_appearance">Apariencia</string>
     <string name="settings_cat_battery">Batería</string>
     <string name="settings_cat_alerts">Notificaciones y recordatorios</string>
     <string name="settings_cat_data">Datos</string>
     <string name="settings_cat_updates">Actualizaciones</string>
-    <string name="capacity_system">Capacidad informada por el sistema</string>
+    <string name="capacity_manufacturer">Capacidad del fabricante (supuesta)</string>
 </resources>

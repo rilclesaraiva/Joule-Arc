@@ -79,7 +79,7 @@ import com.joulearc.app.data.AppUsageReader
 import com.joulearc.app.data.DataExport
 import com.joulearc.app.data.ExportInput
 import com.joulearc.app.data.BatteryRepository
-import com.joulearc.app.data.DetectedCapacity
+import com.joulearc.app.data.DeviceCapacities
 import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.LevelHistoryRepository
 import com.joulearc.app.data.SessionRepository
@@ -183,11 +183,10 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     val sessions by SessionRepository.sessions.collectAsStateWithLifecycle()
     val activeSession by SessionRepository.active.collectAsStateWithLifecycle()
     val levelSamples by LevelHistoryRepository.samples.collectAsStateWithLifecycle()
-    val designUser by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
     val recorded by SettingsRepository.recorded.collectAsStateWithLifecycle()
     val fahrenheit by SettingsRepository.useFahrenheit.collectAsStateWithLifecycle()
-    val systemDesign by produceState<DetectedCapacity?>(null) {
-        value = withContext(Dispatchers.IO) { DeviceInfo.detectDesignCapacity(context) }
+    val capacities by produceState<DeviceCapacities?>(null) {
+        value = withContext(Dispatchers.IO) { DeviceInfo.readCapacities(context) }
     }
     val insights = remember(sessions) { computeInsights(sessions) }
     val drainStats = remember(levelSamples) {
@@ -272,7 +271,7 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
     // Export: the user picks where the file goes (no storage permission needed); it is built on a background thread.
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) {
-            val input = ExportInput(snapshot, estimate, capacityMah, designUser ?: systemDesign?.mah, usageGranted)
+            val input = ExportInput(snapshot, estimate, capacityMah, capacities?.referenceMah, usageGranted)
             Toast.makeText(context, R.string.export_started, Toast.LENGTH_SHORT).show()
             scope.launch {
                 val ok = withContext(Dispatchers.IO) {
@@ -296,9 +295,8 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
                     snapshot = snapshot,
                     estimate = estimate,
                     capacityMah = capacityMah,
-                    designCapacityMah = designUser ?: systemDesign?.mah,
-                    designFromSystem = designUser == null && systemDesign != null,
-                    designSource = if (designUser == null) systemDesign?.source else null,
+                    designCapacityMah = capacities?.referenceMah,
+                    manufacturerCapacityMah = capacities?.manufacturerMah,
                     recorded = recorded,
                     extremes = extremes,
                     fahrenheit = fahrenheit,
@@ -425,7 +423,6 @@ private fun AppContent(hasNotificationPermission: () -> Boolean) {
 
             page == SETTINGS -> Page(goBack) { modifier ->
                 SettingsScreen(
-                    systemDesign = systemDesign,
                     onOpenAbout = { open(ABOUT) },
                     onExport = { exportLauncher.launch(DataExport.fileName(System.currentTimeMillis())) },
                     modifier = modifier,

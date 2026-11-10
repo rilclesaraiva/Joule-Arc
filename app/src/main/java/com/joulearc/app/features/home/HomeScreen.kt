@@ -82,7 +82,7 @@ fun HomeScreen(
                 s = s,
                 capacityMah = state.capacityMah,
                 designMah = state.designCapacityMah,
-                designFromSystem = state.designFromSystem,
+                manufacturerMah = state.manufacturerCapacityMah,
                 onClick = { openReading = Reading.HEALTH },
             )
             SectionHeader(stringResource(R.string.home_battery), stringResource(R.string.home_tap_hint))

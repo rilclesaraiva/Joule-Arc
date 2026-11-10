@@ -54,8 +54,6 @@ import com.joulearc.app.core.RowGroup
 import com.joulearc.app.core.RowIcon
 import com.joulearc.app.core.SUPPORT_EMAIL
 import com.joulearc.app.core.rememberDoubleTapConfirm
-import com.joulearc.app.core.labelRes
-import com.joulearc.app.data.DetectedCapacity
 import com.joulearc.app.data.DeviceInfo
 import com.joulearc.app.data.SettingsRepository
 import kotlin.math.roundToInt
@@ -67,7 +65,6 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun SettingsScreen(
-    systemDesign: DetectedCapacity?,
     onOpenAbout: () -> Unit,
     onExport: () -> Unit,
     modifier: Modifier = Modifier,
@@ -80,7 +77,6 @@ fun SettingsScreen(
     val dualCell by SettingsRepository.dualCellBattery.collectAsStateWithLifecycle()
     val fahrenheit by SettingsRepository.useFahrenheit.collectAsStateWithLifecycle()
     val themeMode by SettingsRepository.themeMode.collectAsStateWithLifecycle()
-    val designUser by SettingsRepository.designCapacityMah.collectAsStateWithLifecycle()
     val predictiveBack by SettingsRepository.predictiveBack.collectAsStateWithLifecycle()
     val persistentOn by SettingsRepository.persistentNotification.collectAsStateWithLifecycle()
 
@@ -150,33 +146,6 @@ fun SettingsScreen(
         GroupLabel(stringResource(R.string.settings_cat_battery))
         RowGroup(
             listOf(
-                {
-                    ControlRow(R.drawable.ic_battery, stringResource(R.string.settings_design)) {
-                        var text by rememberSaveable { mutableStateOf(designUser?.toString() ?: "") }
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { input ->
-                                val digits = input.filter { it.isDigit() }.take(5)
-                                text = digits
-                                SettingsRepository.setDesignCapacityMah(digits.toIntOrNull())
-                            },
-                            supportingText = {
-                                Text(
-                                    stringResource(
-                                        R.string.settings_design_hint,
-                                        systemDesign?.let {
-                                            stringResource(R.string.value_mah, formatInt(it.mah)) + " (" + stringResource(it.source.labelRes()) + ")"
-                                        }
-                                            ?: stringResource(R.string.settings_design_none),
-                                    ),
-                                )
-                            },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                },
                 {
                     SwitchRow(
                         icon = R.drawable.ic_chip,

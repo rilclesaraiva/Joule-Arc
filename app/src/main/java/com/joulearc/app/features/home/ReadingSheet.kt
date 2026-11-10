@@ -277,6 +277,7 @@ private fun HealthDetails(state: HomeState, s: BatterySnapshot) {
             stringResource(R.string.health_condition) to stringResource(conditionLabel(s.healthState)),
             state.capacityMah?.let { stringResource(R.string.capacity_full) to stringResource(R.string.value_mah, formatInt(it)) },
             state.designCapacityMah?.let { stringResource(R.string.capacity_design) to stringResource(R.string.value_mah, formatInt(it)) },
+            state.manufacturerCapacityMah?.let { stringResource(R.string.capacity_manufacturer) to stringResource(R.string.value_mah, formatInt(it)) },
             s.cycleCount?.let { stringResource(R.string.health_cycles) to formatInt(it) },
         ),
     )

@@ -17,7 +17,6 @@ object SettingsRepository {
     const val THEME_DARK = 2
     const val THEME_AMOLED = 3
 
-    private const val KEY_DESIGN_CAPACITY = "design_capacity_mah"
     private const val KEY_CHARGE_ALERT = "charge_alert"
     private const val KEY_CHARGE_ALERT_LEVEL = "charge_alert_level"
     private const val KEY_LOW_ALERT = "low_alert"
@@ -36,10 +35,6 @@ object SettingsRepository {
     private const val KEY_REC_DRAIN_MIN = "rec_drain_min"
 
     private var prefs: SharedPreferences? = null
-
-    private val _designCapacityMah = MutableStateFlow<Int?>(null)
-    /** Device capacity typed by the user; null means "use the system value". */
-    val designCapacityMah: StateFlow<Int?> = _designCapacityMah.asStateFlow()
 
     private val _chargeAlertEnabled = MutableStateFlow(false)
     val chargeAlertEnabled: StateFlow<Boolean> = _chargeAlertEnabled.asStateFlow()
@@ -75,7 +70,6 @@ object SettingsRepository {
     fun init(context: Context) {
         if (prefs != null) return
         val p = context.applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        _designCapacityMah.value = p.getInt(KEY_DESIGN_CAPACITY, 0).takeIf { it > 0 }
         _chargeAlertEnabled.value = p.getBoolean(KEY_CHARGE_ALERT, false)
         _chargeAlertLevel.value = p.getInt(KEY_CHARGE_ALERT_LEVEL, DEFAULT_CHARGE_ALERT_LEVEL)
         _lowAlertEnabled.value = p.getBoolean(KEY_LOW_ALERT, false)
@@ -99,6 +93,8 @@ object SettingsRepository {
                 .putBoolean(KEY_REC_UNIT_FIX, true).apply()
             _recorded.value = RecordedCurrents()
         }
+        // The device capacity typed by the user was removed: the system value is always used.
+        if (p.contains("design_capacity_mah")) p.edit().remove("design_capacity_mah").apply()
         prefs = p
     }
 
@@ -131,12 +127,6 @@ object SettingsRepository {
             block()
             apply()
         }
-    }
-
-    fun setDesignCapacityMah(value: Int?) {
-        val v = value?.takeIf { it in 500..30_000 }
-        _designCapacityMah.value = v
-        edit { if (v == null) remove(KEY_DESIGN_CAPACITY) else putInt(KEY_DESIGN_CAPACITY, v) }
     }
 
     fun setChargeAlertEnabled(value: Boolean) {
