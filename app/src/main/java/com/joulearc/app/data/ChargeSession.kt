@@ -81,7 +81,8 @@ class ChargeSessionTracker(
             return (cur ?: waiting)?.copy(ongoing = false, paused = false)
         }
         if (cur != null) {
-            if (s.source == PowerSource.BATTERY && s.timestampMs - cur.lastMs <= RESUME_WINDOW_MS) {
+            // A full battery has nothing left to resume: unplugging at 100% ends the session at once.
+            if (s.source == PowerSource.BATTERY && cur.endLevel < 100 && s.timestampMs - cur.lastMs <= RESUME_WINDOW_MS) {
                 // Unplugged: wait a few minutes in case it was only a reconnection.
                 current = null
                 pending = cur.copy(paused = true)

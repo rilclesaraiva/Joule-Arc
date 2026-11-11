@@ -61,6 +61,17 @@ class ChargeSessionTrackerTest {
         assertEquals(3000.0, s.avgCurrentMa, 0.01)
     }
 
+    @Test fun unpluggingAtFullEndsTheSessionWithoutWaiting() {
+        val tracker = ChargeSessionTracker()
+        tracker.onSnapshot(snap(0, level = 98))
+        tracker.onSnapshot(snap(60_000, level = 100))
+        val closed = tracker.onSnapshot(unplugged(70_000))
+        assertNotNull(closed)
+        assertFalse(closed!!.ongoing)
+        assertNull(tracker.pending)
+        assertNull(tracker.current)
+    }
+
     @Test fun reconnectingAfterTheWindowStartsANewSession() {
         val tracker = ChargeSessionTracker()
         tracker.onSnapshot(snap(0, level = 40))
