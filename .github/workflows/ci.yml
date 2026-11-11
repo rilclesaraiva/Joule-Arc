@@ -9,12 +9,16 @@ permissions:
   contents: write   # o CI cria a tag e a Release
 
 env:
+  # ── Projeto ──
+  APP_NAME: Joule Arc       # título da Release: "Joule Arc v1.2.0"
+  APP_SLUG: joule-arc       # nome dos arquivos: minúsculas, sem espaços
   # ── Ajuste por stack ──
   VERSION_CMD: grep -m1 -oP 'versionName\s*=?\s*"\K[^"]+' app/build.gradle.kts   # imprime a versão
   TEST_CMD: chmod +x gradlew && ./gradlew testDebugUnitTest assembleRelease   # release = R8 + assinatura
-  TEST_ARTIFACTS: dist-test/joule-arc_v*.apk   # build para vistoria, em todo push (nome final: joule-arc_vX.Y.Z.apk)
+  TEST_ARTIFACTS: app/build/outputs/apk/release/*.apk   # build para vistoria, em todo push
   RELEASE_CMD: ./gradlew assembleRelease   # só APK: o app não vai para a Play Store, então não há .aab
-  ARTIFACTS: dist/joule-arc_v*.apk   # nome final: joule-arc_vX.Y.Z.apk
+  ARTIFACTS: |
+    app/build/outputs/apk/release/*.apk
   # ── Assinatura ──
   REQUIRE_SIGNING: 'true'   # sem os secrets, o release é barrado
   KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -35,15 +39,21 @@ jobs:
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
           echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"
       - run: eval "$TEST_CMD"
-      - name: Nomear o APK da vistoria
+      - name: Nomear build para vistoria   # joule-arc_v0.1.0-build628.apk
+        id: n
         run: |
-          V="$(eval "$VERSION_CMD")"
-          mkdir -p dist-test
-          cp app/build/outputs/apk/release/app-release.apk "dist-test/joule-arc_v${V}.apk"
+          N="${APP_SLUG}_v$(eval "$VERSION_CMD")-build${GITHUB_RUN_NUMBER}"; mkdir -p out
+          for f in $TEST_ARTIFACTS; do
+            [ -f "$f" ] || continue; b="$(basename "$f")"
+            case "$b" in *.tar.gz) e=.tar.gz;; *.*) e=".${b##*.}";; *) e=;; esac
+            [ ! -e "out/$N$e" ] || { echo "Dois artefatos com a extensão '$e': ajuste TEST_ARTIFACTS"; exit 1; }
+            cp "$f" "out/$N$e"
+          done
+          echo "name=$N" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
-          name: build-para-vistoria
-          path: ${{ env.TEST_ARTIFACTS }}
+          name: ${{ steps.n.outputs.name }}
+          path: out/*
           if-no-files-found: ignore
 
   release:
@@ -85,20 +95,23 @@ jobs:
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
           echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"
 
-      - if: steps.v.outputs.publish == 'true'
-        run: eval "$RELEASE_CMD"
-
-      - name: Nomear o APK
+      - name: Build e nomes públicos   # joule-arc_v0.1.0.apk
         if: steps.v.outputs.publish == 'true'
         run: |
-          mkdir -p dist
-          cp app/build/outputs/apk/release/app-release.apk "dist/joule-arc_v${{ steps.v.outputs.version }}.apk"
+          eval "$RELEASE_CMD"
+          N="${APP_SLUG}_v${{ steps.v.outputs.version }}"; mkdir -p out
+          for f in $ARTIFACTS; do
+            [ -f "$f" ] || continue; b="$(basename "$f")"
+            case "$b" in *.tar.gz) e=.tar.gz;; *.*) e=".${b##*.}";; *) e=;; esac
+            [ ! -e "out/$N$e" ] || { echo "Dois artefatos com a extensão '$e': ajuste ARTIFACTS"; exit 1; }
+            cp "$f" "out/$N$e"
+          done
 
       - uses: softprops/action-gh-release@v2   # cria a tag vX.Y.Z neste commit e publica
         if: steps.v.outputs.publish == 'true'
         with:
           tag_name: v${{ steps.v.outputs.version }}
-          name: Joule Arc v${{ steps.v.outputs.version }}
+          name: ${{ env.APP_NAME }} v${{ steps.v.outputs.version }}   # título público
           target_commitish: ${{ github.sha }}
           body_path: notes.md
-          files: ${{ env.ARTIFACTS }}
+          files: out/*
