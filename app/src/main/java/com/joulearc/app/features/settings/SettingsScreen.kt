@@ -5,6 +5,7 @@ import com.joulearc.app.core.formatInt
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -122,6 +123,14 @@ fun SettingsScreen(
                             onSelect = SettingsRepository::setThemeMode,
                         )
                     }
+                }
+                add {
+                    ClickRow(
+                        icon = R.drawable.ic_language,
+                        title = stringResource(R.string.settings_language),
+                        subtitle = stringResource(R.string.settings_language_sub),
+                        onClick = { openLanguageSettings(context) },
+                    )
                 }
                 add {
                     ControlRow(R.drawable.ic_thermometer, stringResource(R.string.settings_temp_unit)) {
@@ -369,6 +378,19 @@ internal fun open(context: Context, intent: Intent) {
     } catch (e: ActivityNotFoundException) {
         Toast.makeText(context, R.string.no_app_found, Toast.LENGTH_SHORT).show()
     }
+}
+
+/**
+ * The app has no language picker of its own: this opens the system screen for the app's language
+ * (Android 13+), or the system language list on older versions.
+ */
+internal fun openLanguageSettings(context: Context) {
+    val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        Intent(Settings.ACTION_APP_LOCALE_SETTINGS, Uri.fromParts("package", context.packageName, null))
+    } else {
+        Intent(Settings.ACTION_LOCALE_SETTINGS)
+    }
+    open(context, intent)
 }
 
 internal fun openUrl(context: Context, url: String) = open(context, Intent(Intent.ACTION_VIEW, Uri.parse(url)))

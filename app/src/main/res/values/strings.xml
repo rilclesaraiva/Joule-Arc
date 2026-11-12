@@ -341,4 +341,6 @@
     <string name="session_pause_detail">Paused at %1$s for %2$s</string>
     <string name="session_pauses_note">Reconnected within 5 minutes, so it is counted as one session. The pauses are not part of the charging time or the average.</string>
     <string name="history_paused">Paused: waiting for the charger to come back</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_sub">Opens the system language settings for this app</string>
 </resources>

@@ -341,4 +341,6 @@
     <string name="session_pause_detail">Pausa às %1$s por %2$s</string>
     <string name="session_pauses_note">Reconectou em até 5 minutos, por isso conta como uma sessão só. As pausas não entram no tempo de carga nem na média.</string>
     <string name="history_paused">Pausada: esperando o carregador voltar</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_language_sub">Abre as configurações de idioma do sistema para este app</string>
 </resources>

@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Added
+- A "Language" row in Settings > Appearance that opens the system language screen for the app (the system list of languages on Android 12 and older). The app still has no language picker of its own.
 - The level history now also keeps the current, voltage and temperature of each sample (older samples have none).
 - Export data (Settings): saves one JSON file with the device details (manufacturer, model, build, Android and security patch), the battery now, estimated and device capacity with every detection source, the 14-day level history, every charging session with its curve, consumption rates and the time each app was used (the whole period, each day and each hour of the last day, with the estimated drain share). Days and hours before the level history started still list the usage times Android has; the drained percentage, mAh, screen-on and screen-off time and the estimated shares cover the part with history and say so. The file goes to the place chosen in Android's file picker and is not sent anywhere.
 
