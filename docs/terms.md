@@ -5,7 +5,7 @@ permalink: /terms
 
 # Terms and conditions
 
-**Joule Arc** · Last updated: 2026-11-09
+**Joule Arc** · Last updated: 2026-11-13
 
 1. **License.** Joule Arc is free software under the [GNU GPL v3](https://github.com/rilclesaraiva/Joule-Arc/blob/main/LICENSE). You may use, study, change and share it under that license.
 2. **No warranty.** The app is provided "as is", without warranty of any kind, as described in the GPL v3.

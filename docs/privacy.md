@@ -5,7 +5,7 @@ permalink: /privacy
 
 # Privacy policy
 
-**Joule Arc** · Last updated: 2026-11-09
+**Joule Arc** · Last updated: 2026-11-13
 
 ## Who is responsible
 
@@ -24,8 +24,8 @@ and no account. The developer does not receive any data from the app.
 | Data | Why | Where it goes |
 |------|-----|---------------|
 | Battery readings: level, current, voltage, temperature, status, power source, charge counter, condition, technology, and when the device reports them the cycle count and what the charger offers | Show live values, ratings and estimates of speed, time and capacity | Shown on screen and in the notification, tile and widget. Not stored, except as summarized in the history below |
-| Charging session history: start time, duration, battery level at start and end, average and peak current, peak power, maximum temperature, power source | Show the history and compare what charges faster | Stored in a file in the app's private storage on your device (`sessions.json`). Not sent anywhere |
-| Battery level history: time, battery percentage, whether a charger was connected and whether the screen was on, one entry when the level or charger state changes or every 10 minutes, for the last 14 days | Draw the battery level and daily usage charts, compute consumption with the screen on and off, and split the drained percentage between apps | Stored in a file in the app's private storage on your device (`levels.json`). Older entries are deleted automatically. Not sent anywhere |
+| Charging session history: start time, duration, battery level at start and end, average and peak current, peak power, maximum temperature, power source, and the pauses when the charger was unplugged and plugged back within 5 minutes | Show the history and compare what charges faster | Stored in a file in the app's private storage on your device (`sessions.json`). Not sent anywhere |
+| Battery level history: time, battery percentage, current, voltage, temperature, whether a charger was connected and whether the screen was on, one entry when the level or charger state changes or every 10 minutes, for the last 14 days | Draw the battery level and daily usage charts, compute consumption with the screen on and off, and split the drained percentage between apps | Stored in a file in the app's private storage on your device (`levels.json`). Older entries are deleted automatically. Not sent anywhere |
 | Device capacity: the value the system reports and the one the manufacturer advertises, read from the system (power profile, system resources or a kernel file, when readable) | Estimate battery health and capacity lost to wear | The value the system reports is also kept as a short log on your device (each distinct value with the time it was first seen), to show whether it changes. Not sent anywhere |
 | Settings and recorded values: reminders and their levels, theme, temperature unit, dual-cell option, predictive back option, persistent notification option, highest and lowest current recorded | Remember your choices | Stored on your device in the app's private storage. Not sent anywhere |
 | Device facts: Android version, API level, security update date, manufacturer, model and device code | Show them in the Device sheet, and fill in a problem report | Shown on screen. Only the app version, Android version, manufacturer and model are included in an email, and only if you choose "Report a problem" and send the draft yourself |
