@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [0.2.0] - 2026-11-13
 ### Added
 - A "Language" row in Settings > Appearance that opens the system language screen for the app (the system list of languages on Android 12 and older). The app still has no language picker of its own.
 - The level history now also keeps the current, voltage and temperature of each sample (older samples have none).
