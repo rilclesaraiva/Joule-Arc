@@ -4,7 +4,7 @@
 ### Added
 - A "Language" row in Settings > Appearance that opens the system language screen for the app (the system list of languages on Android 12 and older). The app still has no language picker of its own.
 - The level history now also keeps the current, voltage and temperature of each sample (older samples have none).
-- Export data (Settings): saves one JSON file with the device details (manufacturer, model, build, Android and security patch), the battery now, estimated and device capacity with every detection source, the 14-day level history, every charging session with its curve, consumption rates and the time each app was used (the whole period, each day and each hour of the last day, with the estimated drain share). Days and hours before the level history started still list the usage times Android has; the drained percentage, mAh, screen-on and screen-off time and the estimated shares cover the part with history and say so. The file goes to the place chosen in Android's file picker and is not sent anywhere.
+- Export data (Settings): saves one JSON file with the device details (manufacturer, model, build, Android and security patch), the battery now, estimated and device capacity with every detection source, the 14-day level history, every charging session with its curve, consumption rates and the time each app was used, with the app names and package names (the whole period, each day and each hour of the last day, with the estimated drain share). Days and hours before the level history started still list the usage times Android has; the drained percentage, mAh, screen-on and screen-off time and the estimated shares cover the part with history and say so. The file goes to the place chosen in Android's file picker and is not sent anywhere.
 
 ### Changed
 - The build for inspection is now named `joule-arc_vX.Y.Z-build<n>.apk`, and the Actions artifact carries the same name. The public release keeps `joule-arc_vX.Y.Z.apk`.
@@ -15,6 +15,7 @@
 - Large numbers now use the thousands separator of the language (1.570 mA in Portuguese, 1,570 mA in English) everywhere: current, capacity, consumption, history, notification, tile and widget.
 - The "Show system apps" menu has rounded corners and sits slightly away from the three-dot button. The snooze menu of the update screen got the same shape.
 - The active and background colors in an app's usage breakdown are now fixed (blue and amber) instead of following the system color, so they are easy to tell apart.
+- Privacy policy: the list of links that open in the browser now matches the app (developer profile, changelog and license were missing).
 
 ### Fixed
 - Settings and History keep their scroll position when you open About or a session and come back.
@@ -24,9 +25,6 @@
 - Export: hours or days without level samples now say `noLevelData` with a null drain instead of 0, and a drop across a gap is no longer lumped into one hour. The export also lists the gaps in the level history and whether the app is exempt from battery restrictions.
 - Some phones (reported in microamps) showed a standby current such as 15 mA as 15 000 mA, which inflated the recorded highest current and could skew the averages and the time-left estimate. The app now learns the unit of the current reading per device. The recorded highest and lowest currents were reset once because of that.
 - A phone that was still charging (for example at 90%, with 1 A going in) could be shown as "Losing charge" with the amber warning. The learned current direction now uses votes (a discharge on battery and a steady charge both count) instead of the last single reading, and once it is known the current decides, even when the system status says discharging.
-
-### Changed
-- Privacy policy: the list of links that open in the browser now matches the app (developer profile, changelog and license were missing).
 
 ## [0.1.0] - 2026-11-09
 First public version.
